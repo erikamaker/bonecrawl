@@ -1,0 +1,129 @@
+############################################################################################################################################################################################################################################################## 
+#####    ENGINE PHASE    #####################################################################################################################################################################################################################################
+############################################################################################################################################################################################################################################################## 
+      
+
+   grease 
+      - taken from greasy worms 
+
+   Staff
+      - requires a blue or pink gem from the mines
+      - requires a branch from a tree
+      
+   Lantern 
+      - requires gas from defeating worms 
+
+   Wall Cracks and Ore Veins
+      - mine through holes in walls very much like how keys open doors 
+      - must be implemented with "walls" in Tiles somehow. 
+
+   Trees 
+      - can drop both apples and/or branches 
+    
+   Altar 
+      - craft items / upgrade items OR sacrifice one key item (to progress story mode)
+    
+   Characters
+      - talking, bartering, @@heck events, hints, gifts, fighting, repositioning (including following) 
+      - demons, trolls, casters, prisoners
+      - goblins, hellions, skeletons, ravens, squids, worms
+   
+
+############################################################################################################################################################################################################################################################## 
+#####    STYLE GUIDE    ######################################################################################################################################################################################################################################
+############################################################################################################################################################################################################################################################## 
+
+
+# puts "	   - This is a boilerplate screen."
+# puts "         Every line should be equal in"
+# puts "         length. The final line may be"
+# puts "         shorter.\n\n" 
+
+# Every gamepiece that displays either an outcome or a passive backdrop will stack in this manner, with spacing between each paragraph (\n\n).
+# They will display in the order they're loaded, so pay attention to the indexing on the level_x array in the main.rb runner file.  
+
+# See idea for opening cut-scene. 
+
+sleep 2
+print Rainbow("\n\n\n	           - Bone Crawl - \n\n")
+sleep 2
+print Rainbow("Ch. 1. Escaping Goblin City\n\n").green
+sleep 2
+puts "	   - You wake up on the floor of"									 
+puts "	     a mostly-empty dungeon cell.\n\n"
+sleep 2
+puts "	   - You're dressed in rags, and"									 
+puts "	     someone's emptied your bag.\n\n"
+sleep 2
+
+
+############################################################################################################################################################################################################################################################## 
+#####    LEVEL DESIGN / GAME MAKING PHASE    #################################################################################################################################################################################################################
+############################################################################################################################################################################################################################################################## 
+
+
+- design one fully functional and curated level of BoneCrawl. 
+- build the level and have people beta test it / cycle until done. 
+
+
+############################################################################################################################################################################################################################################################## 
+#####    COMMERCIAL PHASE    #################################################################################################################################################################################################################################
+############################################################################################################################################################################################################################################################## 
+
+
+- start generating hype about the game and advertise. 
+- release the engine on the website for $1. comes with first level free. 
+- for $1 subscription, you'll get updated engine as applied / monthly chapter. 
+- beta release / debug / re-release cycle
+- find partner to port to mobile 
+- generate hype for mobile / release 
+
+
+############################################################################################################################################################################################################################################################## 
+#####    CHARACTERS    #######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################  
+
+
+class Character < GamePiece
+	attr_accessor :desires, :subtype
+	def initialize(minimap,desires)   
+		@minimap = minimap
+		@desires = desires
+		@subtype = subtype
+		targets = subtype.concat(["person","character","soul"]).flatten
+		@targets = targets
+		moveset = (MOVES[1] + MOVES[6..8]).flatten
+		@moveset = moveset
+		profile = {:card => "#{subtype}#{minimap.flatten}" }
+		@profile = profile
+		def talk ; end
+	end
+	def backdrop	
+		print ITEMS	
+		x = ITEMS.find { |h| h[:item ].eql?(desires) } 
+		print x													
+		print "	   - A #{targets[0]} stands here too.\n\n" 					
+	end	
+	def give
+		print "	   - Offer the #{targets[0]} what?"							
+		print Rainbow(" > ").purple											
+		offering = gets.chomp.downcase ; print("\n") ; sleep(2)
+		x = ITEMS.find { |h| h[:item ].eql?(desires) } 
+		if offering.eql?(desires) and ITEMS.include?(x) 
+			if ITEMS.none?(profile)  
+				ITEMS.delete(x[:item ]) # TODO FIX
+				self.rewards_script
+				ITEMS.push(profile)
+			else print("	   - The #{targets[0]} politely declines.\n\n")
+			end
+		elsif offering.eql?(desires) and ITEMS.none?(x) 
+			print "	   - The #{targets[0]} is interested,\n"		
+			print "	     but you don't have one.\n\n"
+		else print("	   - The #{targets[0]} isn't interested.\n\n")
+		end	
+	end	
+	def hurt
+		print "	   - This #{targets[0]} isn't an enemy.\n\n"			
+	end						   									
+end
+
