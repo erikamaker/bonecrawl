@@ -36,3 +36,14 @@ class Key < Tool
 	end
 end
 
+class Lighter < Tool
+    def initialize
+        @targets = ["brass lighter", "lighter"]
+        @profile = {:build => "brass"}
+	end	
+    def description
+		puts "	   - It's handy when there isn't"
+        puts "	     any fire near, but requires"
+        puts "	     fuel to work.\n\n"
+	end
+end

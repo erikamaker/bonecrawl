@@ -108,8 +108,8 @@ class Inventory < Container
     end
     def show_contents
         @content.group_by { |i| i.targets[0] }.each do |item, total|    
-            dots = (22 - item.length)
-            print "	     #{item} "
+            dots = (24 - item.length)
+            print "	     #{item.capitalize} "
             dots.times do
                 print Rainbow(".").purple
             end
@@ -129,7 +129,7 @@ class Inventory < Container
             puts Rainbow("           - You don't have that.\n").red
         elsif MOVES[2].include?(@@action) and targets.include?("bag")
             puts Rainbow("           - You already have it.\n").red
-        else item.engage_player
+        else item.interact
             puts Rainbow("           - You close your #{targets[0]} shut.\n").red     
         end
     end 

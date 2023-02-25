@@ -189,7 +189,7 @@ class Hook < Fixture
     end
     def backdrop
         puts "	   - A rusty hook juts out of the"
-        puts "	     masonry where you stand.\n\n"
+        puts "	     masonry where you stand.\n\n" 
     end
     def view
         puts "	   - It looks sinister. Intuition"

@@ -5,12 +5,27 @@
 
 class Gamepiece < Gameboard
     attr_accessor :minimap, :targets, :moveset, :profile     
-    def backdrop ; end
-    def load_special_properties ; end
+    def backdrop
+        ## Namespaced, as not all instances have
+        ## backdrops. Some are hidden from player
+    end
+    def load_special_properties
+        ## Namespaced if an instance doesn't have 
+        ## its own special property to load. 
+    end
+    def visualize_target
+        @@sight |= targets
+    end
+    def player_near?
+        minimap.include?(@@stand)
+    end
+    def player_idle?
+        @@state.eql?(:backdrop)
+    end
     def assemble
         load_special_properties
-        minimap.none?(@@stand) ? return : @@sight |= targets
-        @@state.eql?(:backdrop) ? backdrop : engage_player
+        player_near? ? visualize_target : return
+        player_idle? ? backdrop : interact
     end
     def disassemble
         @@check.push(self)
@@ -18,7 +33,8 @@ class Gamepiece < Gameboard
     end
     def view_profile
         @profile.each do |key, value|
-            dots = Rainbow(".").purple * (22 - key.to_s.length)
+            total = 25 - (key.to_s.length + value.to_s.length) 
+            dots = Rainbow(".").purple * total
             space = " " * 13
             value.is_a?(String) and value = value.capitalize
             puts space + "#{key.capitalize} #{dots} #{value}"
@@ -42,7 +58,7 @@ class Gamepiece < Gameboard
             return self.send(action) if moves.include?(@@action)
         end
     end
-    def engage_player
+    def interact
 		return if targets.none?(@@target)
         if moveset.include?(@@action)
 			parse_action
@@ -77,9 +93,12 @@ class Portable < Gamepiece
 	def moveset
 		MOVES[1..2].flatten 
 	end	
+    def remove_from_board
+        @minimap = [0]
+    end
     def load_special_properties
-        condition = @@check.include?(self) && self.is_a?(Portable)
-        @minimap = [0] if condition    # SEND IT TO THE VOID, MWAHAHA
+        already_gotten = @@check.include?(self) && self.is_a?(Portable)
+        remove_from_board if already_gotten    
     end
 	def take 
         view
@@ -170,10 +189,7 @@ end
 ##############################################################################################################################################################################################################################################################  
 
 
-class Substance < Portable
-    def targets
-		subtype | ["drug","ingredient","narcotic","substance"]
-	end	
+class Burnable < Portable
     def moveset
         MOVES[1..2].flatten + MOVES[9]
     end
@@ -182,18 +198,38 @@ class Substance < Portable
         view_profile
         print "\n"
 	end	
-    def burn 
-        if @@sight.none?("fire")
-            puts "	    - There's no fire at this plot.\n\n"
-        else special_burn_screen
-            disassemble
+    def no_fire
+        @@sight.none?("fire")
+    end
+    def out_of_fuel
+        puts "	    - You're out of lighter fuel.\n\n"
+    end
+    def lighter
+        lighter = @@items.find { |i| i.is_a?(Lighter) }
+    end
+    def fuel
+        fuel = @@items.find { |i| i.is_a?(Grease) }
+    end
+    def use_lighter
+        puts "	   - You thumb a little grease in"
+        puts "	     your lighter's fuel canister."
+        puts "	     It sparks a warm flame.\n\n"
+        burn_screen
+        disassemble
+        @@items.find { |i| i.is_a?(Grease) and i.disassemble }
+    end
+    def other_method
+        if lighter == nil
+            puts "	   - There's isn't any fire here.\n\n"
+        else fuel != nil ? use_lighter : out_of_fuel
         end
     end
-    def special_burn_screen 
-        puts "	    - You drop it in the fire. The"
-        puts "	     vapor makes you feel #{profile[:effect]}.\n\n"
-        @profile[:effect].eql?(:hyper) and @@stats[:hyper] = profile[:pages]
-        @profile[:effect].eql?(:fuzzy) and @@stats[:fuzzy] = profile[:pages]
+    def burn 
+        if no_fire
+            other_method
+        else burn_screen
+            disassemble
+        end
     end
 end	
 

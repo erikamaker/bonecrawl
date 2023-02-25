@@ -8,12 +8,17 @@ class Ore < Portable
         subtype | ["ore","metal","raw ore","raw metal"]
     end
     def view 
-        puts "	   - It's a chunk of #{subtype[0]} from"
-		puts "	     beneath the goblin dungeons."
-        puts "	     It's used to to forge tools"
-        puts "	     and weapons.\n\n"
+        puts "	   - Raw silver ore like this is"
+		puts "	     rare. Veins of it can still"
+        puts "	     be found below the dungeon,"
+        puts "	     where the Trolls live.\n\n"
         view_profile
         print "\n"
+    end
+    def backdrop 
+        puts "     - A hunk of #{subtype} ore sits on"
+        puts "	     the ground at your feet.\n\n"    
+
     end
 end
 
@@ -52,6 +57,10 @@ class Jewel < Portable
         view_profile
         print "\n"
     end
+    def backdrop 
+        puts "     - A shimmering #{subtype} is set"
+        puts "	     on the floor here.\n\n"    
+    end
 end
 
 class Blue < Jewel      
@@ -71,3 +80,50 @@ class Pink < Jewel
         @profile = {:magic => "warm"}
     end
 end
+
+
+############################################################################################################################################################################################################################################################## 
+#####    FUEL     ############################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################  
+
+
+class Fuel  < Portable 
+    def targets
+        ["fuel","grease","fat","oil","wax"]
+    end
+end
+
+class WormFat < Fuel
+    def backdrop 
+        puts "	   - A wad of stinkworm fat sulks"
+		puts "	     on the ground at your feet.\n\n"
+    end
+    def view 
+        puts "	   - It's stinkworm grease. Useful"
+		puts "	     for refilling fuel tanks.\n\n"
+    end
+end
+
+class TrollFat < Fuel
+    def backdrop 
+        puts "	   - A wad of waxy Troll fat sulks"
+		puts "	     on the ground at your feet.\n\n"
+    end
+    def view 
+        puts "	   - It's Troll fat. It's good for"
+		puts "	     refilling fuel tanks.\n\n"
+    end
+end
+
+class CaveWax < Fuel
+    def backdrop 
+        puts "	   - A wad of orange wax grows out"
+		puts "	     of the cave wall here.\n\n"
+    end
+    def view 
+        puts "	   - It's cave wax. It's good for"
+		puts "	     refilling fuel tanks.\n\n"
+    end
+end
+
+

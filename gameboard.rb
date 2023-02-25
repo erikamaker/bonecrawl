@@ -14,13 +14,17 @@ class Gameboard
         @@souls = 1
         @@pages = 0
         @@stats = {
-            :block => rand(1..3),
-            :power => rand(1..3),
+            :attack => 1
+            :defense => 0,
             :hyper => 0,
             :fuzzy => 0,
             :weird => 0, 
-            :lucky => 0,
-            :curse => 0
+            :blessed => 0,
+            :cursed => 0,
+            :arrows => 0,     # experience level / base chance out of 10 to land in battle
+            :blades => 0,     # experience level / base chance out of 10 to land in battle
+            :magick => 0,     # experience level / base chance out of 10 to land in battle
+            :speech => 0      # experience level / base chance out of 10 to land in battle
         }
     end
     def action_select
