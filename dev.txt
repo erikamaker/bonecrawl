@@ -3,30 +3,67 @@
 ############################################################################################################################################################################################################################################################## 
       
 
-   grease 
-      - taken from greasy worms 
+   1.) revise screen to show general and ability stats  
+   2.) make clothes: hoodies, tee-shirts, jeans, sneakers (block+, durability-)  
+   3.) make the staffs (see notes below)  
+   4.) make the spells  
+   4.) make the cave cracks  
 
    Staff
       - requires a blue or pink gem from the mines
       - requires a branch from a tree
-      
-   Lantern 
-      - requires gas from defeating worms 
+      - pink gems are used in battle (@@action = cast, @@target = spell)
+      - the pink spells are separate runes that a caster will put on it for you
+         - rune 1: strip enemy of block 
+         - rune 2: strip enemy of attack 
+         - rune 3: stun enemy for a number of pages 
+      - the blue staffs affect magic obstacles in the environment (think ocarina style)
+      - uses soul power 
 
-   Wall Cracks and Ore Veins
+    Hoodies / Tee-shirts / Jeans / Sneakers
+      :block+ , :quality 
+
+    Magic rings 
+      - never break 
+      - forged by dark casters 
+      - draw your life and soul every few pages
+      - make you either invisible, or stronger 
+
+    Tiles that are Mineable  
       - mine through holes in walls very much like how keys open doors 
-      - must be implemented with "walls" in Tiles somehow. 
+      - mine for raw ore and gems 
 
-   Trees 
-      - can drop both apples and/or branches 
+    Apple Trees 
+      - sometimes drop branches / apples if there isn't already one spawned 
+
+    MagicDoors
+      - can't open doors without a blue staff rune 
     
-   Altar 
+    MagicChests 
+      - magically sealed chests, same as above. 
+
+    MagicWildCard
+      - random objects that are affected by magic, ad-hoc 
+
+    Altar 
       - craft items / upgrade items OR sacrifice one key item (to progress story mode)
+      - takes spirit power 
+      - auto take the bone you get from the level's miniboss 
     
-   Characters
+    Characters
       - talking, bartering, @@heck events, hints, gifts, fighting, repositioning (including following) 
-      - demons, trolls, casters, prisoners
-      - goblins, hellions, skeletons, ravens, squids, worms
+      - different scripts based on speech ability (sometimes)
+      - demons, trolls, casters, prisoners, goblins, hellions, 
+
+    Random Generate Enemies   (chance of appearing based on certain conditions, then stays put until defeated)
+      - big rat 
+      - big spider 
+      - squids
+      - worms 
+      - ravens 
+
+
+
    
 
 ############################################################################################################################################################################################################################################################## 
@@ -37,10 +74,12 @@
 # puts "	   - This is a boilerplate screen."
 # puts "         Every line should be equal in"
 # puts "         length. The final line may be"
-# puts "         shorter.\n\n" 
+# puts "         shorter or half.\n\n"    
 
-# Every gamepiece that displays either an outcome or a passive backdrop will stack in this manner, with spacing between each paragraph (\n\n).
-# They will display in the order they're loaded, so pay attention to the indexing on the level_x array in the main.rb runner file.  
+
+# Every gamepiece that displays either an outcome or a passive backdrop will stack in this manner. 
+# Every display will be a paragraph (or two) designated by a tick mark, with line breaks between each tick phrase (\n\n).
+# Each tick phrase will display in the order they're loaded, due to the indexing on the level_x array in the main.rb runner file.  
 
 # See idea for opening cut-scene. 
 
