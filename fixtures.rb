@@ -22,7 +22,7 @@ class Tiles < Fixture
 	def parse_action 
 		case @@target
 		when *general
-            @@state = :backdrop
+            toggle_backdrop
 			overview
 		when *terrain
 			view_type
@@ -196,7 +196,7 @@ class Hook < Fixture
         puts "	     tells you the goblins use it"
         puts "	     to hang more than just coats"
         puts "	     and keys.\n\n"
-        @@state = :backdrop
+        toggle_backdrop
     end
 end
 
@@ -208,11 +208,11 @@ end
 
 class Surface < Fixture
 	def initialize
-		@targets = ["surface"] | subtype
+		@targets = subtype | ["surface"] 
 	end
     def view
         subtype_view
-        @@state = :backdrop
+        toggle_backdrop
     end
 end
 
@@ -258,4 +258,28 @@ class Slab < Surface
 	end
 end
 
+
+############################################################################################################################################################################################################################################################## 
+#####    SURFACES    #########################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################  
+
+
+
+class Tree < Fixture
+	def initialize
+		@targets = ["tree","plant"]
+        @profile = {:apples => rand(1..5), :branches => rand(1..2)}
+	end
+    def backdrop 
+		puts "	   - A gnarled plant bearing blue"
+		puts "	     fruit hangs from the ceiling.\n\n"
+    end
+    def view 
+		puts "	   - It's a blue apple tree. They"
+		puts "	     tend to grow upside down.\n\n"
+        view_profile 
+        toggle_backdrop 
+        print "\n"
+    end
+end
 

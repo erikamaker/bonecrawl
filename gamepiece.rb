@@ -36,7 +36,7 @@ class Gamepiece < Gameboard
             total = 25 - (key.to_s.length + value.to_s.length) 
             dots = Rainbow(".").purple * total
             space = " " * 13
-            value.is_a?(String) and value = value.capitalize
+            value = value.capitalize if not value.is_a?(Integer)
             puts space + "#{key.capitalize} #{dots} #{value}"
         end
     end
@@ -208,7 +208,7 @@ class Burnable < Portable
         lighter = @@items.find { |i| i.is_a?(Lighter) }
     end
     def fuel
-        fuel = @@items.find { |i| i.is_a?(Grease) }
+        fuel = @@items.find { |i| i.is_a?(Fuel) }
     end
     def use_lighter
         puts "	   - You thumb a little grease in"
@@ -216,7 +216,7 @@ class Burnable < Portable
         puts "	     It sparks a warm flame.\n\n"
         burn_screen
         disassemble
-        @@items.find { |i| i.is_a?(Grease) and i.disassemble }
+        @@items.find { |i| i.is_a?(Fuel) and i.disassemble }
     end
     def other_method
         if lighter == nil
@@ -311,29 +311,3 @@ class Pullable < Gamepiece
 end
 
 
-############################################################################################################################################################################################################################################################## 
-#####    CRACKS & VEINS    ##################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################  
-
-
-class Crack < Portable
-    def targets
-        subtype | ["ore vein", "vein", "ore"]
-    end
-	def backdrop
-        print "	   - You've already pulled this\n"
-		puts "	   - An ore vein zigzags across"
-        puts "	     the wall here.\n\n"
-	end
-	def view
-        description 
-        view_profile 
-        print "\n"
-    end
-end
-
-class Weapon < Tool
-    def targets
-        @targets | ["weapon"]
-    end
-end

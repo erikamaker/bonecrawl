@@ -5,7 +5,7 @@
 
 MOVES = 
     [["go", "move", "walk", "run", "travel", "head"],							
-    ["check", "search", "examine", "inspect", "look", "observe", "view","use"],					
+    ["check", "search", "examine", "inspect", "look", "observe", "view"],					
     ["take", "steal", "get", "pilfer", "plunder", "thieve", "burgle", "grab"],				
     ["unlock", "unseal", "open", "free", "release"],						
     ["push", "shove", "thrust", "press", "drive", "force", "cram"],						

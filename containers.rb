@@ -144,6 +144,7 @@ class Knapsack < Inventory
     end
 end
 
+
 ############################################################################################################################################################################################################################################################## 
 #####    PLAYER ASSETS    ####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################  
@@ -157,14 +158,27 @@ class StatsCard < Container
     def minimap
         [@@stand]
     end
-    def open 
-        puts Rainbow("	         - Prisoner Stats -\n").green          
+    def display_stats
+        puts Rainbow("	          - Prisoner Stats -\n").green          
         @@stats.each do |key, value|
-            dots = Rainbow(".").purple * (22 - key.to_s.length)
+            dots = Rainbow(".").purple * (24 - key.to_s.length)
+            space = " " * 13
+            puts space + "#{key.capitalize} #{dots} #{value}"
+        end
+        puts "\n\n"
+    end
+    def display_skill
+        puts Rainbow("	          - Skill Progress -\n").orange          
+        @@skill.each do |key, value|
+            dots = Rainbow(".").red * (24 - key.to_s.length)
             space = " " * 13
             puts space + "#{key.capitalize} #{dots} #{value}"
         end
         puts "\n"
+    end
+    def open 
+        display_stats
+        display_skill
     end
 end
 

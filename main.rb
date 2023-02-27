@@ -47,7 +47,6 @@ stats = StatsCard.new
 
 room_1 = Dungeon.new                                          # Starting room. This is the only time a Tiles instance isn't the content of some portal (like a door).
 room_1.minimap = [[0,1,1],[0,1,2],[0,2,1],[0,2,2]]            # Give the room a 2D array of coordinates: [[ Z for the elevation, X for east/west, and Y for north/south. ]]
-
 def room_1.overview                                           # Will execute when player "views" the "area", and also displays once when uncovered (e.g. opening a door).
     puts "	   - By the glow of one northeast"                # Convention is to describe un-alterable fixtures, as gameplay can alter other objects (e.g. taking something).
     puts "	     torch, you glance around. A"                 # In the parent class Tiles, invoking this method will reset the Gameboard's play state to :backdrop. 
@@ -153,8 +152,11 @@ gem_1.minimap = [[0,1,2]]
 lighter = Lighter.new
 lighter.minimap = [[0,1,2]]
 
-grease = Grease.new
+grease = WormFat.new
 grease.minimap = [[0,1,1]]
+
+tree = Tree.new
+tree.minimap = [[0,1,1]]
 
 level_1 = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, door_3, torch_1, table_1, food_1, pull_1, pick_1, drug_1 ]
 

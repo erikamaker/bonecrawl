@@ -14,41 +14,63 @@ class Gameboard
         @@souls = 1
         @@pages = 0
         @@stats = {
-            :attack => 1
+            :attack => 1,
             :defense => 0,
             :hyper => 0,
-            :fuzzy => 0,
+            :numb => 0,
             :weird => 0, 
             :blessed => 0,
             :cursed => 0,
-            :arrows => 0,     # experience level / base chance out of 10 to land in battle
-            :blades => 0,     # experience level / base chance out of 10 to land in battle
-            :magick => 0,     # experience level / base chance out of 10 to land in battle
-            :speech => 0      # experience level / base chance out of 10 to land in battle
+        }
+        @@skill = {
+            :arrows => 0,     
+            :blades => 0,     
+            :magick => 0,     
+            :speech => 0      
         }
     end
     def action_select
-        print Rainbow("\n  What next?").cyan.bright
-        print Rainbow("  >>  ").purple.bright	
+        prompt_player
         process_input
-        play = MOVES[1..12].flatten.include?(@@action)
-        play.eql?(true) and @@state = :engage 
+        toggle_interact
         print "\n\n\n\n" 
     end	
+    def prompt_player
+        print Rainbow("\n  What next?").cyan.bright
+        print Rainbow("  >>  ").purple.bright	
+    end
     def process_input	
         @@action = gets.chomp.downcase.gsub(/[[:punct:]]/, '')									
         sentence = @@action.split(' ')
         @@action = (MOVES.flatten & (sentence)).join('')
         @@target = (sentence - PARTS).last 
     end	
-    def turn_page
-        @@sight.clear 
-        @@pages += 1 
-        @@state = :backdrop    
+    def toggle_interact 
+        moves = MOVES[1..12].flatten 
+        if moves.include?(@@action)
+            @@state = :interact
+        end
+    end
+    def toggle_backdrop
+        @@state = :backdrop
+    end
+    def reset_sightline
+        @@sight.clear
+    end
+    def increment_page(count)
+        @@pages += count
+    end
+    def decrement_stats
         @@stats.each_with_index do |(key, value), index|
             next unless (2..5).include?(index)
             @@stats[key] -= 1 if value > 0
         end
+    end
+    def turn_page
+        reset_sightline
+        increment_page(1)
+        toggle_backdrop  
+        decrement_stats
     end
 end
 
