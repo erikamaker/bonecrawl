@@ -12,8 +12,7 @@
 #####    DEPENDENCIES    #####################################################################################################################################################################################################################################
 ############################################################################################################################################################################################################################################################## 
 
-
-print "\e[8;57;57t"					
+				
 require 'rainbow'
 require './vocabulary.rb' 
 require './gameboard.rb'         
@@ -22,10 +21,13 @@ require './fixtures.rb'
 require './materials.rb'
 require './tools.rb'
 require './weapons.rb'
-require './ingestibles.rb'
+require './wearables.rb'
+require './edibles.rb'
 require './substances.rb'
 require './containers.rb'
 require './pullables.rb'
+require './trees.rb'
+require './fruit.rb'
 
 
 ############################################################################################################################################################################################################################################################## 
@@ -33,10 +35,11 @@ require './pullables.rb'
 ############################################################################################################################################################################################################################################################## 
 
 
+print "\e[8;57;57t"	
 console = Interface.new
 player = Gameboard.new
-coordinate = Position.new
-knapsack = Knapsack.new
+location = Position.new
+items = Inventory.new
 stats = StatsCard.new
 
 
@@ -45,7 +48,7 @@ stats = StatsCard.new
 ############################################################################################################################################################################################################################################################## 
 
 
-room_1 = Dungeon.new                                          # Starting room. This is the only time a Tiles instance isn't the content of some portal (like a door).
+room_1 = Dungeon.new                                          # Starting room (note: the only time a Tiles instance isn't the content of a door). 
 room_1.minimap = [[0,1,1],[0,1,2],[0,2,1],[0,2,2]]            # Give the room a 2D array of coordinates: [[ Z for the elevation, X for east/west, and Y for north/south. ]]
 def room_1.overview                                           # Will execute when player "views" the "area", and also displays once when uncovered (e.g. opening a door).
     puts "	   - By the glow of one northeast"                # Convention is to describe un-alterable fixtures, as gameplay can alter other objects (e.g. taking something).
@@ -68,7 +71,7 @@ def hall_1.overview                                           # are presets like
     puts "	   - It's a narrow corridor south"                # Remember, overviews should only include things that won't ever change. This means I've intentionally made
     puts "	     of your cell. A faint clang"                 # a "faint clang" that will always be present in the game for one reason or another. Maybe there's a machine
     puts "	     of metal striking metal can"                 # in another room that's a Fixture instance, or maybe someone is always welding. Totally up to the author. 
-    puts "	     be heard to the east.\n\n"
+    puts "	     be heard to the southeast.\n\n"
 end
 
 door_1 = Door.new                                             # This is the Door instance that will contain hall_1. See below. 
@@ -100,7 +103,7 @@ end
 
 chest_1 = Chest.new                                           # Another container. This one contains a weapon, which is part of the Tool class (a Portable subclass). Like the toilet
 chest_1.minimap = [[0,5,-4]]                                  # and lockpick combo above, opening the container will invoke the "take" command on the content. Worth noting: when taking
-chest_1.content = Knife1.new                                  # any portable object, a brief profile of info about it will display before alerting the player that they've received it. 
+chest_1.content = Knife3.new                                  # any portable object, a brief profile of info about it will display before alerting the player that they've received it. 
 
 pull_1 = Lever.new                                            # A lever works very much like a container, with one distinction: the content that they contain can be portable objects
 pull_1.minimap = [[0,3,-3]]                                   # that appear over great distances (e.g. something falls from above), or an event (e.g. gate or a door opens, revealing new
@@ -148,17 +151,19 @@ drug_1.minimap = [[0,2,1]]                                    # like a torch, or
 gem_1 = Pink.new                                              # Not to be confused with a Crystal, a Gem has magickal properties and can be used to make a staff. 
 gem_1.minimap = [[0,1,2]]
 
-
 lighter = Lighter.new
 lighter.minimap = [[0,1,2]]
 
-grease = WormFat.new
-grease.minimap = [[0,1,1]]
+grease = Fat.new
+grease.minimap = [[0,1,2]]
 
-tree = Tree.new
-tree.minimap = [[0,1,1]]
+tree = AppleTree.new
+tree.minimap = [[0,6,-4]]
 
-level_1 = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, door_3, torch_1, table_1, food_1, pull_1, pick_1, drug_1 ]
+apples = Apples.new
+apples.minimap = [[0,6,-4]]
+
+level_1 = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, door_3, tree, apples, torch_1, table_1, food_1, pull_1, pick_1, drug_1 ]
 
 
 ############################################################################################################################################################################################################################################################## 
@@ -172,9 +177,9 @@ loop do
     player.action_select
     console.help_menu
     console.tutorial  
-    coordinate.navigate     
+    location.detect_movement     
     level_1.each { |piece| piece.assemble }
-    knapsack.assemble
+    items.assemble
     stats.assemble
     console.no_target		
     console.page_bottom

@@ -5,7 +5,7 @@
 
 MOVES = 
     [["go", "move", "walk", "run", "travel", "head"],							
-    ["check", "search", "examine", "inspect", "look", "observe", "view"],					
+    ["check", "scope", "search", "examine", "inspect", "look", "observe", "view"],					
     ["take", "steal", "get", "pilfer", "plunder", "thieve", "burgle", "grab"],				
     ["unlock", "unseal", "open", "free", "release"],						
     ["push", "shove", "thrust", "press", "drive", "force", "cram"],						
@@ -13,11 +13,13 @@ MOVES =
     ["speak", "converse", "chat", "talk", "discuss", "communicate"],					
     ["offer", "give", "sacrifice", "provide", "gift", "grant", "bestow"],					
     ["fight", "attack", "kill", "battle", "strike", "hit", "melee", "hurt"],				
-    ["burn", "ignite", "light", "blaze", "smolder", "incinerate"],						
+    ["burn", "smoke", "ignite", "light", "blaze", "smolder", "incinerate"],						
     ["eat", "bite", "consume", "devour", "ingest", "munch", "snack"],	
     ["drink", "guzzle", "swallow", "quaff", "swill", "imbibe", "swig", "sip"],			
     ["mine", "dig", "tunnel", "bore", "burrow", "gouge", "drill", "break"],
-    ["help", "assist", "menu", "moves", "moveslist", "moveset", "hint"]]					
+    ["help", "assist", "menu", "moves", "moveslist", "moveset", "hint"],
+    ["lift","raise","hoist","elevate","uplift","heft","upraise"],
+    ["drink","guzzle","drain","swallow"]]					
 
 PARTS = 
     ["a", "aboard", "above", "across", "about", "above", "across", "after",                     

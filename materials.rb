@@ -38,6 +38,8 @@ class Copper < Ore
     end
 end
 
+## sterling
+
 
 ############################################################################################################################################################################################################################################################## 
 #####    JEWELS     ##########################################################################################################################################################################################################################################
@@ -105,22 +107,28 @@ end
 
 class Fuel  < Portable 
     def targets
-        ["fuel","wax","fat","grease","oil"]
+        subtype | ["fuel","wax","fat","grease","oil"]
     end
 end
 
-class WormFat < Fuel
+class Fat < Fuel
+    def subtype 
+        ["worm fat","stinkworm fat", "fat"]
+    end
     def backdrop 
         puts "	   - A wad of stinkworm fat sulks"
 		puts "	     on the ground at your feet.\n\n"
     end
     def view 
-        puts "	   - It's stinkworm grease. Useful"
-		puts "	     for refueling tanks.\n\n"
+        puts "	   - It smells horrible. It's good"
+		puts "	     for refueling tanks, though.\n\n"
     end
 end
 
-class CaveWax < Fuel
+class Wax < Fuel
+    def subtype 
+        ["wax","cave wax","cavern wax"]
+    end
     def backdrop 
         puts "	   - A wad of orange wax grows out"
 		puts "	     of the cave wall here.\n\n"
@@ -131,13 +139,16 @@ class CaveWax < Fuel
     end
 end
 
-class TreeSap < Fuel 
+class Sap < Fuel 
+    def subtype 
+        ["sap","tree sap", "resin"]
+    end
     def backdrop 
         puts "	   - A vein of almost-solid resin"
 		puts "	     clings to the tree\n\n"
     end
     def view 
-        puts "	   - It's a rich amber color, and"
+        puts "	   - It's a rich amber color, but"
 		puts "	     inedible. Makes good fuel.\n\n"
     end
 end
@@ -246,7 +257,7 @@ class Salt < Portable
 		puts "	     to increase healing potential.\n\n"
     end
     def wrong_move
-        puts "	   - It wouldn't taste good on its"
+        puts "	   - It wouldn't taste right on its"
 		puts "	     own. You decide against it.\n\n"
     end
 end

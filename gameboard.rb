@@ -16,11 +16,11 @@ class Gameboard
         @@stats = {
             :attack => 1,
             :defense => 0,
-            :hyper => 0,
-            :numb => 0,
-            :weird => 0, 
+            :aggression => 0,
+            :resilience => 0,
+            :tranced => 0, 
             :blessed => 0,
-            :cursed => 0,
+            :acursed => 0,
         }
         @@skill = {
             :arrows => 0,     
@@ -84,42 +84,65 @@ class Position < Gameboard
     def compass 
         ["north","south","east","west"]
     end
-    def navigate
-        return if MOVES[0].none?(@@action)
-        @@sight = @@sight | compass
-        if compass.include?(@@target)
-            reposition 
-        else cartesian_error
-        end  
-    end	
-    def reposition
-        coord = {
+    def load_compass
+        @@sight | compass
+    end
+    def direction
+        {
             compass[0] => [0, 1],
             compass[1] => [0,-1],
             compass[2] => [1, 0],
             compass[3] => [-1,0]
         }
-        delta = coord[@@target]
-        @@stand[1] += delta[0]
-        @@stand[2] += delta[1]
-        if @@world.include?(@@stand)
-            print "	   - You move #{@@target} to "
-            print Rainbow(	     "[ #{@@stand[1]} , #{@@stand[2]} ]").orange	
-            print ".\n\n"												
-        else puts "	   - The #{@@target}ern way is blocked."
-            puts "	     One page passes in vain.\n\n"
-            @@stand[1] -= delta[0]
-            @@stand[2] -= delta[1]
-        end   
+    end 
+    def directed_movement
+        @@stand[1] += direction[@@target][0]
+        @@stand[2] += direction[@@target][1] 
     end
-    def cartesian_error
-        print "	   - Move one adjacent tile using\n"
-        print "	     "
+    def activated_barrier
+        @@stand[1] -= direction[@@target][0]
+        @@stand[2] -= direction[@@target][1]
+    end
+    def detect_direction
+        if compass.include?(@@target)
+            reposition 
+        else cartesian_error
+        end  
+    end
+    def detect_movement
+        if MOVES[0].include?(@@action)
+            load_compass
+            detect_direction
+        end
+    end
+    def reposition
+        directed_movement
+        if @@world.include?(@@stand)
+            accepted_movement
+        else redirect_movement
+        end
+    end
+    def accepted_movement
+        print "	   - You move #{@@target} to "
+        print Rainbow(	     "[ #{@@stand[1]} , #{@@stand[2]} ]").orange	
+        print ".\n\n"	
+    end
+    def redirect_movement
+        puts "	   - The #{@@target}ern way is blocked."
+        puts "	     One page passes in vain.\n\n"
+        activated_barrier
+    end
+    def print_options
         compass.each_with_index do |direction, index|
             print Rainbow(direction).orange
             print ", " unless index.eql?(compass.size - 1)
             print Rainbow("or ").white if index.eql?(compass.size - 2)
         end
+    end
+    def cartesian_error
+        print "	   - Move one adjacent tile using\n"
+        print "	     "
+        print_options
         puts ".\n\n"
     end									 
 end
@@ -179,15 +202,15 @@ class Interface < Gameboard
 			puts "	   - Speak your move plainly in a"  													
 			puts "	     few short words, referencing"														
 			puts "	     just one subject per page.\n\n"
-			puts Rainbow("	     Look around the room.").red
-			puts Rainbow("	     Speak to the wizard.").orange
-			puts Rainbow("	     Fight the goblin.").green
-			puts Rainbow("	     Take the sword.").blue
-			puts Rainbow("	     View my items.").indigo
-			puts Rainbow("	     Eat some bread.").maroon
-			puts Rainbow("	     Walk south.").red
-			puts Rainbow("	     Unlock the door.").orange
-			puts Rainbow("	     Check my stats.\n").green											
+			puts Rainbow("	     Check the area.").blue
+			puts Rainbow("	     Talk to the wizard.").indigo
+			puts Rainbow("	     Unlock the door.").maroon
+			puts Rainbow("	     Take the sword.").red
+			puts Rainbow("	     View my inventory.").orange
+			puts Rainbow("	     Eat some bread.").green
+			puts Rainbow("	     Walk south.").cyan
+			puts Rainbow("	     Unlock the door.").blue
+			puts Rainbow("	     Check my stats.\n").indigo											
 			puts "	   - Pause to view your current"
 			print "	     position by pressing " 
 			print Rainbow("return").cyan + ".\n\n"

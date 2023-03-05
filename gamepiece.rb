@@ -6,14 +6,17 @@
 class Gamepiece < Gameboard
     attr_accessor :minimap, :targets, :moveset, :profile     
     def backdrop
-        ## Namespaced, as not all instances have
-        ## backdrops. Some are hidden from player
+        # Not all instances will have their
+        # own backdrop. Some are hidden and
+        # will return nil. 
     end
     def load_special_properties
-        ## Namespaced if an instance doesn't have 
-        ## its own special property to load. 
+        # For example, Apples grow based on
+        # the passage of time. Tiles push
+        # their minimap coordinates to the
+        # overall map. Etcetera. 
     end
-    def visualize_target
+    def reveal_targets
         @@sight |= targets
     end
     def player_near?
@@ -24,24 +27,30 @@ class Gamepiece < Gameboard
     end
     def assemble
         load_special_properties
-        player_near? ? visualize_target : return
+        player_near? ? reveal_targets : return
         player_idle? ? backdrop : interact
     end
     def disassemble
         @@check.push(self)
         @@items.delete(self)
     end
+    def view
+        description 
+        view_profile 
+        print "\n"
+    end
     def view_profile
+        return if @profile == nil 
         @profile.each do |key, value|
             total = 25 - (key.to_s.length + value.to_s.length) 
             dots = Rainbow(".").purple * total
             space = " " * 13
-            value = value.capitalize if not value.is_a?(Integer)
+            value = value.to_s.capitalize 
             puts space + "#{key.capitalize} #{dots} #{value}"
         end
     end
-    def parse_action
-        actions = {
+    def actions
+        {
             view: MOVES[1],
             take: MOVES[2],
             open: MOVES[3],
@@ -51,9 +60,11 @@ class Gamepiece < Gameboard
             give: MOVES[7],
             harm: MOVES[8],
             burn: MOVES[9],
-            heal: MOVES[10],
+            feed: MOVES[10],
             mine: MOVES[11]
         }
+    end
+    def parse_action
         actions.each do |action, moves|
             return self.send(action) if moves.include?(@@action)
         end
@@ -96,47 +107,23 @@ class Portable < Gamepiece
     def remove_from_board
         @minimap = [0]
     end
+    def already_gotten
+        @@check.include?(self) 
+    end
     def load_special_properties
-        already_gotten = @@check.include?(self) && self.is_a?(Portable)
         remove_from_board if already_gotten    
     end
 	def take 
         view
-        puts Rainbow("	   - You steal the #{targets[0]}.\n").orange
+        puts Rainbow("	   - You take the #{targets[0]}.\n").orange
         @@check.push(self)
         @@items.push(self)
-	end						
+	end			
 end
 
 
 ############################################################################################################################################################################################################################################################## 
-#####    TOOLS & WEAPONS    ##################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################  
-
-
-class Tool < Portable
-    def targets
-        @targets | ["tool"]
-    end
-	def backdrop
-		puts "	   - A #{targets[0]} lays here.\n\n"   
-	end
-	def view
-        description 
-        view_profile 
-        print "\n"
-    end
-end
-
-class Weapon < Tool
-    def targets
-        @targets | ["weapon"]
-    end
-end
-
-
-############################################################################################################################################################################################################################################################## 
-#####    INGESTIBLES    ######################################################################################################################################################################################################################################
+#####    EDIBLE    ###########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################  
 
 
@@ -147,19 +134,33 @@ class Edible < Portable
 	def moveset
 		MOVES[1..2].flatten | MOVES[10]
 	end	
-    def view
-        description 
-        view_profile 
-        print "\n"
+    def feed
+        animate_eating
+        remove_portion
+        portions_left
+        heal_player
+        side_effects
     end
-    def heal
-        @@heart += heal_amount
-        profile[:portions] -= 1 if profile[:portions] > 0
+    def animate_eating
         puts "	   - You eat the #{subtype[0]}, healing"
 		print "	     #{heal_amount} heart"   
         heal_amount.eql?(1) ? print(". ") : print("s. ")
-        portions_left
-        side_effects
+    end
+    def remove_portion
+        profile[:portions] -= 1
+    end
+    def portions_left
+        case profile[:portions]
+        when 1
+            print "#{profile[:portions]} portion left.\n\n"
+        when * [2..7]
+            print "#{profile[:portions]} portions left.\n\n"
+        else print "You finish it.\n\n"
+            disassemble
+        end
+	end
+    def heal_player
+        @@heart += heal_amount
     end
     def heal_amount 
         if @@heart + profile[:hearts] > 4
@@ -167,22 +168,32 @@ class Edible < Portable
         else profile[:hearts]
         end
     end
-    def portions_left
-        case profile[:portions]
-        when 1
-            print "#{profile[:portions]} portion remains.\n\n"
-        when * [2,3,4,5,6,7]
-            print "#{profile[:portions]} portions remain.\n\n"
-        else print "You finish it.\n\n"
-            disassemble
-        end
-	end
     def side_effects
         return if not profile.key?(:effect) 
-        puts "	   - You feel... #{profile[:effect]}.\n\n"
+        display_side_effect
     end
 end
 
+
+############################################################################################################################################################################################################################################################## 
+#####    INGESTIBLES    ######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################  
+
+
+class Drink < Edible
+	def targets
+		subtype | ["drink"] 
+	end		
+	def moveset
+		[MOVES[1..2],MOVES[10],MOVES[15]].flatten
+	end
+    def animate_eating
+        puts "	   - You drink the #{subtype[0]}, healing"
+		print "	     #{heal_amount} heart"   
+        heal_amount.eql?(1) ? print(". ") : print("s. ")
+    end
+end
+	
 
 ############################################################################################################################################################################################################################################################## 
 #####    COMBUSTIBLES     ####################################################################################################################################################################################################################################
@@ -193,11 +204,6 @@ class Burnable < Portable
     def moveset
         MOVES[1..2].flatten + MOVES[9]
     end
-    def view 
-        description
-        view_profile
-        print "\n"
-	end	
     def no_fire
         @@sight.none?("fire")
     end
@@ -309,5 +315,11 @@ class Pullable < Gamepiece
 		end														
 	end		
 end
+
+
+
+
+
+
 
 

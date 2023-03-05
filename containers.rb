@@ -91,6 +91,12 @@ end
 
 class Inventory < Container 
     def view ; open end
+    def targets
+        ["knapsack","rucksack","backpack","sack","bag","items","inventory","stuff","things","collection"]
+    end
+    def minimap
+        [@@stand]
+    end
     def moveset
         MOVES[1] | MOVES[3]
     end
@@ -133,15 +139,6 @@ class Inventory < Container
             puts Rainbow("           - You close your #{targets[0]} shut.\n").red     
         end
     end 
-end
-
-class Knapsack < Inventory
-    def targets
-        ["knapsack","rucksack","backpack","sack","bag"]
-    end
-    def minimap
-        [@@stand]
-    end
 end
 
 
