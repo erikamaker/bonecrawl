@@ -45,7 +45,10 @@ class Fruit < Edible
     def last_bite?
         @group[0].profile[:portions].eql?(0)
     end
-    def none_left
+    def none_left?
+        @group.count == 0
+    end
+    def be_patient
         puts "	   - There aren't any left. They"
         puts "	     need time to regrow.\n\n"    
     end
@@ -54,7 +57,7 @@ class Fruit < Edible
             description 
             view_profile 
             print "\n"
-        else none_left
+        else be_patient
         end
     end
     def take
@@ -64,24 +67,23 @@ class Fruit < Edible
         @group.delete(@group[0])
     end
     def feed
-        if any_fruit?
-            animate_eating
-            remove_portion
-            portions_left
-            heal_player
-            side_effects
-            remove_from_board
-        end
+        return if none_left?
+        animate_eating
+        remove_portion
+        portions_left
+        heal_player
+        side_effects
+        remove_from_board      
     end
 end
 
 
 ############################################################################################################################################################################################################################################################## 
-#####    APPLE SPAWNER    ###########################################################################################################################################################################################################################
+#####    APPLE SPAWNER    ####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################  
 
 
-class Apples < Fruit 
+class AppleSpawner < Fruit 
     def initialize                                                                
         @group = [Apple.new,Apple.new,Apple.new]
         @time = 0 
@@ -91,7 +93,7 @@ class Apples < Fruit
         ["apple","apples"]  
     end
     def backdrop
-		if @group.count > 0 
+		if any_fruit?
             print "	   - #{@group.count} indigo " 
             one_left ? print("apple ") : print("apples ")
             one_left ? print("hangs ") : print("hang ") 

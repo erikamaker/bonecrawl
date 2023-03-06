@@ -11,10 +11,10 @@ class Gamepiece < Gameboard
         # will return nil. 
     end
     def load_special_properties
-        # For example, Apples grow based on
-        # the passage of time. Tiles push
+        # For example, fruit sources grow 
+        # with passage of time. Tiles push
         # their minimap coordinates to the
-        # overall map. Etcetera. 
+        # overall map. Et cetera. 
     end
     def reveal_targets
         @@sight |= targets
@@ -29,6 +29,9 @@ class Gamepiece < Gameboard
         load_special_properties
         player_near? ? reveal_targets : return
         player_idle? ? backdrop : interact
+    end
+    def remove_from_board
+        @minimap = [0] # The Void
     end
     def disassemble
         @@check.push(self)
@@ -104,9 +107,6 @@ class Portable < Gamepiece
 	def moveset
 		MOVES[1..2].flatten 
 	end	
-    def remove_from_board
-        @minimap = [0]
-    end
     def already_gotten
         @@check.include?(self) 
     end

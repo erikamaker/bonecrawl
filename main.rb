@@ -160,7 +160,7 @@ grease.minimap = [[0,1,2]]
 tree = AppleTree.new
 tree.minimap = [[0,6,-4]]
 
-apples = Apples.new
+apples = AppleSpawner.new
 apples.minimap = [[0,6,-4]]
 
 level_1 = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, door_3, tree, apples, torch_1, table_1, food_1, pull_1, pick_1, drug_1 ]

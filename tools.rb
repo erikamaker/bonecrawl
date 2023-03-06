@@ -73,7 +73,7 @@ end
 
 class Jar < Tool
     def initialize
-        @profile = {:build => "glass", => :holding => "nothing", => :rune => "none"}
+        @profile = {:build => "glass", :holding => "nothing", :rune => "none"}
     end
     def subtype
         ["jar", "bottle", "flask"]

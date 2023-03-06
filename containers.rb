@@ -34,10 +34,10 @@ class Urns < Container
         false
     end
     def targets
-        ["urn","jar","bottle","emains"]
+        ["urn","jar","bottle","remains"]
     end
     def backdrop
-		puts "	   - A ceramic urn sits here.\n\n"    
+		puts "	   - An ornate clay urn sits here.\n\n"    
 	end
 end
 

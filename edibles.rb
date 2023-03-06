@@ -5,13 +5,13 @@
 
 class Bread < Edible
     def initialize
-		@profile = { :hearts => 2, :portions => 4}
+		@profile = { :hearts => 2, :portions => 4 }
 	end
     def subtype
        ["loaf", "bread", "golden bread"]
     end
 	def backdrop
-		puts "	   - Some golden bread sits here.\n\n"
+		puts "	   - Some goblish bread sits here.\n\n"
 	end
 	def description 
 		puts "	   - It's said that a single bite\n"
@@ -21,13 +21,13 @@ end
 
 class Apple < Edible 
     def initialize
-        @profile = { :hearts => 1, :portions => 4}
+        @profile = { :hearts => 1, :portions => 4 }
     end
     def subtype
         ["apple"]
 	end
 	def backdrop
-		puts "	   - A blue apple sits here.\n\n"
+		puts "	   - An indigo apple sits here.\n\n"
 	end
 	def description 
 		puts "	   - Blue apples like these tend"	
@@ -44,7 +44,7 @@ class Berry < Edible
 	end
 	def backdrop
 		puts "	   - A single blackberry, perhaps"
-        puts "	     spilt in error, lays here.\n\n"
+        puts "	     spilt by mistake, lays here.\n\n"
 	end
 	def description 
 		puts "	   - Berries like this are bitter."	
@@ -52,7 +52,6 @@ class Berry < Edible
         puts "	     own, but they cook down well.\n\n"
 	end
 end
-
 
 
 ############################################################################################################################################################################################################################################################## 
@@ -70,13 +69,13 @@ class Elixer < Drink   # No backdrop, because you'll never see it until it's alr
 	def description 
 		puts "	   - It's a hearty health elixer."
         puts "	     One drink fully restores all"
-        puts "	     lost heartpoints.\n\n"
+        puts "	     lost heart points.\n\n"
 	end
 end
 
 class Anodyne < Drink 
     def initialize
-        @profile = { :effect => "tolerance", :duration => 3, :magnitude => 3, :portions => 2}
+        @profile = { :effect => "tolerance", :duration => 3, :magnitude => 3, :portions => 2 }
     end
     def subtype
         ["anodyne","narcotic","analgesic","pain reliever"]
@@ -91,21 +90,21 @@ end
 
 class Water < Drink 
     def initialize
-        @profile = { :effect => "blessing", :duration => 3, :magnitude => 3, :portions => 2}
+        @profile = { :effect => "blessing", :duration => 3, :magnitude => 3, :portions => 2 }
     end
     def subtype
         ["water","holy water"]
 	end
 	def description 
 		puts "	   - It's water bottled by a rebel"	
-        puts "	     cherub. It blesses one's body"
+        puts "	     cherub. It blesses one's soul"
         puts "	     with luck against all odds.\n\n"
 	end
 end
 
 class Cure < Drink 
     def initialize
-        @profile = { :effect => "exorcism", :portions => 1}
+        @profile = { :effect => "exorcism", :portions => 1 }
     end
     def subtype
         ["antidote","cure","exorcism"]
@@ -119,7 +118,7 @@ end
 
 class Brew < Drink 
     def initialize
-        @profile = { :effect => "blessing", :duration => 3, :magnitude => 3, :portions => 2}
+        @profile = { :effect => "aggression", :duration => 3, :magnitude => 3, :portions => 2 }
     end
     def subtype
         ["brew","daemon brew"]
