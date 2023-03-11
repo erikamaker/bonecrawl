@@ -8,7 +8,7 @@ class Toilet < Container
 		false
 	end
 	def targets
-        ["drain","toilet","bowl","toilet bowl", "toilet lid", "drain","lid","latch"]
+        ["drain","toilet","bowl","lid"]
     end
     def backdrop
 		puts "	   - A dirty lidded toilet sticks"
@@ -21,10 +21,10 @@ class Chest < Container
         true
     end
     def targets
-        ["chest","strongbox","chest","treasure chest","lootbox","box","lock","latch"]
+        ["chest","strongbox","lootbox","box"]
     end
     def backdrop
-		puts "	   - A wooden chest sits against"
+		puts "	   - A wooden chest rests against"
 		puts "	     the dungeon wall.\n\n"
 	end
 end
@@ -65,7 +65,9 @@ class Door < Container
         true
     end
     def load_special_properties
-        content.assemble if @@check.include?(self)
+        if already_gotten?
+            content.assemble 
+        end
     end
     def give_content
         puts Rainbow("           - A new path is revealed. Your").orange
@@ -75,7 +77,7 @@ class Door < Container
         @@check.push(self)
     end
 	def targets										
-		["door","exit","iron door","latch"]
+		["door","exit"]
 	end
 	def backdrop
 		puts "	   - You stand near the threshold"
@@ -92,7 +94,7 @@ end
 class Inventory < Container 
     def view ; open end
     def targets
-        ["knapsack","rucksack","backpack","sack","bag","items","inventory","stuff","things","collection"]
+        ["knapsack","rucksack","backpack","sack","pack","items","inventory","stuff","things"]
     end
     def minimap
         [@@stand]
@@ -102,18 +104,17 @@ class Inventory < Container
     end
     def open
         print Rainbow("	   - You reach into your #{targets[0]}.\n\n").red
-        targets.include?("bag") ? @content = @@items : @content = []
-        if @content.empty?  
+        if @@items.empty?  
 			print "	   - It's empty.\n\n"
             print Rainbow("           - You close your #{targets[0]} shut.\n\n").red 
-		else show_contents
+		else 
+            show_contents
             manage_inventory
-            @@action = :reset
-            @@target = :reset
+            reset_input
 		end
     end
     def show_contents
-        @content.group_by { |i| i.targets[0] }.each do |item, total|    
+        @@items.group_by { |i| i.targets[0] }.each do |item, total|    
             dots = (24 - item.length)
             print "	     #{item.capitalize} "
             dots.times do
@@ -127,7 +128,7 @@ class Inventory < Container
         print Rainbow("\n\n	   - What next?").cyan
         print Rainbow("  >>  ").purple
         process_input
-        item = content.find { |i| i.targets.include?(@@target) }
+        item = @@items.find { |i| i.targets.include?(@@target) }
         puts "\n\n"
         if moves.none?(@@action)
             puts Rainbow("           - You close your #{targets[0]} shut.\n").red            
@@ -135,7 +136,8 @@ class Inventory < Container
             puts Rainbow("           - You don't have that.\n").red
         elsif MOVES[2].include?(@@action) and targets.include?("bag")
             puts Rainbow("           - You already have it.\n").red
-        else item.interact
+        else 
+            item.interact
             puts Rainbow("           - You close your #{targets[0]} shut.\n").red     
         end
     end 

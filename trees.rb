@@ -51,3 +51,19 @@ class WillowTree < Tree
 		puts "	     properties.\n\n" 
     end
 end
+
+class BerryTree < Tree 
+    def subtype
+        ["berry","blackberry"]
+    end
+    def backdrop 
+		puts "	   - A short and bushy blackberry"
+		puts "	     tree grows here.\n\n"
+    end
+    def description
+        puts "	   - It's a berry tree. Its fruit" 
+		puts "	     is edible, but doesn't taste"
+		puts "	     great on its own.\n\n" 
+    end
+end
+

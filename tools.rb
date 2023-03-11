@@ -14,7 +14,7 @@ end
 
 class Pickaxe1 < Tool 
 	def initialize  
-        @profile = {:build => "iron", :lifespan => rand(7..13), :damage => 3}
+        @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
 	end
     def subtype
         ["pickaxe","iron pickaxe"]
@@ -40,26 +40,26 @@ end
 
 class Key < Tool
 	def initialize
-        @profile = {:build => "copper", :lifespan => 1}
+        @profile = {:build => "brass", :lifespan => 1}
 	end	
     def subtype
-        ["brass key", "skeleton key", "key"]
+        ["brass key","key"]
     end
 	def description
 		puts "	   - It's brittle and tarnished."
-		puts "	     It can be used only once.\n\n"
+		puts "	     It can be used just once.\n\n"
 	end
 end
 
 class Lighter < Tool
     def initialize
-        @profile = {:build => "brass"}
+        @profile = {:build => "copper"}
 	end	
     def count_fuel
         @profile[:fuel] = @@items.count { |item| item.is_a?(Fuel) }
     end
     def load_special_properties
-        remove_from_board if already_gotten    
+        remove_from_board if already_gotten?    
         count_fuel
     end
     def subtype
@@ -67,20 +67,29 @@ class Lighter < Tool
     end
     def description
 		puts "	   - It's handy when there isn't"
-        puts "	     any fire. Watch its fuel.\n\n"
+        puts "	     any fire. Watch your fuel.\n\n"
 	end
 end
 
 class Jar < Tool
     def initialize
-        @profile = {:build => "glass", :holding => "nothing", :rune => "none"}
+        @profile = {:build => "glass", :holding => "nothing"}
+    end
+    def currently_full
+        @profile[:holding] != "nothing"
+    end
+    def moveset
+        if currently_full
+            [MOVES[1..2],MOVES[15]].flatten
+        else MOVES[1..2].flatten
+        end
     end
     def subtype
         ["jar", "bottle", "flask"]
     end
     def description
 		puts "	   - It's a simple glass jar. It"
-        puts "	     can carry elixers, spirits,"
-        puts "	     and most fluids.\n\n"
+        puts "	     currently holds #{profile[:holding]}}"
 	end
 end
+

@@ -7,7 +7,7 @@ class Substance < Burnable
     def targets
 		subtype | ["drug","ingredient","narcotic","substance"]
 	end	
-    def burn_screen
+    def animate_combusion
         puts Rainbow("	   - You hold the #{subtype[0]} against").orange
         puts Rainbow("	     the fire, inhaling the smoke.").orange
         burn_effect
@@ -20,7 +20,7 @@ class Crystal < Substance
 		@profile = { :effect => :aggression, :duration => 3 , :magnitude => 2}
 	end
 	def subtype
-		["crystal", "rock", "shard", "aggressive stimulant", "stimulant", "upper"]
+		["crystal", "rock", "shard", "stimulant"]
 	end	
 	def backdrop
 		puts "	   - A purple crystal sits here.\n\n"
@@ -41,7 +41,7 @@ class Blossom < Substance
 		@profile = { :effect => :tolerance, :duration => 3, :magnitude => 2} 
  	end
 	def subtype
-		["blossom","flower", "bright red flower", "bright red blossom", "red flower","red blossom", "pain -eliever", "plant", "herb"]
+		["blossom","flower"]
 	end	
 	def backdrop
 		puts "	   - A red blossom blooms here.\n\n"
@@ -56,3 +56,4 @@ class Blossom < Substance
         @@stats[:tolerance] = profile[:duration]
     end
 end
+

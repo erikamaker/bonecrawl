@@ -18,7 +18,8 @@ class Lever < Pullable
 		if @@check.none?(self)									
 			puts "	   - This lever isn't pulled yet."			
 			puts "	     It could do anything.\n\n"	
-		else puts "	   - It's stuck down and locked.\n\n"
+		else 
+            puts "	   - It's stuck down and locked.\n\n"
 		end
 	end
 end	
@@ -38,7 +39,8 @@ class Rope < Pullable
 		if @@check.none?(self)									
 		    puts "	   - It's tied to something. You"			
 			puts "	     wonder what it could be.\n\n"	
-		else print "	   - It won't pull further.\n\n"
+		else 
+            print "	   - It won't pull further.\n\n"
 		end
 	end
 end	

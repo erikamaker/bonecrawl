@@ -7,7 +7,6 @@ class Tiles < Fixture
 	attr_accessor  :subtype, :built_of, :terrain, :borders, :general, :targets
 	def initialize
 		@general = ["around","room","area","surroundings"] | subtype
-		@general = general
 		@borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
 		@terrain = ["terrain","medium","material"] | built_of
 		@targets = (general + terrain + borders).flatten
@@ -64,25 +63,23 @@ class Bricks < Tiles
 	end		
 end
 
-
 class Dungeon < Bricks
 	def subtype 
 		subtype = ["jail","dungeon","cell"] 
 	end
 	def backdrop
-		puts "	   - You're in a cold prison cell."        ## A preset, feel free to change in the main runner file. 
+		puts "	   - You're in a cold prison cell."       
 		puts "	     It's dark and mostly empty.\n\n"
 	end
 end
-
 
 class Corridor < Bricks
 	def subtype 
 		subtype = ["tunnel","corridor","hall"] 
 	end
 	def backdrop
-		puts "	   - You're in a cramped corridor"        ## Another preset. These are always suggestions for the main
-		puts "	     made of dark cobbled bricks.\n\n"           ## screen player views when idle in the environment. 
+		puts "	   - You're in a cramped corridor"       
+		puts "	     made of dark cobbled bricks.\n\n"     
 	end
 end
 
@@ -114,7 +111,6 @@ class WarmRocks < Tiles
 	end		
 end
 
-
 class WarmCave < WarmRocks
 	def subtype
 		subtype = ["cavern","cave","underground"]
@@ -124,7 +120,6 @@ class WarmCave < WarmRocks
 		puts "	     It's pleasantly warm.\n\n"
 	end
 end
-
 
 class Grotto < WarmCave
 	def subtype 
@@ -170,10 +165,13 @@ class Fireplace < Fire
 		puts "	   - Hot coals smolder in an iron"
 		puts "	     grate built into of the wall.\n\n"
 	end
+    def heal_amount
+        4
+    end
 	def view
 		puts "	   - You warm your hands and toes"
-		puts "	     at the fire. It's nice.\n\n"
-        @@heart = 4
+		puts "	     at the fire. It heals you.\n\n"
+        heal_player
     end
 end
 
@@ -222,7 +220,7 @@ class Table < Surface
 	end	
 	def backdrop
 		puts "	   - You stand before a humungous"
-		puts "	     table made of solid rock.\n\n"
+		puts "	     table cut from solid rock.\n\n"
 	end
 	def subtype_view
 		puts "	   - Its rocky top rises to meet"
@@ -239,8 +237,8 @@ class Shelf < Surface
 		puts "	     It's just within your reach.\n\n"
 	end
 	def subtype_view
-        puts "	   - The wood is gnarled and old."
-		puts "	     It's scarred by many years.\n\n"
+        puts "	   - The wood is gnarly and blue."
+		puts "	     It's covered in scars.\n\n"
 	end
 end
 
@@ -249,7 +247,7 @@ class Slab < Surface
 		["grave","grave slab","gravestone","headstone"]
 	end	
 	def backdrop
-		puts "	   - You stand near a gravestone"
+		puts "	   - You stand a square headstone"
 		puts "	     sticking out of the ground.\n\n"
 	end
 	def subtype_view
@@ -257,5 +255,4 @@ class Slab < Surface
 		puts "	     The inscription has eroded.\n\n"
 	end
 end
-
 

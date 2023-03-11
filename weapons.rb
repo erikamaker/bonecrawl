@@ -27,11 +27,11 @@ end
 
 class Knife2 < Knife 
     def initialize  
-        @profile = {:build => "iron", :lifespan => rand(7..13), :damage => 3}
+        @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
 	end
     def description
         puts "	   - It's a sturdy dagger wrought"
-		puts "	     from tempered iron.\n\n"
+		puts "	     from honed copper.\n\n"
     end
 end
 

@@ -14,14 +14,15 @@ class Gameboard
         @@souls = 1
         @@pages = 0
         @@stats = {
-            :attack => 1,
-            :defense => 0,
-            :aggression => 0,
-            :resilience => 0,
+            :offense => 1,
+            :defense => 0, 
+            :excited => 0,
+            :sedated => 0,
             :tranced => 0, 
             :blessed => 0,
             :acursed => 0,
         }
+
         @@skill = {
             :arrows => 0,     
             :blades => 0,     
@@ -45,6 +46,10 @@ class Gameboard
         @@action = (MOVES.flatten & (sentence)).join('')
         @@target = (sentence - PARTS).last 
     end	
+    def reset_input
+        @@action = :reset
+        @@target = :reset
+    end
     def toggle_interact 
         moves = MOVES[1..12].flatten 
         if moves.include?(@@action)
@@ -106,7 +111,8 @@ class Position < Gameboard
     def detect_direction
         if compass.include?(@@target)
             reposition 
-        else cartesian_error
+        else 
+            cartesian_error
         end  
     end
     def detect_movement
@@ -119,7 +125,8 @@ class Position < Gameboard
         directed_movement
         if @@world.include?(@@stand)
             accepted_movement
-        else redirect_movement
+        else 
+            redirect_movement
         end
     end
     def accepted_movement
@@ -174,16 +181,16 @@ class Interface < Gameboard
 		@@heart = [@@heart, 4].min
 		if @@heart > 1
 		@@heart.times { print Rainbow("♥ ").red }
-		else print Rainbow("♥ ").red.blink
+		else 
+            print Rainbow("♥ ").red.blink
 		end
 		(4 - @@heart).times { print Rainbow("♥ ").cyan }
     end
 	def tutorial
 		if MOVES.flatten.none?(@@action) || (@@target.eql?(@@action))
 			return if (MOVES[13] | MOVES[0]).include?(@@target)
-			@@state = :backdrop		
-			@@pages -= 1	
-			print "	   - You pause for one page. View\n"
+			@@state = :backdrop	
+			print "	   - A page passes in vain. View\n"
 			print "	     tutorial with command" 
             print Rainbow(" help").cyan + ".\n\n"
 		end
@@ -233,7 +240,8 @@ class Interface < Gameboard
 					print Rainbow("■ ").red.blink
 				elsif @@world.include?(pos)
 					print Rainbow("■ ").green
-				else print "⬚ "
+				else 
+                    print "⬚ "
 				end
 			end
 			print "\n" if row != bigmap.last

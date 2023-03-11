@@ -148,7 +148,7 @@ pick_1.minimap = [[0,4,-4]]
 drug_1 = Crystal.new                                          # A substance. This is combustible. If a player tries to "burn" it in the presence of a flame,
 drug_1.minimap = [[0,2,1]]                                    # like a torch, or a Portable lighter, it will activate a special property that affects stats. 
 
-gem_1 = Pink.new                                              # Not to be confused with a Crystal, a Gem has magickal properties and can be used to make a staff. 
+gem_1 = Rose.new                                              # Not to be confused with a Crystal, a Gem has magickal properties and can be used to make a staff. 
 gem_1.minimap = [[0,1,2]]
 
 lighter = Lighter.new
@@ -163,7 +163,7 @@ tree.minimap = [[0,6,-4]]
 apples = AppleSpawner.new
 apples.minimap = [[0,6,-4]]
 
-level_1 = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, door_3, tree, apples, torch_1, table_1, food_1, pull_1, pick_1, drug_1 ]
+level_1 = [ room_1, drain_1, lighter, grease, gem_1, door_1, hook_1, key_1, door_2, door_3, tree, apples, torch_1, table_1, food_1, pull_1, pick_1, drug_1 ]
 
 
 ############################################################################################################################################################################################################################################################## 

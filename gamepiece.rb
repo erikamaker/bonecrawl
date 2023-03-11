@@ -14,7 +14,7 @@ class Gamepiece < Gameboard
         # For example, fruit sources grow 
         # with passage of time. Tiles push
         # their minimap coordinates to the
-        # overall map. Et cetera. 
+        # overall map. Others may have none.
     end
     def reveal_targets
         @@sight |= targets
@@ -30,8 +30,11 @@ class Gamepiece < Gameboard
         player_near? ? reveal_targets : return
         player_idle? ? backdrop : interact
     end
+    def already_gotten?
+        @@check.include?(self) 
+    end
     def remove_from_board
-        @minimap = [0] # The Void
+        @minimap = [0] # The Void Coordinate. 
     end
     def disassemble
         @@check.push(self)
@@ -76,7 +79,8 @@ class Gamepiece < Gameboard
 		return if targets.none?(@@target)
         if moveset.include?(@@action)
 			parse_action
-		else wrong_move
+		else 
+            wrong_move
 		end
     end
     def wrong_move
@@ -107,11 +111,8 @@ class Portable < Gamepiece
 	def moveset
 		MOVES[1..2].flatten 
 	end	
-    def already_gotten
-        @@check.include?(self) 
-    end
     def load_special_properties
-        remove_from_board if already_gotten    
+        remove_from_board if already_gotten?    
     end
 	def take 
         view
@@ -135,13 +136,13 @@ class Edible < Portable
 		MOVES[1..2].flatten | MOVES[10]
 	end	
     def feed
-        animate_eating
+        animate_ingestion
         remove_portion
         portions_left
         heal_player
         side_effects
     end
-    def animate_eating
+    def animate_ingestion
         puts "	   - You eat the #{subtype[0]}, healing"
 		print "	     #{heal_amount} heart"   
         heal_amount.eql?(1) ? print(". ") : print("s. ")
@@ -155,7 +156,8 @@ class Edible < Portable
             print "#{profile[:portions]} portion left.\n\n"
         when * [2..7]
             print "#{profile[:portions]} portions left.\n\n"
-        else print "You finish it.\n\n"
+        else 
+            print "You finish it.\n\n"
             disassemble
         end
 	end
@@ -165,12 +167,13 @@ class Edible < Portable
     def heal_amount 
         if @@heart + profile[:hearts] > 4
             (4 - @@heart)
-        else profile[:hearts]
+        else 
+            profile[:hearts]
         end
     end
     def side_effects
         return if not profile.key?(:effect) 
-        display_side_effect
+        display_side_effect 
     end
 end
 
@@ -187,7 +190,7 @@ class Drink < Edible
 	def moveset
 		[MOVES[1..2],MOVES[10],MOVES[15]].flatten
 	end
-    def animate_eating
+    def animate_ingestion
         puts "	   - You drink the #{subtype[0]}, healing"
 		print "	     #{heal_amount} heart"   
         heal_amount.eql?(1) ? print(". ") : print("s. ")
@@ -216,24 +219,26 @@ class Burnable < Portable
     def fuel
         fuel = @@items.find { |i| i.is_a?(Fuel) }
     end
+    def got_a_light?
+        if lighter == nil
+            puts "	   - There's isn't any fire here.\n\n"
+        else 
+            fuel != nil ? use_lighter : out_of_fuel
+        end
+    end
     def use_lighter
         puts "	   - You thumb a little grease in"
         puts "	     your lighter's fuel canister."
         puts "	     It sparks a warm flame.\n\n"
-        burn_screen
+        animate_combusion
         disassemble
         @@items.find { |i| i.is_a?(Fuel) and i.disassemble }
     end
-    def other_method
-        if lighter == nil
-            puts "	   - There's isn't any fire here.\n\n"
-        else fuel != nil ? use_lighter : out_of_fuel
-        end
-    end
     def burn 
         if no_fire
-            other_method
-        else burn_screen
+            got_a_light?
+        else 
+            animate_combusion
             disassemble
         end
     end
@@ -261,7 +266,8 @@ class Container < Gamepiece
     def open
         if @@check.none?(self)
             needkey.eql?(false) ? give_content : is_locked
-        else puts "	   - It's already open.\n\n"
+        else 
+            puts "	   - It's already open.\n\n"
         end
 	end 
     def use_key
@@ -275,18 +281,19 @@ class Container < Gamepiece
     def is_locked
         if key.nil?
             puts "	   - It won't open. It's locked.\n\n"
-        else puts "	   - You twirl a #{key.targets[0]} in the"
+        else 
+            puts "	   - You twirl a #{key.targets[0]} in the"
             puts "	     #{targets[0]}'s latch. Click.\n\n"
             use_key
             give_content  
         end
 	end
-    def opening_animation
+    def animate_opening
         puts Rainbow("           - It swings open and reveals a").orange
         puts Rainbow("             hidden #{content.targets[0]}.\n").orange
     end
     def give_content
-        opening_animation
+        animate_opening
         @@action = "take"
         @@target = content.targets[0]
         content.minimap = minimap
@@ -308,18 +315,12 @@ class Pullable < Gamepiece
 	end
     def pull
 		if @@check.none?(self)		
-			@@check.push(self) 
+			disassemble
 			reveal_secret
-		else print "	   - You've already pulled this\n"
-			print "	     #{targets[0]} before.\n\n" 							
+		else      
+            puts "	   - It appears that somebody has\n"
+			puts "	     already pulled this #{targets[0]}\n\n" 							
 		end														
 	end		
 end
-
-
-
-
-
-
-
 

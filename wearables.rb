@@ -62,7 +62,7 @@ class Sneakers < Clothes    # Requires 2 spider spools, 1 copper ore, and 4 rat 
         @profile = {:defense => 5, :lifespan => 50}
     end
     def backdrop 
-        puts "	   - A pair of black sneakers sits"
+        puts "	   - A pair of hide sneakers sits"
 		puts "	     untied on the ground.\n\n"
     end
     def description 
@@ -114,8 +114,4 @@ class GoldRing < Ring  # Requires 1 silver
         puts "	   - A simple golden ring lays on"
 		puts "	     the dirty ground.\n\n"
     end
-    def description 
-		puts "	   - It fits. It doesn't do much,"
-		puts "	     but it sure is pretty."
-	end
 end

@@ -5,7 +5,7 @@
 
 class Bread < Edible
     def initialize
-		@profile = { :hearts => 2, :portions => 4 }
+		@profile = { :hearts => 2, :portions => 3 }
 	end
     def subtype
        ["loaf", "bread", "golden bread"]
@@ -14,14 +14,14 @@ class Bread < Edible
 		puts "	   - Some goblish bread sits here.\n\n"
 	end
 	def description 
-		puts "	   - It's said that a single bite\n"
-        puts "	     can fully heal a grown human.\n\n"
+		puts "	   - It's soft and buttery. Cook\n"
+        puts "	     it down with fruit or meat.\n\n"
 	end
 end
 
 class Apple < Edible 
     def initialize
-        @profile = { :hearts => 1, :portions => 4 }
+        @profile = { :hearts => 1, :portions => 3 }
     end
     def subtype
         ["apple"]
@@ -31,13 +31,15 @@ class Apple < Edible
 	end
 	def description 
 		puts "	   - Blue apples like these tend"	
-        puts "	     to grow underground.\n\n"
+        puts "	     to grow underground. Goblin"
+        puts "	     elders bake them wuth bread.\n\n"
+
 	end
 end
 
 class Berry < Edible 
     def initialize
-        @profile = { :hearts => 1, :portions => 1}
+        @profile = { :hearts => 1, :portions => 1 }
     end
     def subtype
         ["berry","berries","blackberries"]
@@ -49,7 +51,46 @@ class Berry < Edible
 	def description 
 		puts "	   - Berries like this are bitter."	
         puts "	     They don't heal much on their"
-        puts "	     own, but they cook down well.\n\n"
+        puts "	     own, but cook well with bread.\n\n"
+	end
+end
+
+class Mushroom < Edible 
+    def initialize
+        @profile = { :hearts => 4, :portions => 1, :effect => "trance", :duration => 10}
+    end
+    def subtype
+        ["fungi","fungus","mushroom","shroom","toadstool","stool"]
+	end
+	def backdrop
+		puts "	   - A small blue mushroom blooms"
+        puts "	     on the wall here.\n\n"
+	end
+	def description 
+		puts "	   - Toadstools like these induce"	
+        puts "	     waking dreams when eaten.\n\n"
+	end
+    def side_effect
+        puts "	     The walls begin to breathe."
+        puts "	     Colors whirl in your eyes.\n\n" 
+        @@stats[:tranced] = profile[:duration]
+    end
+end
+
+class Jerky < Edible 
+    def initialize
+        @profile = { :hearts => 2, :portions => 2}
+    end
+    def subtype
+        ["jerky","meat"]
+	end
+	def backdrop
+		puts "	   - A small strip of smoked meat"
+        puts "	     lays across the ground here.\n\n"
+	end
+	def description 
+		puts "	   - It's dry and salty. It might"	
+        puts "	     cook well with some bread.\n\n"
 	end
 end
 
@@ -61,7 +102,7 @@ end
 
 class Elixer < Drink   # No backdrop, because you'll never see it until it's already obtained. 
     def initialize
-		@profile = { :effect => "health", :portions => 4, :hearts => 3 }
+		@profile = { :effect => "health", :portions => 3, :hearts => 3 }
 	end
     def subtype
        ["elixer", "potion", "medicine"]
@@ -69,7 +110,7 @@ class Elixer < Drink   # No backdrop, because you'll never see it until it's alr
 	def description 
 		puts "	   - It's a hearty health elixer."
         puts "	     One drink fully restores all"
-        puts "	     lost heart points.\n\n"
+        puts "	     heart points.\n\n"
 	end
 end
 
@@ -90,7 +131,7 @@ end
 
 class Water < Drink 
     def initialize
-        @profile = { :effect => "blessing", :duration => 3, :magnitude => 3, :portions => 2 }
+        @profile = { :effect => "blessing", :duration => 3, :magnitude => 3, :portions => 3 }
     end
     def subtype
         ["water","holy water"]

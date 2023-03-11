@@ -38,8 +38,6 @@ class Copper < Ore
     end
 end
 
-## sterling
-
 
 ############################################################################################################################################################################################################################################################## 
 #####    JEWELS     ##########################################################################################################################################################################################################################################
@@ -48,54 +46,46 @@ end
 
 class Jewel < Portable 
     def targets
-        subtype | ["gem","jewel","geode","stone","crystal"]
+        [subtype] | ["gem","jewel","geode","stone","crystal"]
     end
     def view 
-        puts "	   - It's a #{subtype[0]}. Jewels like"
+        puts "	   - It's a #{subtype} gem. Jewels like"
 		puts "	     this are seldom found before"
         puts "	     Trolls can eat them.\n\n"
+        description
         view_profile
         print "\n"
     end
     def backdrop 
-        puts "     - A shimmering #{subtype} juts"
+        puts "	   - A shimmering #{subtype} gem sticks"
         puts "	     out of the cave wall here.\n\n"    
     end
 end
 
 class Blue < Jewel      
     def subtype
-       ["blue gem"]
+       "blue"
     end
     def initialize
         @profile = {:magic => "freeze"}
     end
 end
 
-class Pink < Jewel      
-    def subtype
-       ["pink gem"]
-    end
-    def initialize
-        @profile = {:magic => "disarm"}
-    end
-end
-
 class Plum < Jewel      
     def subtype
-       ["plum gem"]
+       "plum"
     end
     def initialize
-        @profile = {:magic => "reveal"}
+        @profile = {:magic => "reveal"} 
     end
 end
 
 class Rose < Jewel      
     def subtype
-       ["rose gem"]
+        "rose"
     end
     def initialize
-        @profile = {:magic => "weaken"}
+        @profile = {:magic => "ignite"}
     end
 end
 
@@ -144,8 +134,8 @@ class Sap < Fuel
         ["sap","tree sap", "resin"]
     end
     def backdrop 
-        puts "	   - A vein of almost-solid resin"
-		puts "	     clings to the tree\n\n"
+        puts "	   - A drop of nearly-solid resin"
+		puts "	     hangs thick from the tree.\n\n"
     end
     def view 
         puts "	   - It's a rich amber color, but"
@@ -160,28 +150,37 @@ end
 
 
 class Leather < Portable 
+    def targets
+        ["leather","hide","skin"]
+    end
     def backdrop 
         puts "	   - The thick hide of a sewer rat"
 		puts "	     lays on the ground.\n\n"
     end
     def view 
         puts "	   - It's durable leather. Usually"
-		puts "	     used for crafting armor.\n\n"
+		puts "	     it's used for crafting armor.\n\n"
     end
 end
 
 class Silk < Portable 
+    def targets
+        ["silk","thread","web","webbing","webs"]
+    end
     def backdrop 
         puts "	   - A tangled mess of spider silk"
 		puts "	     webs the corner here.\n\n"
     end
     def view 
-        puts "	   - It's remarkably strong spider"
-		puts "	     silk. It makes good thread.\n\n" 
+        puts "	   - It's remarkably strong, and is"
+		puts "	     commonly used as thread.\n\n" 
     end
 end
 
 class Bone < Portable 
+    def targets
+        ["bone","fragment","skin"]
+    end
     def backdrop 
         puts "	   - A dirty bone fragment lays at"
 		puts "	     your feet.\n\n"
@@ -192,29 +191,34 @@ class Bone < Portable
     end
 end
 
-class Tusk < Portable 
+class Tusk < Bone 
+    def targets
+        ["tusk","horn"]
+    end
     def backdrop 
         puts "	   - A heavy tusk fragment lays on"
 		puts "	     the ground here.\n\n"
     end
-    def view 
-        puts "	   - It's a durable base for tools"
-		puts "	     and weapons. Just add metal.\n\n" 
-    end
 end
 
 class Shell < Portable
+    def targets
+        ["shell"]
+    end
     def backdrop 
         puts "	   - A large spiral shell was shed"
 		puts "	     here. The snail's long gone.\n\n"
     end
     def view 
-        puts "	   - It's used for crafting arrows,"
-		puts "	     or writing with squid ink.\n\n" 
+        puts "	   - It is often crushed for brews"
+		puts "	     or elixers.\n\n" 
     end
 end
 
 class Feather < Portable 
+    def targets
+        ["feather","quill"]
+    end
     def backdrop 
         puts "	   - A dark, crooked raven's quill"
 		puts "	     lays on the floor here.\n\n"
@@ -224,19 +228,50 @@ class Feather < Portable
 		puts "	     or writing with squid ink.\n\n" 
     end
 end
+
+class Ash < Portable 
+    def targets
+        ["ash","ashes","charcoal","soot"]
+    end
+    def backdrop 
+        puts "	   - A small pile of ashes sits on"
+		puts "	     the ground here.\n\n"
+    end
+    def view 
+        puts "	   - It's the soot leftover from a"
+		puts "	     small woodfire. Antidotes for" 
+        puts "	     curses can be brewed with it.\n\n" 
+    end
+end
   
-class Branch < Portable 
+class Branch < Burnable 
+    def targets
+        ["branch","stick","skin"]
+    end
     def backdrop 
         puts "	   - A fallen branch leans against"
 		puts "	     the tree's gnarled roots.\n\n"
     end
+    def burn_effect
+        @@items.delete(self)
+        @@items.push(Ash.new)
+    end
+    def animate_combusion
+        puts "	   - You hold the branch over the"
+        puts "	     fire. It burns quickly.\n\n"
+        burn_effect
+    end
     def view 
         puts "	   - Made of hardy wood, it builds"
-		puts "	     sturdy handles and staves.\n\n" 
+		puts "	     sturdy handles and staves. It" 
+        puts "	     is sometimes burned for ashes.\n\n" 
     end
 end
 
 class Gland < Portable 
+    def targets
+        ["gland","ink","pouch","sack"]
+    end
     def backdrop 
         puts "	   - A dark and spongy squid pouch"
 		puts "	     drips ink on the floor here.\n\n"
@@ -248,6 +283,9 @@ class Gland < Portable
 end
 
 class Salt < Portable 
+    def targets
+        ["salt","seasoning","sodium","cube"]
+    end
     def backdrop 
         puts "	   - A pink cube of salt as big as"
 		puts "	     your fist sits here.\n\n"
