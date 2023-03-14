@@ -1,4 +1,5 @@
-![mockup](https://user-images.githubusercontent.com/118931925/225107021-e585ae56-21a9-4789-8a50-c0344beabcd3.png)
+![mockup](https://user-images.githubusercontent.com/118931925/225107805-62ca450a-a079-47e0-97ec-76eddb036285.png)
+
 
 # THE STORY SO FAR
 
