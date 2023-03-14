@@ -1,4 +1,4 @@
-
+![mockup](https://user-images.githubusercontent.com/118931925/225104127-37312110-478f-4792-8a84-61f6a80ec1db.png)
 
 # THE STORY SO FAR
 
@@ -25,7 +25,4 @@ If you're interested in collaborating (either in code or content), please reach 
 The terminal-based engine is nearing completion, but there's still work to do. Following its completion, I will be building a website at www.bonecrawl.com, where players may run a demo and download the game. Each level will be released in installments.I would love to one day add MMORPG functionality, so that friends can meet up in their own levels to map out new adventures. More than anything, I have big mobile app aspirations for this project. 
 
 3/14/23
-
-
-
 
