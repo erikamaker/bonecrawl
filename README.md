@@ -1,4 +1,4 @@
-file:///home/erikamaker/bonecrawl/development/mockup.png
+
 
 # THE STORY SO FAR
 
