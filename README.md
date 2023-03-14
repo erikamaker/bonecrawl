@@ -22,7 +22,7 @@ In 2003, my mom linked me to a .zip file of some text adventures. Just one link 
 
 # PROGRESS UPDATE
 
-The terminal-based engine is nearing completion, but there's still a lot of legwork to do. After its completion, I will be building a website at www.bonecrawl.com, where players may run a demo and download the gmae. I would love to one day add MMORPG functionality to the engine someday, so that friends can meet up in their own levels to map out new adventures. 
+The terminal-based engine is nearing completion, but there's still a lot of legwork to do. After its completion, I will be building a website at www.bonecrawl.com, where players may run a demo and download the game. I would love to one day add MMORPG functionality, so that friends can meet up in their own levels to map out new adventures. More than anything, I have big mobile app aspirations for this project. 
 
 3/14/23
 
