@@ -16,6 +16,9 @@ The idea was to create a text-based RPG that felt action-oriented. It needed to 
 In 2003, my mom linked me to a .zip file of some text adventures. Just one link is all it took; I spent the rest of my youth on adventures that unfolded before me in terminal-green characters across a curved black screen. For many years, I dreamed of building my own text adventure game and, in 2019, I broke ground on the rogue-like realization of its engine. Here it is, warts and all! 
 
 
+# MY GOOD INTENTIONS
 
+The terminal-based engine is nearing completion, but there's still a lot of legwork to do. After its completion, I will be building a website at www.bonecrawl.com, where players may run a demo and download the gmae. I would love to one day add MMORPG functionality to the engine someday, so that friends can meet up in their own levels to map out new adventures. 
 
+If you're interested in collaborating (either in code or content), please reach out! 
 
