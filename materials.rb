@@ -52,7 +52,6 @@ class Jewel < Portable
         puts "	   - It's a #{subtype} gem. Jewels like"
 		puts "	     this are seldom found before"
         puts "	     Trolls can eat them.\n\n"
-        description
         view_profile
         print "\n"
     end

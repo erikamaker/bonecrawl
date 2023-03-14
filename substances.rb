@@ -32,7 +32,7 @@ class Crystal < Substance
     def burn_effect 
         puts "	     You feel light as a feather,"
         puts "	     and sharp as a razor.\n\n"
-        @@stats[:aggression] = profile[:duration]
+        @@stats[:excited] = profile[:duration]
     end
 end
 
@@ -53,7 +53,7 @@ class Blossom < Substance
     def burn_effect 
         puts "	     You feel warm and fuzzy all"
         puts "	     over. Your eyes droop.\n\n"
-        @@stats[:tolerance] = profile[:duration]
+        @@stats[:sedated] = profile[:duration]
     end
 end
 

@@ -21,7 +21,7 @@ class Fruit < Edible
     end
     def grow_fruit
         if @group.count < 3
-            @group.push(@type.new)
+            @group.push(@type.new) 
         end
     end
     def assign_profile
@@ -85,7 +85,7 @@ end
 class AppleSpawner < Fruit 
     def initialize                                                                
         @group = []
-        @time = 0 
+        @time = 0
         @type = Apple
     end 
     def harvest_cycle

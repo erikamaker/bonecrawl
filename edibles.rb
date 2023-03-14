@@ -32,7 +32,7 @@ class Apple < Edible
 	def description 
 		puts "	   - Blue apples like these tend"	
         puts "	     to grow underground. Goblin"
-        puts "	     elders bake them wuth bread.\n\n"
+        puts "	     elders bake them with bread.\n\n"
 
 	end
 end
