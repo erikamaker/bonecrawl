@@ -1,6 +1,4 @@
-![mockup](https://user-images.githubusercontent.com/118931925/225080564-4f3dc3a7-49fb-4a86-9be0-c99801f23b87.png)
-
-
+file:///home/erikamaker/bonecrawl/development/mockup.png
 
 # THE STORY SO FAR
 
