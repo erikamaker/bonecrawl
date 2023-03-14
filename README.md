@@ -3,7 +3,7 @@
 
 # THE STORY
 
-You wake up alone in your prison cell, already dead. You're a captive soul in the underworld, hunted by nameless monsters and demons sent to torture you for eternity. Except, you don't belong here, and neither does your little sister. Somewhere in the 9 treacherous levels, she's imprisoned. Face your demons, take back the family bones, and climb your way out from perdition. With some sacrifices and a little magick, you may escape.
+You wake up alone in your prison cell, already dead. You're a captive soul in the underworld, hunted by nameless monsters and demons sent to torture you for eternity. Except, you don't belong here, and neither does your little sister. Somewhere in the 9 treacherous levels, she's imprisoned. Face your demons, take back the family bones, and climb your way out of perdition. With some sacrifices and a little magick, you may escape.
 
 
 # ABOUT THE ENGINE 
