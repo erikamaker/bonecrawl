@@ -17,7 +17,7 @@ The idea was to create a text-based RPG that felt action-oriented. It needed to 
 
 In 2003, my mom linked me to a .zip file of some text adventures. That's all it took. Not as social as some other geeks I knew growing up, I spent the rest of my youth on solo adventures that unfolded before me in terminal-green characters across a curved black screen. For 20 years, I've dreamed of building my own text adventure and, in 2019, I broke ground on the rogue-like realization of its engine. Here it is, warts and all! 
 
-If you're interested in collaborating (either in code or content), please reach out. 
+If you're interested in collaborating (either in code or content), please reach out!  
 
 
 
