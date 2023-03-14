@@ -10,7 +10,7 @@ You wake up alone in your prison cell, already dead. You're a captive soul in th
 
 # ABOUT THE ENGINE 
 
-The idea was to create a text-based RPG that felt action-oriented. It needed to work with words alone, yet stay far away from the realm of multiple-choice. I wanted the player to experience a full adventure, complete with NSWE navigation, a visual grid map of coordinates, a hearts bar display, inventory management, item crafting, turn-based battling, magick casting, dynamic characters, environmental puzzles, and a heck of a lot more. I don't know that I'll ever complete this project, because I always plan on adding more. 
+The idea was to create a text-based RPG that felt action-oriented. It needed to work with words alone, yet stay far away from the realm of multiple-choice CYOAs to maximize on replayability. I wanted the player to experience a full and unique adventure, complete with NSWE navigation, a visual grid map of coordinates, a hearts bar display, inventory management, item crafting, turn-based battling, magick casting, dynamic characters, environmental puzzles, and a heck of a lot more. I don't know that I'll ever complete this project, because I always plan on adding more. 
 
 
 
