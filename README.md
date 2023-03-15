@@ -3,13 +3,13 @@
 
 # THE STORY SO FAR
 
-There's been a mistake. You wake up in your dungeon cell, already dead. A captive soul of the labyrinthian underworld, your fate is eternal torture at the hands of monstrous demons. Except, you don't belong here, and neither does your sister. Somewhere in the 9 treacherous levels, she waits for you. Face your demons, find the family bones, and climb out of perdition. With some sacrifices and a little magick, you may escape.
+There's been a mistake. You wake up in your dungeon cell, already dead. A captive soul of the labyrinthian underworld, your fate is eternal torture at the hands of monstrous demons. Except, you don't belong here, and neither does your sister. Somewhere in the 9 treacherous levels of Hell, she waits for you. Face your demons, find the family bones, and climb out of perdition. With some sacrifices and a little magick, you may escape.
 
 
 
 # ABOUT THE ENGINE 
 
-The idea was to create a text-based RPG that felt action-oriented. It needed to work with words alone, yet stay far away from the realm of multiple-choice CYOAs to maximize on replayability. I wanted the player to experience a full and unique adventure, complete with NSWE navigation, a visual grid map of coordinates, a hearts bar display, inventory management, item crafting, turn-based battling, magick casting, dynamic characters, environmental puzzles, and a heck of a lot more. I don't know that I'll ever complete this project, because I always plan on adding more content. 
+The idea was to create a text-based RPG that felt action-oriented. It needed to work with words alone, yet stay far away from the realm of multiple-choice CYOAs to maximize on replayability. I wanted the player to experience a full and unique adventure, complete with NSWE navigation, a visual grid map of coordinates, a hearts bar display, inventory management, dynamic terrain, tools and weapons crafting, turn-based battling, layered lore, magick casting, reactive characters, environmental puzzles, and a heck of a lot more. I don't know that I'll ever complete this project, because I always plan on adding more content. 
 
 If you're interested in collaborating (either in code or content), please reach out!
 
