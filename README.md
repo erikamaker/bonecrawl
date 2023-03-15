@@ -9,7 +9,7 @@ You wake up alone in your prison cell, already dead. You're a captive soul in th
 
 # ABOUT THE ENGINE 
 
-The idea was to create a text-based RPG that felt action-oriented. It needed to work with words alone, yet stay far away from the realm of multiple-choice CYOAs to maximize on replayability. I wanted the player to experience a full and unique adventure, complete with NSWE navigation, a visual grid map of coordinates, a hearts bar display, inventory management, item crafting, turn-based battling, magick casting, dynamic characters, environmental puzzles, and a heck of a lot more. I don't know that I'll ever complete this project, because I always plan on adding more. 
+The idea was to create a text-based RPG that felt action-oriented. It needed to work with words alone, yet stay far away from the realm of multiple-choice CYOAs to maximize on replayability. I wanted the player to experience a full and unique adventure, complete with NSWE navigation, a visual grid map of coordinates, a hearts bar display, inventory management, item crafting, turn-based battling, magick casting, dynamic characters, environmental puzzles, and a heck of a lot more. I don't know that I'll ever complete this project, because I always plan on adding more content. 
 
 
 
@@ -23,7 +23,7 @@ If you're interested in collaborating (either in code or content), please reach 
 
 # PROGRESS UPDATE
 
-The terminal-based engine is nearing completion, but there's still work to do. Following its completion, I will be building a website at www.bonecrawl.com, where players may run a demo and download the game. Each level will be released in installments.I would love to one day add MMORPG functionality, so that friends can meet up in their own levels to map out new adventures. More than anything, I have big mobile app aspirations for this project. 
+The terminal-based engine is nearing completion, but there's still work to do. Following its completion, I will be building a website at www.bonecrawl.com, where players may run a demo and download the game. Each level will be released in installments. I would love to one day add MMORPG functionality, so that friends can meet up in their own levels to map out adventures. More than anything, I have big mobile app aspirations for this project. 
 
 3/14/23
 
