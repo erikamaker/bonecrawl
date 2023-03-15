@@ -3,7 +3,7 @@
 
 # THE STORY SO FAR
 
-You wake up in your dungeon cell, already dead. A captive soul of the labyrinthian underworld, your fate is eternal torture at the hands of monstrous demons. Except, you don't belong here, and neither does your sister. Somewhere in the 9 treacherous levels, she waits for you. Face your demons, find the family bones, and climb out of perdition. With some sacrifices and a little magick, you may escape.
+There's been a mistake. You wake up in your dungeon cell, already dead. A captive soul of the labyrinthian underworld, your fate is eternal torture at the hands of monstrous demons. Except, you don't belong here, and neither does your sister. Somewhere in the 9 treacherous levels, she waits for you. Face your demons, find the family bones, and climb out of perdition. With some sacrifices and a little magick, you may escape.
 
 
 
