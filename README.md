@@ -3,7 +3,7 @@
 
 # THE STORY SO FAR
 
-You wake up alone in your prison cell, already dead. You're a captive soul in the underworld, hunted by nameless monsters and demons sent to torture you for eternity. Except, you don't belong here, and neither does your sister. Somewhere in the 9 treacherous levels, she's imprisoned. Face your demons, take back the family bones, save your sister, and climb out of perdition. With some sacrifices and a little magick, you may escape.
+You wake up alone in your dungeon cell, already dead. A captive soul of the labyrinthian underworld, your fate is eternal demonic torture. Except, you don't belong here, and neither does your sister. Somewhere in the 9 treacherous levels, she's trapped. Face your demons, find the family bones, and climb out of perdition. With some sacrifices and a little magick, you may escape.
 
 
 
@@ -17,7 +17,7 @@ If you're interested in collaborating (either in code or content), please reach 
 
 # ABOUT THE AUTHOR
 
-In 2003, my mom linked me to a .zip file of some text adventures. That's all it took. Very shy, I spent a lot of my youth on solo adventures that unfolded before me in terminal-green characters across a curved black screen. For 20 years, I've dreamed of building my own adventure and, in 2019, I broke ground on the rogue-like realization of its engine. Here it is, warts and all! 
+In 2003, my mom linked me to a .zip file of some text adventures. That's all it took. Very shy, I spent a lot of my youth on solo adventures that unfolded before me in terminal-green characters across a curved black screen. For 20 years, I've dreamed of building my own adventure and, in 2019, I broke ground on the rogue-like realization of its engine. Here it is, warts and all.
 
 
 
