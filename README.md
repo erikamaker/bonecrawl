@@ -23,7 +23,7 @@ If you're interested in collaborating (either in code or content), please reach 
 
 # PROGRESS UPDATE
 
-The terminal-based engine is nearing completion, but there's still work to do. Following its completion, I will be building a website at www.bonecrawl.com, where players may run a demo and download the game. Each level will be released in installments. I would love to one day add MMORPG functionality, so that friends can meet up in their own levels to map out adventures. More than anything, I have big mobile app aspirations for this project. 
+The terminal-based engine is nearing completion, but there's still work to do. Following its completion, I will be building a website at www.bonecrawl.com, where players may can a demo and download the game. Each level will be released in installments. I would love to one day add MMORPG functionality, so that friends can meet up in their own levels to map out adventures. More than anything, I have big mobile app aspirations for this project. 
 
 3/14/23
 
