@@ -12,9 +12,9 @@ class Gamepiece < Gameboard
     end
     def load_special_properties
         # For example, fruit sources grow 
-        # with passage of time. Tiles push
-        # their minimap coordinates to the
-        # overall map. Others may have none.
+        # with passage of time. Other pieces
+        # may have other ad-hoc properties,
+        # or none at all. 
     end
     def reveal_targets
         @@sight |= targets
@@ -30,11 +30,11 @@ class Gamepiece < Gameboard
         player_near? ? reveal_targets : return
         player_idle? ? backdrop : interact
     end
-    def already_gotten?
+    def already_obtained
         @@check.include?(self) 
     end
     def remove_from_board
-        @minimap = [0] # The Void Coordinate. 
+        @minimap = [0] # The Void. 
     end
     def disassemble
         @@check.push(self)
@@ -72,7 +72,7 @@ class Gamepiece < Gameboard
     end
     def parse_action
         actions.each do |action, moves|
-            return self.send(action) if moves.include?(@@action)
+            self.send(action) if moves.include?(@@action)
         end
     end
     def interact
@@ -112,7 +112,7 @@ class Portable < Gamepiece
 		MOVES[1..2].flatten 
 	end	
     def load_special_properties
-        remove_from_board if already_gotten?    
+        remove_from_board if already_obtained    
     end
 	def take 
         view
@@ -130,7 +130,7 @@ end
 
 class Edible < Portable
 	def targets
-		subtype | ["food","edible"] 
+		subtype | ["food","edible","nourishment","nutrients","nutrient"] 
 	end		
 	def moveset
 		MOVES[1..2].flatten | MOVES[10]
@@ -227,7 +227,7 @@ class Burnable < Portable
         end
     end
     def use_lighter
-        puts "	   - You thumb a little grease in"
+        puts "	   - You thumb a little fuel into"
         puts "	     your lighter's fuel canister."
         puts "	     It sparks a warm flame.\n\n"
         animate_combusion

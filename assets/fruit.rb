@@ -12,12 +12,8 @@ class Fruit < Edible
         end
     end
     def load_special_properties
-        increment_time
         harvest_cycle
         assign_profile
-    end
-    def increment_time
-        @time += 1 
     end
     def grow_fruit
         if @group.count < 3
@@ -85,11 +81,10 @@ end
 class AppleSpawner < Fruit 
     def initialize                                                                
         @group = []
-        @time = 0
         @type = Apple
     end 
     def harvest_cycle
-        if (@time % 30 == 0)
+        if @@pages % 30 == 0
             grow_fruit
         end
     end
@@ -115,11 +110,10 @@ end
 class BerrySpawner < Fruit 
     def initialize                                                                
         @group = []
-        @time = 0 
         @type = Berry
     end 
     def harvest_cycle
-        if (@time % 40 == 0)
+        if (@@pages % 40 == 0)
             grow_fruit
         end
     end

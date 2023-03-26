@@ -59,7 +59,7 @@ class Lighter < Tool
         @profile[:fuel] = @@items.count { |item| item.is_a?(Fuel) }
     end
     def load_special_properties
-        remove_from_board if already_gotten?    
+        remove_from_board if already_obtained    
         count_fuel
     end
     def subtype

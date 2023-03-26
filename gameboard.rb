@@ -14,19 +14,18 @@ class Gameboard
         @@souls = 1
         @@pages = 0
         @@stats = {
-            :offense => 1,
+            :attack => 1,
             :defense => 0, 
-            :excited => 0,
+            :agitated => 0,
             :sedated => 0,
-            :tranced => 0, 
+            :entranced => 0, 
             :blessed => 0,
-            :acursed => 0,
+            :cursed => 0,
         }
-
         @@skill = {
             :arrows => 0,     
             :blades => 0,     
-            :magick => 0,     
+            :spells => 0,     
             :speech => 0      
         }
     end
@@ -37,12 +36,12 @@ class Gameboard
         print "\n\n\n\n" 
     end	
     def prompt_player
-        print Rainbow("\n  What next?").cyan.bright
+        print Rainbow("\n   What next?").cyan.bright
         print Rainbow("  >>  ").purple.bright	
     end
     def process_input	
-        @@action = gets.chomp.downcase.gsub(/[[:punct:]]/, '')									
-        sentence = @@action.split(' ')
+        @@action = gets.chomp.downcase								
+        sentence = @@action.scan(/[\w']+/)
         @@action = (MOVES.flatten & (sentence)).join('')
         @@target = (sentence - PARTS).last 
     end	
@@ -190,9 +189,10 @@ class Interface < Gameboard
 		if MOVES.flatten.none?(@@action) || (@@target.eql?(@@action))
 			return if (MOVES[13] | MOVES[0]).include?(@@target)
 			@@state = :backdrop	
-			print "	   - A page passes in vain. View\n"
+			print "	   - You pause for one page. View\n"
 			print "	     tutorial with command" 
             print Rainbow(" help").cyan + ".\n\n"
+            @@pages -= 1
 		end
 	end
     def no_target
@@ -250,4 +250,7 @@ class Interface < Gameboard
 		print Rainbow("- Pg. #{@@pages} -\n\n").purple									
 	end	
 end
+
+
+
 

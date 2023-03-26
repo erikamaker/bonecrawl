@@ -29,7 +29,7 @@ class Chest < Container
 	end
 end
 
-class Urns < Container
+class Urn < Container
     def needkey
         false
     end
@@ -65,7 +65,7 @@ class Door < Container
         true
     end
     def load_special_properties
-        if already_gotten?
+        if already_obtained
             content.assemble 
         end
     end
@@ -94,13 +94,10 @@ end
 class Inventory < Container 
     def view ; open end
     def targets
-        ["knapsack","rucksack","backpack","sack","pack","items","inventory","stuff","things"]
+        ["knapsack","rucksack","backpack","sack","bag","pack","items","inventory","stuff","things"]
     end
     def minimap
         [@@stand]
-    end
-    def moveset
-        MOVES[1] | MOVES[3]
     end
     def open
         print Rainbow("	   - You reach into your #{targets[0]}.\n\n").red

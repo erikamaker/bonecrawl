@@ -16,7 +16,6 @@ class Ore < Portable
     def backdrop 
         puts "     - A hunk of #{subtype} ore sits on"
         puts "	     the ground at your feet.\n\n"    
-
     end
 end
 
@@ -109,7 +108,7 @@ class Fat < Fuel
 		puts "	     on the ground at your feet.\n\n"
     end
     def view 
-        puts "	   - It smells horrible. It's good"
+        puts "	   - It smells putrid. It's good"
 		puts "	     for refueling tanks, though.\n\n"
     end
 end
@@ -269,7 +268,7 @@ end
 
 class Gland < Portable 
     def targets
-        ["gland","ink","pouch","sack"]
+        ["gland","ink"]
     end
     def backdrop 
         puts "	   - A dark and spongy squid pouch"
