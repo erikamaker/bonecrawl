@@ -3,57 +3,55 @@
 ##############################################################################################################################################################################################################################################################  
 
 
-class Substance < Burnable
+class Blossom < Burnable
     def targets
-		subtype | ["drug","ingredient","narcotic","substance"]
-	end	
+        subtype | ["flower","blossom","plant","drug"]
+    end
     def animate_combusion
-        puts Rainbow("	   - You hold the #{subtype[0]} against").orange
-        puts Rainbow("	     the fire, inhaling the smoke.").orange
+        puts Rainbow("	   - You hold the blossom against").orange
+        puts Rainbow("	     the fire, inhaling its smoke.").orange
         burn_effect
     end
+    def backdrop
+		puts "	   - A #{subtype[1]} blossom blooms here.\n\n"
+	end
 end
 
 
-class Crystal < Substance 
+class RedFlower < Blossom 
     def initialize
-		@profile = { :effect => :aggression, :duration => 3 , :magnitude => 2}
+		@profile = { :effect => :agitation }
 	end
-	def subtype
-		["crystal", "rock", "shard", "stimulant"]
+    def subtype
+		["crimson flower","crimson","red"]
 	end	
-	def backdrop
-		puts "	   - A purple crystal sits here.\n\n"
-	end
 	def description
 		puts "	   - It's an aggressive stimulant."
-		puts "	     Its combusted form is vapor.\n\n"
+		puts "	     Its combusted form is smoke.\n\n"
 	end
     def burn_effect 
-        puts "	     You feel light as a feather,"
+        puts "	   - You feel light as a feather,"
         puts "	     and sharp as a razor.\n\n"
-        @@stats[:excited] = profile[:duration]
+        @@stats[:agitation] = 10
     end
 end
 
-class Blossom < Substance 
+
+class PurpleFlower < Blossom 
     def initialize
-		@profile = { :effect => :tolerance, :duration => 3, :magnitude => 2} 
- 	end
-	def subtype
-		["blossom","flower"]
-	end	
-	def backdrop
-		puts "	   - A red blossom blooms here.\n\n"
+		@profile = { :effect => :agitation }
 	end
-    def description
-		puts "	   - It's a powerful pain-reliever\n"
-		puts "	     when combusted.\n\n"
+    def subtype
+		["purple flower","purple","violet","indigo"]
+	end	
+	def description
+		puts "	   - When burned, it's a powerful"
+		puts "	     pain reliever and sedative.\n\n"
 	end
     def burn_effect 
-        puts "	     You feel warm and fuzzy all"
-        puts "	     over. Your eyes droop.\n\n"
-        @@stats[:sedated] = profile[:duration]
+        puts "	   - You feel warm and fuzzy."
+        puts "	     neck\n\n"
+        @@stats[:sedation] = 10
     end
 end
 

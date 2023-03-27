@@ -23,20 +23,19 @@ class Silver < Ore
     def subtype
        ["silver"]
     end
-    def initialize
-        @profile = {:deflects => "evil", :strength => 3}
-    end
 end
 
 class Copper < Ore      
     def subtype
        ["copper"]
     end
-    def initialize
-        @profile = {:strength => 4}
-    end
 end
 
+class Brass < Ore      
+    def subtype
+       ["brass"]
+    end
+end
 
 ############################################################################################################################################################################################################################################################## 
 #####    JEWELS     ##########################################################################################################################################################################################################################################
@@ -45,45 +44,17 @@ end
 
 class Jewel < Portable 
     def targets
-        [subtype] | ["gem","jewel","geode","stone","crystal"]
+       ["gem","jewel","geode","stone","crystal", "shard"]
     end
     def view 
-        puts "	   - It's a #{subtype} gem. Jewels like"
-		puts "	     this are seldom found before"
-        puts "	     Trolls can eat them.\n\n"
+        puts "	   - It's a cherub gem. They tend"
+		puts "	     to grow where angels dwell.\n\n" 
         view_profile
         print "\n"
     end
     def backdrop 
-        puts "	   - A shimmering #{subtype} gem sticks"
-        puts "	     out of the cave wall here.\n\n"    
-    end
-end
-
-class Blue < Jewel      
-    def subtype
-       "blue"
-    end
-    def initialize
-        @profile = {:magic => "freeze"}
-    end
-end
-
-class Plum < Jewel      
-    def subtype
-       "plum"
-    end
-    def initialize
-        @profile = {:magic => "reveal"} 
-    end
-end
-
-class Rose < Jewel      
-    def subtype
-        "rose"
-    end
-    def initialize
-        @profile = {:magic => "ignite"}
+        puts "	   - A milky white jewel juts out"
+        puts "	     of the cavern wall.\n\n"    
     end
 end
 

@@ -250,10 +250,13 @@ class Slab < Surface
 		puts "	   - You stand a square headstone"
 		puts "	     sticking out of the ground.\n\n"
 	end
+    def display_inscription
+        puts "	     The inscription has eroded.\n\n"
+    end
 	def subtype_view
 		puts "	   - It's made of crumbling rock."
-		puts "	     The inscription has eroded.\n\n"
-	end
+        display_inscription
+    end
 end
 
 ############################################################################################################################################################################################################################################################## 
@@ -271,7 +274,7 @@ class Tree < Fixture
     end
 end
 
-class CaveTree < Tree 
+class SapTree < Tree 
     def backdrop 
 		puts "	   - A gnarled sap tree clings to"
 		puts "	     the ceiling with its roots.\n\n"
