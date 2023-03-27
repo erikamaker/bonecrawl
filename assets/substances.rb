@@ -26,13 +26,13 @@ class RedFlower < Blossom
 		["crimson flower","crimson","red"]
 	end	
 	def description
-		puts "	   - It's an aggressive stimulant."
-		puts "	     Its combusted form is smoke.\n\n"
+		puts "	   - When burned, it's a powerful"
+		puts "	     pain reliever and sedative.\n\n"
 	end
     def burn_effect 
-        puts "	   - You feel light as a feather,"
-        puts "	     and sharp as a razor.\n\n"
-        @@stats[:agitation] = 10
+        puts "	   - A flushed and dreamy feeling"
+        puts "	     tickles through your body.\n\n"
+        @@stats[:sedation] = 10
     end
 end
 
@@ -44,14 +44,14 @@ class PurpleFlower < Blossom
     def subtype
 		["purple flower","purple","violet","indigo"]
 	end	
-	def description
-		puts "	   - When burned, it's a powerful"
-		puts "	     pain reliever and sedative.\n\n"
+    def description
+		puts "	   - It's an aggressive stimulant."
+		puts "	     Its combusted form is smoke.\n\n"
 	end
     def burn_effect 
-        puts "	   - You feel warm and fuzzy."
-        puts "	     neck\n\n"
-        @@stats[:sedation] = 10
+        puts "	   - You feel light as a feather,"
+        puts "	     and sharp as a razor.\n\n"
+        @@stats[:agitation] = 10
     end
 end
 
