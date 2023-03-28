@@ -17,7 +17,6 @@ class Blossom < Burnable
 	end
 end
 
-
 class RedFlower < Blossom 
     def initialize
 		@profile = { :effect => :agitation }
@@ -35,7 +34,6 @@ class RedFlower < Blossom
         @@stats[:sedation] = 10
     end
 end
-
 
 class PurpleFlower < Blossom 
     def initialize
