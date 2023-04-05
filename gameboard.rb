@@ -14,18 +14,17 @@ class Gameboard
         @@souls = 1
         @@pages = 0
         @@stats = {
-            :attack => 1,
-            :defense => 0, 
-            :agitated => 0,
-            :sedated => 0,
-            :entranced => 0, 
-            :blessed => 0,
-            :cursed => 0,
+            :level => 1,
+            :bless => 0,
+            :curse => 0,
+            :slays => 0,
+            :bones => 0,
+            :score => 0
         }
         @@skill = {
             :arrows => 0,     
             :blades => 0,     
-            :spells => 0,     
+            :magick => 0,     
             :speech => 0      
         }
     end
@@ -49,14 +48,15 @@ class Gameboard
         @@action = :reset
         @@target = :reset
     end
+    def toggle_backdrop
+        @@state = :backdrop
+    end
     def toggle_interact 
         moves = MOVES[1..12].flatten 
         if moves.include?(@@action)
             @@state = :interact
+        else toggle_backdrop
         end
-    end
-    def toggle_backdrop
-        @@state = :backdrop
     end
     def reset_sightline
         @@sight.clear
@@ -64,17 +64,13 @@ class Gameboard
     def increment_page(count)
         @@pages += count
     end
-    def decrement_stats
-        @@stats.each_with_index do |(key, value), index|
-            next unless (2..5).include?(index)
-            @@stats[key] -= 1 if value > 0
-        end
+    def decrement_page(count)
+        @@pages -= count
     end
     def turn_page
         reset_sightline
         increment_page(1)
         toggle_backdrop  
-        decrement_stats
     end
 end
 
@@ -85,18 +81,18 @@ end
 
 
 class Position < Gameboard
-    def compass 
+    def directions 
         ["north","south","east","west"]
     end
-    def load_compass
-        @@sight | compass
+    def load_directions
+        @@sight | directions
     end
     def direction
         {
-            compass[0] => [0, 1],
-            compass[1] => [0,-1],
-            compass[2] => [1, 0],
-            compass[3] => [-1,0]
+            directions[0] => [0, 1],
+            directions[1] => [0,-1],
+            directions[2] => [1, 0],
+            directions[3] => [-1,0]
         }
     end 
     def directed_movement
@@ -108,47 +104,47 @@ class Position < Gameboard
         @@stand[2] -= direction[@@target][1]
     end
     def detect_direction
-        if compass.include?(@@target)
-            reposition 
+        if directions.include?(@@target)
+            reposition_player 
         else 
-            cartesian_error
+            no_direction_detected
         end  
     end
     def detect_movement
         if MOVES[0].include?(@@action)
-            load_compass
+            load_directions
             detect_direction
         end
     end
-    def reposition
+    def reposition_player
         directed_movement
         if @@world.include?(@@stand)
-            accepted_movement
+            animate_movement
         else 
-            redirect_movement
+            activated_barrier
+            the_way_is_blocked
         end
     end
-    def accepted_movement
+    def animate_movement
         print "	   - You move #{@@target} to "
         print Rainbow(	     "[ #{@@stand[1]} , #{@@stand[2]} ]").orange	
         print ".\n\n"	
     end
-    def redirect_movement
+    def the_way_is_blocked
         puts "	   - The #{@@target}ern way is blocked."
         puts "	     One page passes in vain.\n\n"
-        activated_barrier
     end
-    def print_options
-        compass.each_with_index do |direction, index|
+    def print_movement_options
+        directions.each_with_index do |direction, index|
             print Rainbow(direction).orange
-            print ", " unless index.eql?(compass.size - 1)
-            print Rainbow("or ").white if index.eql?(compass.size - 2)
+            print ", " unless index.eql?(directions.size - 1)
+            print Rainbow("or ").white if index.eql?(directions.size - 2)
         end
     end
-    def cartesian_error
+    def no_direction_detected
         print "	   - Move one adjacent tile using\n"
         print "	     "
-        print_options
+        print_movement_options
         puts ".\n\n"
     end									 
 end
@@ -185,14 +181,20 @@ class Interface < Gameboard
 		end
 		(4 - @@heart).times { print Rainbow("♥ ").cyan }
     end
+    def that_move_made_no_sense
+        MOVES.flatten.none?(@@action) || (@@target.eql?(@@action))
+    end
+    def player_selected_help_menu
+        (MOVES[13] | MOVES[0]).include?(@@target)
+    end
 	def tutorial
-		if MOVES.flatten.none?(@@action) || (@@target.eql?(@@action))
-			return if (MOVES[13] | MOVES[0]).include?(@@target)
-			@@state = :backdrop	
+		if that_move_made_no_sense
+			return if player_selected_help_menu
+			toggle_backdrop	
 			print "	   - You pause for one page. View\n"
 			print "	     tutorial with command" 
             print Rainbow(" help").cyan + ".\n\n"
-            @@pages -= 1
+            decrement_page(1)
 		end
 	end
     def no_target
@@ -250,7 +252,4 @@ class Interface < Gameboard
 		print Rainbow("- Pg. #{@@pages} -\n\n").purple									
 	end	
 end
-
-
-
 

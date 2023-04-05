@@ -3,34 +3,11 @@
 ############################################################################################################################################################################################################################################################## 
 
 
-- make a list of every item with a profile, adjust numbers as needed 
+
+- make a module 
 
 
-heart elixer, portions 3, hearts +3 
-anodyne, portions 2, duration 3: tolerance 
-water, portions 3, duration 3, blessing
-curse cure, portion 1, duration n/a
-demon brew, portion 2, duration 3: attack +3
-
-bread, portion 3, hearts 2
-apple, portion 3, hearts 1
-berry, portion 1, hearts 1
-fungi, portion 1, hearts 4, duration 10: trance
-jerky, portion 2, hearts 2
-
-
-
-
-
-
-- make side effects for all brewed drinks 
-
-
-
-
-
-
-
+- make a list of every item with a profile, adjust numbers as needed
 
 
 

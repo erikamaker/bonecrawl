@@ -1,8 +1,7 @@
 ############################################################################################################################################################################################################################################################## 
 #####    DEPENDENCIES    #####################################################################################################################################################################################################################################
 ############################################################################################################################################################################################################################################################## 
-
-				
+	
 require 'rainbow'
 require './vocabulary.rb' 
 require './gameboard.rb'         
@@ -13,7 +12,6 @@ require './assets/tools.rb'
 require './assets/weapons.rb'
 require './assets/wearables.rb'
 require './assets/edibles.rb'
-require './assets/ingredients.rb'
 require './assets/containers.rb'
 require './assets/pullables.rb'
 require './assets/trees.rb'
@@ -26,10 +24,11 @@ require './assets/fruit.rb'
 
 
 print "\e[8;57;57t"	
+
 console = Interface.new
 player = Gameboard.new
 location = Position.new
-items = Inventory.new
+rucksack = Inventory.new
 stats = StatsCard.new
 
 
@@ -135,11 +134,9 @@ door_3.content = hall_2
 pick_1 = Lockpick.new                                         
 pick_1.minimap = [[0,4,-4]]
 
-drug_1 = Crystal.new                                         
+drug_1 = RedFlower.new                                         
 drug_1.minimap = [[0,2,1]]                                    
 
-gem_1 = Rose.new                                               
-gem_1.minimap = [[0,1,2]]
 
 lighter = Lighter.new
 lighter.minimap = [[0,1,2]]
@@ -153,7 +150,7 @@ tree.minimap = [[0,6,-4]]
 apples = AppleSpawner.new
 apples.minimap = [[0,6,-4]]
 
-level_1 = [ room_1, drain_1, lighter, grease, gem_1, door_1, hook_1, key_1, door_2, door_3, tree, apples, torch_1, table_1, food_1, pull_1, pick_1, drug_1 ]
+level_1 = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, door_3, tree, apples, torch_1, table_1, food_1, pull_1, pick_1, drug_1 ]
 
 
 ############################################################################################################################################################################################################################################################## 
@@ -169,7 +166,7 @@ loop do
     console.tutorial  
     location.detect_movement     
     level_1.each { |piece| piece.assemble }
-    items.assemble
+    rucksack.assemble
     stats.assemble
     console.no_target		
     console.page_bottom

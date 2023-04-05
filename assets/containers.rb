@@ -86,6 +86,7 @@ class Door < Container
 end
 
 
+
 ############################################################################################################################################################################################################################################################## 
 #####   INVENTORY    #########################################################################################################################################################################################################################################
 ############################################################################################################################################################################################################################################################## 
@@ -95,6 +96,9 @@ class Inventory < Container
     def view ; open end
     def targets
         ["knapsack","rucksack","backpack","sack","bag","pack","items","inventory","stuff","things"]
+    end
+    def moves
+        MOVES[1..11].flatten
     end
     def minimap
         [@@stand]
@@ -121,12 +125,14 @@ class Inventory < Container
         end
     end
     def manage_inventory
-        moves = MOVES[1..11].flatten
         print Rainbow("\n\n	   - What next?").cyan
         print Rainbow("  >>  ").purple
         process_input
         item = @@items.find { |i| i.targets.include?(@@target) }
         puts "\n\n"
+        bag_action(item)
+    end 
+    def bag_action(item)
         if moves.none?(@@action)
             puts Rainbow("           - You close your #{targets[0]} shut.\n").red            
         elsif item.nil?
@@ -137,7 +143,7 @@ class Inventory < Container
             item.interact
             puts Rainbow("           - You close your #{targets[0]} shut.\n").red     
         end
-    end 
+    end
 end
 
 
