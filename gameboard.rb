@@ -1,11 +1,11 @@
-############################################################################################################################################################################################################################################################## 
+##############################################################################################################################################################################################################################################################
 #####    GAMEBOARD    ########################################################################################################################################################################################################################################
-############################################################################################################################################################################################################################################################## 
+##############################################################################################################################################################################################################################################################
 
 
 class Gameboard
     def initialize
-        @@world = [] 
+        @@world = []
         @@check = []
         @@stand = [0,1,2]
         @@items = []
@@ -14,7 +14,6 @@ class Gameboard
         @@souls = 1
         @@pages = 0
         @@stats = {
-            :level => 1,
             :bless => 0,
             :curse => 0,
             :slays => 0,
@@ -22,28 +21,28 @@ class Gameboard
             :score => 0
         }
         @@skill = {
-            :arrows => 0,     
-            :blades => 0,     
-            :magick => 0,     
-            :speech => 0      
+            :arrows => 0,
+            :blades => 0,
+            :magick => 0,
+            :speech => 0
         }
     end
     def action_select
         prompt_player
         process_input
         toggle_interact
-        print "\n\n\n\n" 
-    end	
+        print "\n\n\n\n"
+    end
     def prompt_player
         print Rainbow("\n   What next?").cyan.bright
-        print Rainbow("  >>  ").purple.bright	
+        print Rainbow("  >>  ").purple.bright
     end
-    def process_input	
-        @@action = gets.chomp.downcase								
+    def process_input
+        @@action = gets.chomp.downcase
         sentence = @@action.scan(/[\w']+/)
         @@action = (MOVES.flatten & (sentence)).join('')
-        @@target = (sentence - PARTS).last 
-    end	
+        @@target = (sentence - PARTS).last
+    end
     def reset_input
         @@action = :reset
         @@target = :reset
@@ -51,8 +50,8 @@ class Gameboard
     def toggle_backdrop
         @@state = :backdrop
     end
-    def toggle_interact 
-        moves = MOVES[1..12].flatten 
+    def toggle_interact
+        moves = MOVES[1..12].flatten
         if moves.include?(@@action)
             @@state = :interact
         else toggle_backdrop
@@ -70,18 +69,18 @@ class Gameboard
     def turn_page
         reset_sightline
         increment_page(1)
-        toggle_backdrop  
+        toggle_backdrop
     end
 end
 
 
-############################################################################################################################################################################################################################################################## 
+##############################################################################################################################################################################################################################################################
 #####    MOVEMENT    #########################################################################################################################################################################################################################################
-############################################################################################################################################################################################################################################################## 
+##############################################################################################################################################################################################################################################################
 
 
 class Position < Gameboard
-    def directions 
+    def directions
         ["north","south","east","west"]
     end
     def load_directions
@@ -94,10 +93,10 @@ class Position < Gameboard
             directions[2] => [1, 0],
             directions[3] => [-1,0]
         }
-    end 
+    end
     def directed_movement
         @@stand[1] += direction[@@target][0]
-        @@stand[2] += direction[@@target][1] 
+        @@stand[2] += direction[@@target][1]
     end
     def activated_barrier
         @@stand[1] -= direction[@@target][0]
@@ -105,10 +104,10 @@ class Position < Gameboard
     end
     def detect_direction
         if directions.include?(@@target)
-            reposition_player 
-        else 
+            reposition_player
+        else
             no_direction_detected
-        end  
+        end
     end
     def detect_movement
         if MOVES[0].include?(@@action)
@@ -120,15 +119,15 @@ class Position < Gameboard
         directed_movement
         if @@world.include?(@@stand)
             animate_movement
-        else 
+        else
             activated_barrier
             the_way_is_blocked
         end
     end
     def animate_movement
         print "	   - You move #{@@target} to "
-        print Rainbow(	     "[ #{@@stand[1]} , #{@@stand[2]} ]").orange	
-        print ".\n\n"	
+        print Rainbow(	     "[ #{@@stand[1]} , #{@@stand[2]} ]").orange
+        print ".\n\n"
     end
     def the_way_is_blocked
         puts "	   - The #{@@target}ern way is blocked."
@@ -146,13 +145,13 @@ class Position < Gameboard
         print "	     "
         print_movement_options
         puts ".\n\n"
-    end									 
+    end
 end
 
 
-############################################################################################################################################################################################################################################################## 
+##############################################################################################################################################################################################################################################################
 #####    INTERFACE    ########################################################################################################################################################################################################################################
-############################################################################################################################################################################################################################################################## 
+##############################################################################################################################################################################################################################################################
 
 
 class Interface < Gameboard
@@ -162,7 +161,7 @@ class Interface < Gameboard
         print_spirit_meter
         print Rainbow(" -   ╱   - ").blue.bright
 		print_hearts_meter
-		print Rainbow(" -     ]").blue.bright 		
+		print Rainbow(" -     ]").blue.bright
 		print Rainbow("\n---------------------------------------------------------\n\n\n").blue.bright
     end
     def print_spirit_meter
@@ -176,7 +175,7 @@ class Interface < Gameboard
 		@@heart = [@@heart, 4].min
 		if @@heart > 1
 		@@heart.times { print Rainbow("♥ ").red }
-		else 
+		else
             print Rainbow("♥ ").red.blink
 		end
 		(4 - @@heart).times { print Rainbow("♥ ").cyan }
@@ -190,9 +189,9 @@ class Interface < Gameboard
 	def tutorial
 		if that_move_made_no_sense
 			return if player_selected_help_menu
-			toggle_backdrop	
+			toggle_backdrop
 			print "	   - You pause for one page. View\n"
-			print "	     tutorial with command" 
+			print "	     tutorial with command"
             print Rainbow(" help").cyan + ".\n\n"
             decrement_page(1)
 		end
@@ -206,10 +205,10 @@ class Interface < Gameboard
         puts "	     your knapsack.\n\n"
     end
 	def help_menu
-		if MOVES[13].include?(@@action)																																
-			@@pages -= 1																	
-			puts "	   - Speak your move plainly in a"  													
-			puts "	     few short words, referencing"														
+		if MOVES[13].include?(@@action)
+			@@pages -= 1
+			puts "	   - Speak your move plainly in a"
+			puts "	     few short words, referencing"
 			puts "	     just one subject per page.\n\n"
 			puts Rainbow("	     Check the area.").blue
 			puts Rainbow("	     Talk to the wizard.").indigo
@@ -219,17 +218,17 @@ class Interface < Gameboard
 			puts Rainbow("	     Eat some bread.").green
 			puts Rainbow("	     Walk south.").cyan
 			puts Rainbow("	     Unlock the door.").blue
-			puts Rainbow("	     Check my stats.\n").indigo											
+			puts Rainbow("	     Check my stats.\n").indigo
 			puts "	   - Pause to view your current"
-			print "	     position by pressing " 
+			print "	     position by pressing "
 			print Rainbow("return").cyan + ".\n\n"
 		end
     end
-	def page_bottom	
+	def page_bottom
 		puts "\n\n\n"
-        z = @@stand[0]																				
-		x = @@stand[1]																				
-		y = @@stand[2]	
+        z = @@stand[0]
+		x = @@stand[1]
+		y = @@stand[2]
 		bigmap = [
 			[[z, x - 1, y + 1], [z, x, y + 1], [z, x + 1, y + 1]],
 			[[z, x - 1, y], [z, x, y], [z, x + 1, y]],
@@ -242,14 +241,14 @@ class Interface < Gameboard
 					print Rainbow("■ ").red.blink
 				elsif @@world.include?(pos)
 					print Rainbow("■ ").green
-				else 
+				else
                     print "⬚ "
 				end
 			end
 			print "\n" if row != bigmap.last
-		end	
+		end
         (37 - @@pages.to_s.length).times { print(" ") }
-		print Rainbow("- Pg. #{@@pages} -\n\n").purple									
-	end	
+		print Rainbow("- Pg. #{@@pages} -\n\n").purple
+	end
 end
 
