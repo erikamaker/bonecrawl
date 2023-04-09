@@ -1,0 +1,186 @@
+############################################################################################################################################################################################################################################################## 
+#####    ENGINE PHASE    #####################################################################################################################################################################################################################################
+############################################################################################################################################################################################################################################################## 
+
+
+
+- make a module 
+
+
+- make a list of every item with a profile, adjust numbers as needed
+
+
+
+
+
+
+
+
+
+- make mineable tiles: ore / gem veins, and cracks 
+- make staves 
+- make swords 
+
+
+
+Swords 
+    - follow the knife template 
+
+
+
+Staff
+    - 1 gem + 1 branch.
+    - 3 types: lower defense, lower attack, lower health
+    - built by casters
+    - costs soul power to use   
+    - has a damage level on its own
+
+Spells 
+   - cast: #SPELLNAME 
+     -you don't have a gem 
+       - you don't have a staff (hurt yourself in the process) 
+     - spell happens (affect enemy stats / breaks magic seal) 
+   - spellnames are known for life
+   - they're recorded in a spellbook 
+   - the spellbook is a crafter's gift 
+   
+
+Bows 
+    - follow the lighter fuel paradigm 
+
+Magick Seals
+  - banished by using the environment-affecting staff 
+  - containers, portable items, events (what if a bridge collapsed ;D )
+
+
+
+
+Altar  <  Character
+  - craft clothes, weapons, tools
+  - will curse you for attacking it
+  - talking to it will hint what it wants: "Femur. Can I build you something?" 
+  - auto take the bone you get from the level's miniboss 
+
+Cauldron 
+  - used exclusively for cooking food in. 
+  - found in crafter cities and goblin supply rooms
+
+
+  
+
+Character
+  - talking, bartering, @@heck events, hints, gifts, fighting, repositioning (including following) 
+  - different scripts based on speech ability (sometimes)
+  - demons, trolls, casters, prisoners, goblins, hellions, cherubs
+  - be specific! error for all enemies if there is more than one (same for "person") this should let them follow you now. 
+  
+Random Generate Enemies   (chance of appearing based on certain conditions, then stays put until defeated / only fight) 
+  - big rat: gives you leather
+  - big spider: gives you silk  
+  - squids: gives you ink glands 
+  - worms: gives you fat 
+  - ravens: gives you feathers
+
+
+
+
+############################################################################################################################################################################################################################################################## 
+#####    STYLE GUIDE    ######################################################################################################################################################################################################################################
+############################################################################################################################################################################################################################################################## 
+
+
+# puts "	   - This is a boilerplate screen."
+# puts "         Every line should be equal in"
+# puts "         length. The final line may be"
+# puts "         shorter or half.\n\n"    
+
+
+# Every gamepiece that displays either an outcome or a passive backdrop will stack in this manner. 
+# Every display will be a paragraph (or two) designated by a tick mark, with line breaks between each tick phrase (\n\n).
+# Each tick phrase will display in the order they're loaded, due to the indexing on the level_x array in the main.rb runner file.  
+
+# See idea for opening cut-scene. 
+
+sleep 2
+print Rainbow("\n\n\n	           - Bone Crawl - \n\n")
+sleep 2
+print Rainbow("Ch. 1. Escaping Goblin City\n\n").green
+sleep 2
+puts "	   - You wake up on the floor of"									 
+puts "	     a mostly-empty dungeon cell.\n\n"
+sleep 2
+puts "	   - You're dressed in rags, and"									 
+puts "	     someone's emptied your bag.\n\n"
+sleep 2
+
+
+############################################################################################################################################################################################################################################################## 
+#####    LEVEL DESIGN / GAME MAKING PHASE    #################################################################################################################################################################################################################
+############################################################################################################################################################################################################################################################## 
+
+
+- design one fully functional and curated level of BoneCrawl. 
+- build the level and have people beta test it / cycle until done. 
+
+
+############################################################################################################################################################################################################################################################## 
+#####    COMMERCIAL PHASE    #################################################################################################################################################################################################################################
+############################################################################################################################################################################################################################################################## 
+
+
+- start generating hype about the game and advertise. 
+- release the engine on the website for $1. comes with first level free. 
+- for $1 subscription, you'll get updated engine as applied / monthly chapter. 
+- beta release / debug / re-release cycle
+- find partner to port to mobile 
+- generate hype for mobile / release 
+
+
+############################################################################################################################################################################################################################################################## 
+#####    CHARACTERS    #######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################  
+
+
+class Character < GamePiece
+	attr_accessor :desires, :subtype
+	def initialize(minimap,desires)   
+		@minimap = minimap
+		@desires = desires
+		@subtype = subtype
+		targets = subtype.concat(["person","character","soul"]).flatten
+		@targets = targets
+		moveset = (MOVES[1] + MOVES[6..8]).flatten
+		@moveset = moveset
+		profile = {:card => "#{subtype}#{minimap.flatten}" }
+		@profile = profile
+		def talk ; end
+	end
+	def backdrop	
+		print ITEMS	
+		x = ITEMS.find { |h| h[:item ].eql?(desires) } 
+		print x													
+		print "	   - A #{targets[0]} stands here too.\n\n" 					
+	end	
+	def give
+		print "	   - Offer the #{targets[0]} what?"							
+		print Rainbow(" > ").purple											
+		offering = gets.chomp.downcase ; print("\n") ; sleep(2)
+		x = ITEMS.find { |h| h[:item ].eql?(desires) } 
+		if offering.eql?(desires) and ITEMS.include?(x) 
+			if ITEMS.none?(profile)  
+				ITEMS.delete(x[:item ]) # TODO FIX
+				self.rewards_script
+				ITEMS.push(profile)
+			else print("	   - The #{targets[0]} politely declines.\n\n")
+			end
+		elsif offering.eql?(desires) and ITEMS.none?(x) 
+			print "	   - The #{targets[0]} is interested,\n"		
+			print "	     but you don't have one.\n\n"
+		else print("	   - The #{targets[0]} isn't interested.\n\n")
+		end	
+	end	
+	def hurt
+		print "	   - This #{targets[0]} isn't an enemy.\n\n"			
+	end						   									
+end
+
