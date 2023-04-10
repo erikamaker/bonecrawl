@@ -128,7 +128,6 @@ pick_1.minimap = [[0,4,-4]]
 drug_1 = RedFlower.new
 drug_1.minimap = [[0,2,1]]
 
-
 lighter = Lighter.new
 lighter.minimap = [[0,1,2]]
 
@@ -158,8 +157,6 @@ loop do
     location.detect_movement
     level_1.each { |piece| piece.assemble }
     rucksack.assemble
-   # stats.assemble
     console.no_target
     console.page_bottom
 end
-

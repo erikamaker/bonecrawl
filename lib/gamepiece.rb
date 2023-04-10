@@ -23,7 +23,7 @@ class Gamepiece < Gameboard
         minimap.include?(@@position)
     end
     def player_idle?
-        @@state.eql?(:player_idle)
+        @@state == :player_idle
     end
     def assemble
         load_special_properties
@@ -110,6 +110,9 @@ class Portable < Gamepiece
 	def take
         view
         puts Rainbow("	   - You take the #{targets[0]}.\n").orange
+        push_to_inventory
+    end
+    def push_to_inventory
         remove_from_board
         @@inventory.push(self)
 	end
@@ -153,7 +156,7 @@ class Edible < Portable
     def animate_ingestion
         puts Rainbow("	   - You eat the #{subtype[0]}, healing").orange
 		print Rainbow("	     #{heal_amount} heart").orange
-        heal_amount.eql?(1) ? print(Rainbow(". ").orange) : print(Rainbow("s. ").orange)
+        heal_amount == 1 ? print(Rainbow(". ").orange) : print(Rainbow("s. ").orange)
     end
     def remove_portion
         profile[:portions] -= 1
@@ -203,7 +206,7 @@ class Drink < Edible
     def animate_ingestion
         puts "	   - You drink the #{subtype[0]}, healing"
 		print "	     #{heal_amount} heart"
-        heal_amount.eql?(1) ? print(". ") : print("s. ")
+        heal_amount == 1 ? print(". ") : print("s. ")
     end
 end
 
@@ -345,3 +348,8 @@ class Pullable < Gamepiece
 		end
 	end
 end
+
+
+##############################################################################################################################################################################################################################################################
+#####     CHARACTERS     #####################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################

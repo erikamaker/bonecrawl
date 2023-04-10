@@ -74,12 +74,12 @@ class Jar < Tool
         ["jar", "bottle", "flask"]
     end
     def description
-        if @holding
-		    puts "	   - It's a simple glass jar. It"
-            puts "	     currently holds #{@holding[0]}"
-        end
+	    puts "	   - It's a simple glass jar. It"
+        print "	     currently holds "
+        @holding ? "#{@holding[0]}" : "nothing"
 	end
 end
+
 
 
 ##############################################################################################################################################################################################################################################################
@@ -89,7 +89,7 @@ end
 
 class Identification < Portable
     def targets
-        ["stats","info","player","self","myself","information","stackup","level","identification","id"]
+        ["hell pass","pass","card","id","identification"]
     end
     def display_stats
         puts Rainbow("	          - Prisoner Stats -\n").green
@@ -175,16 +175,16 @@ end
 class Inventory < Container
     def view ; open end
     def targets
-        ["knapsack","rucksack","backpack","sack","bag","pack","items","inventory","stuff","things"]
+        ["knapsack","ruck sack","backpack","sack","bag","pack","items","inventory","stuff","things"]
     end
     def minimap
         [@@position]
     end
     def open
-        print Rainbow("	   - You reach into your #{targets[0]}.\n\n").red
+        print Rainbow("	   - You reach into your rucksack.\n\n").red
         if @@inventory.empty?
 			print "	   - It's empty.\n\n"
-            print Rainbow("           - You close your #{targets[0]} shut.\n\n").red
+            print Rainbow("           - You close your rucksack shut.\n\n").red
 		else
             show_contents
             manage_inventory
@@ -194,7 +194,8 @@ class Inventory < Container
     def show_contents
         @@inventory.group_by { |item| item.targets[0] }.each do |item, total|
             dots = (24 - item.length)
-            print "	     #{item.capitalize} "
+            item_copy = item
+            print "	     #{item_copy.split.each{|word| word.capitalize!}.join(' ')}"
             dots.times do
                 print Rainbow(".").purple
             end
@@ -269,7 +270,7 @@ class Lever < Pullable
 		puts "	     the wall where you stand.\n\n"
 	end
 	def view
-		if @state.eql?("unpulled")
+		if @state == "unpulled"
 			puts "	   - This lever isn't pulled yet."
 			puts "	     It could do anything.\n\n"
 		else
@@ -329,8 +330,7 @@ class Apple < Edible
 	end
 	def description
 		puts "	   - Blue apples like these tend"
-        puts "	     to grow underground. Goblin"
-        puts "	     elders bake them with bread.\n\n"
+        puts "	     to grow underground.\n\n"
 
 	end
 end
@@ -371,7 +371,7 @@ class Mushroom < Edible
     def side_effect
         puts "	     The walls begin to breathe."
         puts "	     Colors whirl in your eyes.\n\n"
-        @@player_stats[:tranced] = profile[:duration]
+        @@player_stats[:Ascension] = profile[:duration]
     end
 end
 
@@ -414,7 +414,7 @@ end
 
 class Anodyne < Drink
     def initialize
-        @profile = { :effect => "tolerance", :duration => 3, :magnitude => 3, :portions => 2 }
+        @profile = { :effect => :sedation, :duration => 10, :defense => +2, :portions => 3 }
     end
     def subtype
         ["anodyne","narcotic","analgesic","pain reliever"]
@@ -422,7 +422,7 @@ class Anodyne < Drink
 	def description
 		puts "	   - Made from boiled red blossom"
         puts "	     petals, it protects its user"
-        puts "	     from pain for 3 pages.\n\n"
+        puts "	     from pain for 10 pages.\n\n"
 
 	end
 end
@@ -450,8 +450,8 @@ class Cure < Drink
 	end
 	def description
 		puts "	   - Difficult to concoct, it will"
-        puts "	     exorcise any daemonic curses."
-        puts "	     It must be entirely drained.\n"
+        puts "	     exorcise demonic curses. It's"
+        puts "	     a painful draught to swallow.\n\n"
 	end
 end
 
@@ -600,6 +600,10 @@ class Grotto < WarmCave
 	def draw_backdrop
 		puts "	   - You're in a gleaming grotto"
 		puts "	     with a simmering spring.\n\n"
+	end
+    def view_above
+		puts "	   - The ceiling seems to yawn a"
+		puts "	     good 30 feet above you.\n\n"
 	end
 end
 
@@ -836,11 +840,11 @@ class GrowingFruit < Edible
         (@group.count) > 0 and (@group[0].profile[:portions] > 0)
     end
     def one_left
-        @group.count.eql?(1)
+        @group.count == 1
     end
     def last_bite?
         print @group
-        @group[0].profile[:portions].eql?(0)
+        @group[0].profile[:portions] == 0
     end
     def none_left?
         @group.count == 0
@@ -978,11 +982,11 @@ end
 
 class Jewel < Portable
     def targets
-       ["gem","jewel","geode","stone","crystal", "shard"]
+       ["gem","jewel","geode","stone","crystal","rock","shard"]
     end
     def view
-        puts "	   - It's a cherub gem. They tend"
-		puts "	     to grow where angels dwell.\n\n"
+        puts "	   - It's a cherub rock. It grows"
+		puts "	     where fallen angels dwell.\n\n"
         view_profile
         print "\n"
     end
