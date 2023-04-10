@@ -353,3 +353,82 @@ end
 ##############################################################################################################################################################################################################################################################
 #####     CHARACTERS     #####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
+
+
+class Character < Gamepiece
+    attr_accessor :hostile, :desires, :rewards, :subtype
+    def initialize
+        @moveset = MOVES[1] | MOVES[6..8]
+        @hostile = false
+        @desires = desires
+        @friends = false
+    end
+    def targets
+        ["subtype"] | ["character","person","entity","soul"]  # TODO: add individual body parts to SPEECH
+    end
+    def draw_backdrop                                            # Viewing this character should tell you a general description and also return its profile.
+        puts "	   - A #{subtype} stands before you,\n"
+        puts "	     ready for testing.\n\n"
+    end
+    def become_hostile
+        @hostile = true
+    end
+    def avoid_conflict
+        @hostile = false
+    end
+    def become_friends
+        @friends = true
+    end
+    def player_owns_desires
+        @@inventory.find { |item| item.targets == desires.targets }
+    end
+    def hostile_script
+        puts "	   - This #{@subtype} isn't interested"
+        puts "	     in talking things out.\n\n"
+    end
+    def return_the_favor
+        puts "	   - As a token of your new alliance,"
+        puts "	     They hand you a #{@reward}.\n\n"
+        @reward.assemble
+        @reward.minimap = minimap
+        @reward.take
+    end
+    def accept_player_gift
+        puts "	   - The #{subtype} graciously thanks"
+        puts "	     you for the kindness.\n\n"
+        return_the_favor
+    end
+    def give
+        if !player_owns_desires
+            puts "     - You don't have that.\n\n"
+            return
+        end
+        if !@friends
+            accept_player_gift
+        else puts "	   - The #{@subtype} politely declines.\n\n"
+        end
+    end
+    def talk
+        if @hostile
+            hostile_script
+        else
+            default_script  # This should change based on their friendship
+        end
+    end
+end
+
+
+
+
+
+
+class Hellion < Gamepiece
+    def initialize
+        super
+        become_hostile
+    end
+    def subtype
+        ["goat","monster","enemy","demon","daemon"]
+    end
+end
+
