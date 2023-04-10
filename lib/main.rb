@@ -63,7 +63,7 @@ hook_1.minimap = [[0,2,0]]
 
 key_1 = Key.new
 key_1.minimap = [[0,2,0]]
-def key_1.backdrop
+def key_1.draw_backdrop
     puts "	   - A brass key dangles from it.\n\n"
 end
 

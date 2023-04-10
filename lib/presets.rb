@@ -1220,7 +1220,7 @@ class Blossom < Burnable
     end
     def animate_combustion
         puts "	   - You hold the blossom against"
-        puts "	     the fire, inhaling its smoke.\n\n"
+        puts "	     the fire, inhaling its smoke."
         burn_effect
         print "\n"
     end
