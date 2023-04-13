@@ -267,13 +267,10 @@ class Container < Gamepiece
     attr_accessor :content, :needkey, :state
     def initialize
         @moveset = MOVES[1] | MOVES[3]
-        @closed = true
+        @state = "closed shut"
     end
     def toggle_state_open
-        @closed = false
-    end
-    def state
-        @closed ? "closed shut" : "jammed open"
+        @state = "jammed open"
     end
 	def view
 		puts "	   - This #{targets[0]} is #{state}.\n\n"
@@ -283,10 +280,10 @@ class Container < Gamepiece
         @@inventory.find { |item| tools.include?(item.targets[0]) }
     end
     def open
-        if @closed
+        if @state.eql?("closed shut")
             !needkey ? give_content : is_locked
         else
-            puts "	   - It's already open.\n\n"
+            puts "	   - This #{targets[0]}'s already open.\n\n"
         end
 	end
     def use_key
@@ -327,24 +324,24 @@ end
 
 
 class Pullable < Gamepiece
-    attr_accessor :content, :pulled
+    attr_accessor :content
     def initialize
         @moveset = MOVES[1] | MOVES[5]
-        @pulled = false
+        @unpulled = true
     end
     def load_special_properties
-        content.assemble if @pulled
+        content.assemble if !@unpulled
     end
     def toggle_state_pulled
-        @pulled = true
+        @unpulled = false
     end
     def pull
-		if @pulled
-			toggle_state_pulled
+		if @unpulled
 			reveal_secret
+            toggle_state_pulled
 		else
             puts "	   - It appears that somebody has\n"
-			puts "	     already pulled this #{targets[0]}\n\n"
+			puts "	     already pulled this #{targets[0]}.\n\n"
 		end
 	end
 end
@@ -356,19 +353,22 @@ end
 
 
 class Character < Gamepiece
-    attr_accessor :hostile, :desires, :rewards, :subtype
+    attr_accessor :hostile, :desires, :content, :friends, :subtype
     def initialize
-        @moveset = MOVES[1] | MOVES[6..8]
+        @moveset = MOVES[1] | MOVES[6..8].flatten
         @hostile = false
         @desires = desires
         @friends = false
     end
     def targets
-        ["subtype"] | ["character","person","entity","soul"]  # TODO: add individual body parts to SPEECH
+        subtype | ["character","person","entity","soul"]  # TODO: add individual body parts to SPEECH
     end
     def draw_backdrop                                            # Viewing this character should tell you a general description and also return its profile.
-        puts "	   - A #{subtype} stands before you,\n"
+        puts "	   - A #{subtype[0]} stands before you,\n"
         puts "	     ready for testing.\n\n"
+    end
+    def load_special_properties
+        @profile[:carrying] = @content.targets[0]
     end
     def become_hostile
         @hostile = true
@@ -383,18 +383,17 @@ class Character < Gamepiece
         @@inventory.find { |item| item.targets == desires.targets }
     end
     def hostile_script
-        puts "	   - This #{@subtype} isn't interested"
-        puts "	     in talking things out.\n\n"
+        puts "	   - This #{subtype[0]} isn't talking.\n\n"
     end
     def return_the_favor
         puts "	   - As a token of your new alliance,"
-        puts "	     They hand you a #{@reward}.\n\n"
-        @reward.assemble
-        @reward.minimap = minimap
-        @reward.take
+        puts "	     They hand you a #{content}.\n\n"
+        @content.assemble
+        @content.minimap = minimap
+        @content.take
     end
     def accept_player_gift
-        puts "	   - The #{subtype} graciously thanks"
+        puts "	   - The #{@subtype[0]} graciously thanks"
         puts "	     you for the kindness.\n\n"
         return_the_favor
     end
@@ -405,12 +404,15 @@ class Character < Gamepiece
         end
         if !@friends
             accept_player_gift
-        else puts "	   - The #{@subtype} politely declines.\n\n"
+        else puts "	   - The #{@subtype[0]} politely declines.\n\n"
         end
     end
     def talk
+
         if @hostile
             hostile_script
+            toggle_idle
+            avoid_conflict
         else
             default_script  # This should change based on their friendship
         end
@@ -420,15 +422,30 @@ end
 
 
 
-
-
-class Hellion < Gamepiece
+class Hellion < Character
     def initialize
         super
         become_hostile
+        @profile = {:attack => 2, :defense => 2, :hostile => @hostile}
     end
     def subtype
-        ["goat","monster","enemy","demon","daemon"]
+        ["hellion","goat","monster","enemy","demon","daemon"]
+    end
+    def description
+        puts "	   - It's a hellion. Goat-like in"
+        puts "	     its appearance, these demons"
+        puts "	     were the bastard children of"
+        puts "	     cherubs and trolls.\n\n"
+    end
+    def default_script
+        if !@friends
+            puts "	   - It leers at you, dark pupils"
+            puts "	     flexing in its yellow eyes.\n\n"
+            become_friends
+        else
+            puts "	   - The goat says it can't pray,"
+            puts "	     but that maybe you should.\n\n"
+        end
     end
 end
 

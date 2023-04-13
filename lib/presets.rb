@@ -235,7 +235,7 @@ class Door < Container
         true
     end
     def load_special_properties
-        if !@closed
+        if state.eql?("jammed open")
             content.assemble
         end
     end
@@ -270,7 +270,7 @@ class Lever < Pullable
 		puts "	     the wall where you stand.\n\n"
 	end
 	def view
-		if @state == "unpulled"
+		if @unpulled
 			puts "	   - This lever isn't pulled yet."
 			puts "	     It could do anything.\n\n"
 		else

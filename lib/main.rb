@@ -28,9 +28,9 @@ stats = Identification.new
 ##############################################################################################################################################################################################################################################################
 
 
-tom = Character.new
-tom.minimap = [[0,2,-1]]
-tom.rewards = Knife3.new
+tom = Hellion.new
+tom.minimap = [[0,1,2]]
+tom.content = Knife3.new
 
 
 room_1 = Dungeon.new
@@ -43,12 +43,15 @@ def room_1.overview
     puts "	     your cell's only exit.\n\n"
 end
 
+
 torch_1 = Torch.new
 torch_1.minimap = [[0,2,2],[0,2,-1],[0,5,-4]]
+
 
 drain_1 = Toilet.new
 drain_1.minimap = [[0,1,1]]
 drain_1.content = Lockpick.new
+
 
 hall_1 = Corridor.new
 hall_1.minimap = [[0,2,0],[0,2,-1],[0,2,-2]]
@@ -59,18 +62,22 @@ def hall_1.overview
     puts "	     be heard to the southeast.\n\n"
 end
 
+
 door_1 = Door.new
 door_1.minimap = [[0,2,1]]
 door_1.content = hall_1
 
+
 hook_1 = Hook.new
 hook_1.minimap = [[0,2,0]]
+
 
 key_1 = Key.new
 key_1.minimap = [[0,2,0]]
 def key_1.draw_backdrop
     puts "	   - A brass key dangles from it.\n\n"
 end
+
 
 room_2 = Dungeon.new
 room_2.minimap = [[0,1,-3],[0,2,-3],[0,3,-3],[0,1,-4],[0,2,-4],[0,3,-4],[0,1,-5],[0,2,-5],[0,3,-5]]
@@ -86,9 +93,11 @@ def room_2.overview
     puts "	     is set in the center.\n\n"
 end
 
+
 chest_1 = Chest.new
 chest_1.minimap = [[0,5,-4]]
 chest_1.content = Knife3.new
+
 
 pull_1 = Lever.new
 pull_1.minimap = [[0,3,-3]]
@@ -105,15 +114,19 @@ def pull_1.reveal_secret
     puts "	     outside your cell door.\n\n"
 end
 
+
 door_2 = Door.new
 door_2.minimap = [[0,2,-2]]
 door_2.content = room_2
 
+
 table_1 = Table.new
 table_1.minimap = [[0,2,-4]]
 
+
 food_1 = Apple.new
 food_1.minimap = [[0,2,-4]]
+
 
 hall_2 = Corridor.new
 hall_2.minimap = [[0,4,-4],[0,5,-4],[0,6,-4]]
@@ -123,29 +136,37 @@ def hall_2.overview
     puts "	     The clanging grows louder.\n\n"
 end
 
+
 door_3 = Door.new
 door_3.minimap = [[0,3,-4]]
 door_3.content = hall_2
 
+
 pick_1 = Lockpick.new
 pick_1.minimap = [[0,4,-4]]
+
 
 drug_1 = RedFlower.new
 drug_1.minimap = [[0,2,1]]
 
+
 lighter = Lighter.new
 lighter.minimap = [[0,1,2]]
+
 
 grease = Fat.new
 grease.minimap = [[0,1,2]]
 
+
 tree = AppleTree.new
 tree.minimap = [[0,6,-4]]
+
 
 apples = AppleSpawner.new
 apples.minimap = [[0,6,-4]]
 
-level_1 = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, tom, door_2, door_3, tree, apples, torch_1, table_1, food_1, pick_1, drug_1 ]
+
+level_1 = [ room_1, tom, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, door_3, tree, apples, torch_1, pull_1, table_1, food_1, pick_1, drug_1 ]
 
 
 ##############################################################################################################################################################################################################################################################
