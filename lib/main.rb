@@ -81,7 +81,7 @@ end
 
 room_2 = Dungeon.new
 room_2.minimap = [[0,1,-3],[0,2,-3],[0,3,-3],[0,1,-4],[0,2,-4],[0,3,-4],[0,1,-5],[0,2,-5],[0,3,-5]]
-def room_2.backdrop
+def room_2.draw_backdrop
     puts "	   - You're in a homely guardroom."
     puts "	     It's warm, well-lit, and dry.\n\n"
 end

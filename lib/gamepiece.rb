@@ -361,7 +361,7 @@ class Character < Gamepiece
         @friends = false
     end
     def targets
-        subtype | ["character","person","entity","soul"]  # TODO: add individual body parts to SPEECH
+        subtype | ["character","person","entity","soul"]         # TODO: add individual body parts to SPEECH
     end
     def draw_backdrop                                            # Viewing this character should tell you a general description and also return its profile.
         puts "	   - A #{subtype[0]} stands before you,\n"
@@ -373,17 +373,40 @@ class Character < Gamepiece
     def become_hostile
         @hostile = true
     end
-    def avoid_conflict
+    def no_longer_hostile
         @hostile = false
     end
     def become_friends
         @friends = true
     end
-    def player_owns_desires
-        @@inventory.find { |item| item.targets == desires.targets }
+    def interesting_cargo
+        wants = @@inventory.find { |item| item.targets == desires.targets }
+        wants.nil? ? false : true
     end
     def hostile_script
         puts "	   - This #{subtype[0]} isn't talking.\n\n"
+    end
+    def ask_for_desires
+        puts "	   - The #{subtype[0]} asks for your #{desires.targets[0]}.\n\n"
+        choice = gets.chomp
+        if choice.eql?("yes")
+            @@inventory.delete(desires)
+            reward_animation
+            become_friends
+        else
+            puts "	   - 'Just leave me alone, then.\n\n'"
+            become_friends
+        end
+    end
+    def default_script
+        if !@friends
+            puts "	   - It leers at you, dark pupils"
+            puts "	     flexing in its yellow eyes.\n\n"
+            ask_for_desires if interesting_cargo
+        else
+            puts "	   - Ayyyy, it's my favortie lighter"
+            puts "	     giving mortal.\n\n"
+        end
     end
     def return_the_favor
         puts "	   - As a token of your new alliance,"
@@ -397,22 +420,9 @@ class Character < Gamepiece
         puts "	     you for the kindness.\n\n"
         return_the_favor
     end
-    def give
-        if !player_owns_desires
-            puts "     - You don't have that.\n\n"
-            return
-        end
-        if !@friends
-            accept_player_gift
-        else puts "	   - The #{@subtype[0]} politely declines.\n\n"
-        end
-    end
     def talk
-
         if @hostile
             hostile_script
-            toggle_idle
-            avoid_conflict
         else
             default_script  # This should change based on their friendship
         end
@@ -425,7 +435,7 @@ end
 class Hellion < Character
     def initialize
         super
-        become_hostile
+        @desires = Lighter.new
         @profile = {:attack => 2, :defense => 2, :hostile => @hostile}
     end
     def subtype
@@ -437,15 +447,9 @@ class Hellion < Character
         puts "	     were the bastard children of"
         puts "	     cherubs and trolls.\n\n"
     end
-    def default_script
-        if !@friends
-            puts "	   - It leers at you, dark pupils"
-            puts "	     flexing in its yellow eyes.\n\n"
-            become_friends
-        else
-            puts "	   - The goat says it can't pray,"
-            puts "	     but that maybe you should.\n\n"
-        end
+    def reward_animation
+        puts "	   - The north wall at [-1,9,1] is"
+        puts "	     false. Walk through it.\n\n"
     end
 end
 
