@@ -178,8 +178,8 @@ loop do
     console.turn_page
     console.page_top
     player.action_select
-    console.help_menu
-    console.tutorial
+    console.tutorial_screen
+    console.suggest_tutorial
     location.detect_movement
     level_1.each { |piece| piece.assemble }
     rucksack.assemble

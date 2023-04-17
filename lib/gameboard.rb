@@ -47,7 +47,7 @@ class Gameboard
         @@state = :player_idle
     end
     def toggle_engaged
-        moves = MOVES[1..12].flatten
+        moves = MOVES[1..13].flatten
         return if moves.none?(@@action)
         @@state = :player_engaged
     end
@@ -127,19 +127,6 @@ class Position < Gameboard
         puts "	   - The #{@@target}ern way is blocked."
         puts "	     One page passes in vain.\n\n"
     end
-    def print_movement_options
-        directions.each_with_index do |direction, index|
-            print Rainbow(direction).orange
-            print ", " unless index.eql?(directions.size - 1)
-            print Rainbow("or ").white if index.eql?(directions.size - 2)
-        end
-    end
-    def no_direction_detected
-        print "	   - Move one adjacent tile using\n"
-        print "	     "
-        print_movement_options
-        puts ".\n\n"
-    end
 end
 
 
@@ -174,15 +161,15 @@ class Interface < Gameboard
 		end
 		(4 - @@player_stats[:heart]).times { print Rainbow("♥ ").cyan }
     end
-    def that_move_made_no_sense
+    def nontraditional_move
         MOVES.flatten.none?(@@action) || (@@target.eql?(@@action))
     end
-    def player_selected_help_menu
-        (MOVES[13] | MOVES[0]).include?(@@target)
+    def tutorial_selected
+        MOVES[13].include?(@@target)
     end
-	def tutorial
-		if that_move_made_no_sense
-			return if player_selected_help_menu
+	def suggest_tutorial
+		if nontraditional_move
+			return if tutorial_selected
 			toggle_idle
 			print "	   - A page passes in vain. View\n"
 			print "	     tutorial with command"
@@ -198,20 +185,26 @@ class Interface < Gameboard
             puts "	     your knapsack.\n\n"
         end
     end
-	def help_menu
-		if MOVES[13].include?(@@action)
+	def tutorial_screen
+		if tutorial_selected
 			puts "	   - Speak your move plainly in a"
 			puts "	     few short words, referencing"
-			puts "	     just one subject per page.\n\n"
-			puts Rainbow("	     Check the area.").blue
-			puts Rainbow("	     Talk to the prisoner.").indigo
-			puts Rainbow("	     Unlock the door.").maroon
-			puts Rainbow("	     Attack the demon.").red
-			puts Rainbow("	     View my inventory.").orange
+			puts "	     only one subject per page.\n\n"
+			puts Rainbow("	     Slay the troll.").red
+			puts Rainbow("	     Open my inventory.").yellow
 			puts Rainbow("	     Eat some bread.").green
-			puts Rainbow("	     Walk south.").cyan
-			puts Rainbow("	     Steal the sword.").blue
+			puts Rainbow("	     Go west of here.").blue
 			puts Rainbow("	     Check my stats.\n").indigo
+            print Rainbow("	   - Move ").cyan
+            print "one adjacent tile using\n"
+            print Rainbow("	     north").orange + ", "
+            print Rainbow("south").orange + ", "
+            print Rainbow("east").orange + ", or "
+            print Rainbow("west").orange + ".\n\n"
+			print "	   - Press "
+            print Rainbow("return").cyan
+			puts " for the current"
+            puts "	     coordinate's list of targets.\n\n"
 		end
     end
     def bigmap
@@ -239,10 +232,13 @@ class Interface < Gameboard
 			print "\n" if row != bigmap.last
 		end
     end
+    def draw_page_count
+        (37 - @@page_count.to_s.length).times { print(" ") }
+		print Rainbow("- Pg. #{@@page_count} -\n\n").purple
+    end
 	def page_bottom
 		puts "\n\n\n"
         draw_map
-        (37 - @@page_count.to_s.length).times { print(" ") }
-		print Rainbow("- Pg. #{@@page_count} -\n\n").purple
+        draw_page_count
 	end
 end

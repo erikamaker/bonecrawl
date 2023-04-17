@@ -32,6 +32,7 @@ class Gamepiece < Gameboard
     end
     def remove_from_board
         @minimap = [0]
+        remove_from_inventory
     end
     def remove_from_inventory
         @@inventory.delete(self)
@@ -51,6 +52,11 @@ class Gamepiece < Gameboard
             puts space + "#{key.capitalize} #{dots} #{value}"
         end
     end
+    def search_inventory(types)
+        types = Array(types)
+        @@inventory.find { |i| types.any? { |type| i.is_a?(type) } }
+    end
+
     def actions
         {
             view: MOVES[1],
@@ -226,17 +232,17 @@ class Burnable < Portable
     def out_of_fuel
         puts "	    - You're out of lighter fuel.\n\n"
     end
-    def lighter
-        lighter = @@inventory.find { |item| item.is_a?(Lighter) }
-    end
-    def fuel
-        fuel = @@inventory.find { |item| item.is_a?(Fuel) }
+    def got_fuel?
+        if search_inventory(Fuel).nil?
+            out_of_fuel
+        else use_lighter
+        end
     end
     def got_a_light?
-        if lighter.nil?
+        if search_inventory(Lighter).nil?
             puts "	   - There's isn't any fire here.\n\n"
         else
-            !fuel.nil? ? use_lighter : out_of_fuel
+            got_fuel?
         end
     end
     def use_lighter
@@ -245,7 +251,7 @@ class Burnable < Portable
         puts "	     It sparks a warm flame.\n\n"
         animate_combustion
         remove_from_board
-        @@inventory.find { |item| item.is_a?(Fuel) and @@inventory.delete(item) }
+        search_inventory(Fuel).remove_from_board
     end
     def burn
         if no_fire
@@ -387,8 +393,10 @@ class Character < Gamepiece
         puts "	   - This #{subtype[0]} isn't talking.\n\n"
     end
     def ask_for_desires
-        puts "	   - The #{subtype[0]} asks for your #{desires.targets[0]}.\n\n"
+        print Rainbow("	   - Offer your #{desires.targets[0]}?").cyan
+        print Rainbow("\n\n	     >>  ").red
         choice = gets.chomp
+        print "\n\n"
         if choice.eql?("yes")
             @@inventory.delete(desires)
             reward_animation
@@ -396,16 +404,6 @@ class Character < Gamepiece
         else
             puts "	   - 'Just leave me alone, then.\n\n'"
             become_friends
-        end
-    end
-    def default_script
-        if !@friends
-            puts "	   - It leers at you, dark pupils"
-            puts "	     flexing in its yellow eyes.\n\n"
-            ask_for_desires if interesting_cargo
-        else
-            puts "	   - Ayyyy, it's my favortie lighter"
-            puts "	     giving mortal.\n\n"
         end
     end
     def return_the_favor
@@ -448,8 +446,20 @@ class Hellion < Character
         puts "	     cherubs and trolls.\n\n"
     end
     def reward_animation
-        puts "	   - The north wall at [-1,9,1] is"
-        puts "	     false. Walk through it.\n\n"
+        puts Rainbow("	   - ' The north wall at [-1,9,1] is").orange
+        puts Rainbow("	     false. Walk through it. '\n\n").orange
+    end
+    def default_script
+        if !@friends
+            puts "	   - It leers at you, dark pupils"
+            puts "	     flexing in its yellow eyes."
+            puts "	     It bleats something about a"
+            puts "	     lost silver lighter.\n\n"
+            ask_for_desires if interesting_cargo
+        else
+            puts "	   - The demon says it can't pray,"
+            puts "	     but that maybe you should.\n\n"
+        end
     end
 end
 
