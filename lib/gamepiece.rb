@@ -8,9 +8,9 @@ class Gamepiece < Gameboard
     def draw_backdrop
         # Not all instances will have their
         # own backdrop. Some are hidden and
-        # will return nil in the engine.
+        # will return nil.
     end
-    def load_special_properties
+    def special_properties
         # For example, fruit spawners grow
         # fruit on a schedule. This is for
         # any ad hoc logic a specific piece
@@ -26,7 +26,7 @@ class Gamepiece < Gameboard
         @@state == :player_idle
     end
     def assemble
-        load_special_properties
+        special_properties
         player_near? ? reveal_targets : return
         player_idle? ? draw_backdrop : interact
     end
@@ -54,9 +54,12 @@ class Gamepiece < Gameboard
     end
     def search_inventory(types)
         types = Array(types)
-        @@inventory.find { |i| types.any? { |type| i.is_a?(type) } }
+        @@inventory.find do |item|
+            types.any? do |type|
+              item.is_a?(type)
+            end
+        end
     end
-
     def actions
         {
             view: MOVES[1],
@@ -162,7 +165,10 @@ class Edible < Portable
     def animate_ingestion
         puts Rainbow("	   - You eat the #{subtype[0]}, healing").orange
 		print Rainbow("	     #{heal_amount} heart").orange
-        heal_amount == 1 ? print(Rainbow(". ").orange) : print(Rainbow("s. ").orange)
+        if heal_amount == 1
+            print Rainbow(". ").orange
+        else print Rainbow("s. ").orange
+        end
     end
     def remove_portion
         profile[:portions] -= 1
@@ -176,7 +182,6 @@ class Edible < Portable
         else
             print "You finish it.\n\n"
             remove_from_board
-            remove_from_inventory
         end
 	end
     def heal_player
@@ -212,7 +217,10 @@ class Drink < Edible
     def animate_ingestion
         puts "	   - You drink the #{subtype[0]}, healing"
 		print "	     #{heal_amount} heart"
-        heal_amount == 1 ? print(". ") : print("s. ")
+        if heal_amount == 1
+            print(". ")
+        else print("s. ")
+        end
     end
 end
 
@@ -251,7 +259,7 @@ class Burnable < Portable
         puts "	     It sparks a warm flame.\n\n"
         animate_combustion
         remove_from_board
-        search_inventory(Fuel).remove_from_board
+        search_inventory(Fuel).remove_from_inventory
     end
     def burn
         if no_fire
@@ -335,7 +343,7 @@ class Pullable < Gamepiece
         @moveset = MOVES[1] | MOVES[5]
         @unpulled = true
     end
-    def load_special_properties
+    def special_properties
         content.assemble if !@unpulled
     end
     def toggle_state_pulled
@@ -369,97 +377,48 @@ class Character < Gamepiece
     def targets
         subtype | ["character","person","entity","soul"]         # TODO: add individual body parts to SPEECH
     end
-    def draw_backdrop                                            # Viewing this character should tell you a general description and also return its profile.
-        puts "	   - A #{subtype[0]} stands before you,\n"
-        puts "	     ready for testing.\n\n"
-    end
-    def load_special_properties
-        @profile[:carrying] = @content.targets[0]
-    end
     def become_hostile
         @hostile = true
     end
-    def no_longer_hostile
-        @hostile = false
-    end
     def become_friends
+        @hostile = false
         @friends = true
     end
-    def interesting_cargo
-        wants = @@inventory.find { |item| item.targets == desires.targets }
-        wants.nil? ? false : true
-    end
-    def hostile_script
-        puts "	   - This #{subtype[0]} isn't talking.\n\n"
+    def wanted_cargo
+        @@inventory.find { |item| item.targets == desires.targets }
     end
     def ask_for_desires
-        print Rainbow("	   - Offer your #{desires.targets[0]}?").cyan
-        print Rainbow("\n\n	     >>  ").red
+        print Rainbow("	   - Offer your #{desires.targets[0]}?\n").cyan
+        print Rainbow("	     >>  ").purple
         choice = gets.chomp
-        print "\n\n"
+        print "\n"
         if choice.eql?("yes")
-            @@inventory.delete(desires)
-            reward_animation
-            become_friends
+            exchange_gifts
         else
-            puts "	   - 'Just leave me alone, then.\n\n'"
-            become_friends
+           puts "INSERT BATTLE ANIMATION \n\n"
         end
     end
-    def return_the_favor
-        puts "	   - As a token of your new alliance,"
-        puts "	     They hand you a #{content}.\n\n"
-        @content.assemble
-        @content.minimap = minimap
+    def exchange_gifts
+        reward_animation
+        puts "	   - To help you on your journey,"
+        puts "	     you're given a #{@content.targets[0]}.\n\n"
         @content.take
+        wanted_cargo.remove_from_inventory
+        become_friends
     end
-    def accept_player_gift
-        puts "	   - The #{@subtype[0]} graciously thanks"
-        puts "	     you for the kindness.\n\n"
-        return_the_favor
+    def full_script
+        if !@friends
+            default_script
+            ask_for_desires if wanted_cargo
+        else
+           friendly_script
+        end
     end
     def talk
-        if @hostile
-            hostile_script
-        else
-            default_script  # This should change based on their friendship
-        end
+        @hostile ? hostile_script : full_script
     end
 end
 
 
 
-
-class Hellion < Character
-    def initialize
-        super
-        @desires = Lighter.new
-        @profile = {:attack => 2, :defense => 2, :hostile => @hostile}
-    end
-    def subtype
-        ["hellion","goat","monster","enemy","demon","daemon"]
-    end
-    def description
-        puts "	   - It's a hellion. Goat-like in"
-        puts "	     its appearance, these demons"
-        puts "	     were the bastard children of"
-        puts "	     cherubs and trolls.\n\n"
-    end
-    def reward_animation
-        puts Rainbow("	   - ' The north wall at [-1,9,1] is").orange
-        puts Rainbow("	     false. Walk through it. '\n\n").orange
-    end
-    def default_script
-        if !@friends
-            puts "	   - It leers at you, dark pupils"
-            puts "	     flexing in its yellow eyes."
-            puts "	     It bleats something about a"
-            puts "	     lost silver lighter.\n\n"
-            ask_for_desires if interesting_cargo
-        else
-            puts "	   - The demon says it can't pray,"
-            puts "	     but that maybe you should.\n\n"
-        end
-    end
-end
 

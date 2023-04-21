@@ -30,7 +30,7 @@ stats = Identification.new
 
 tom = Hellion.new
 tom.minimap = [[0,1,2]]
-tom.content = Knife3.new
+tom.content = [Apple.new,Berry.new,Bread.new].sample
 
 
 room_1 = Dungeon.new

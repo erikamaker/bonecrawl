@@ -234,7 +234,7 @@ class Door < Container
     def needkey
         true
     end
-    def load_special_properties
+    def special_properties
         if state.eql?("jammed open")
             content.assemble
         end
@@ -486,7 +486,7 @@ class Tiles < Fixture
     def view
         overview
     end
-    def load_special_properties
+    def special_properties
         @@world_map |= minimap
         @@encounters.include?("vein") and moveset | MOVES[12]
     end
@@ -819,7 +819,11 @@ class GrowingFruit < Edible
             []
         end
     end
-    def load_special_properties
+    def feed
+        puts Rainbow("	   - You take one to eat later.\n").orange
+        push_to_inventory
+    end
+    def special_properties
         harvest_cycle
         assign_profile
     end
@@ -833,9 +837,6 @@ class GrowingFruit < Edible
             @profile = @group[0].profile
         end
     end
-    def remove_from_board
-        @group.clear if last_bite?
-    end
     def any_fruit?
         (@group.count) > 0 and (@group[0].profile[:portions] > 0)
     end
@@ -843,8 +844,9 @@ class GrowingFruit < Edible
         @group.count == 1
     end
     def last_bite?
-        print @group
-        @group[0].profile[:portions] == 0
+        if @group.count.eql?(1)
+            @group[0].profile[:portions] == 0
+        end
     end
     def none_left?
         @group.count == 0
@@ -1431,4 +1433,52 @@ class GoldRing < Ring  # Requires 1 silver
         puts "	   - A simple golden ring lays on"
 		puts "	     the dirty ground.\n\n"
     end
+end
+
+
+##############################################################################################################################################################################################################################################################
+#####    CHARACTERS     ######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+
+class Hellion < Character
+    def initialize
+        super
+        @desires = Lighter.new
+        @profile = {:attack => 2, :defense => 2, :hostile => @hostile}
+    end
+    def subtype
+        ["hellion","goat","monster","enemy","demon","daemon"]
+    end
+    def draw_backdrop                                            # Viewing this character should tell you a general description and also return its profile.
+        puts "	   - A dark hellion stands on two\n"
+        puts "	     cloven hooves. It stinks.\n\n"
+    end
+    def hostile_script
+        puts "	   - Its black pupils quiver with"
+        puts "	     rage. It looks rabid.\n\n"
+    end
+    def description
+        puts "	   - It's a hellion. Goat-like in"
+        puts "	     its appearance, these demons"
+        puts "	     were the bastard children of"
+        puts "	     cherubs and trolls.\n\n"
+    end
+    def reward_animation
+        puts "	   - The hellion lowers its voice."
+        puts "	     It barely whispers a rumor...\n\n"
+        puts Rainbow("	     There's a third cell lost to").orange
+        puts Rainbow("	     the ages on this floor.\n").orange
+    end
+    def default_script
+        puts "	   - It leers at you, dark pupils"
+        puts "	     flexing in its yellow eyes."
+        puts "	     It says it lost its lighter.\n\n"
+    end
+    def friendly_script
+        puts "	   - It says this place isn't all"
+        puts "	     that it seems. Be vigilant.\n\n"
+    end
+
 end

@@ -100,7 +100,7 @@ class Position < Gameboard
         if directions.include?(@@target)
             reposition_player
         else
-            no_direction_detected
+            no_direction_detected           # FIX THIS
         end
     end
     def detect_movement
@@ -191,10 +191,10 @@ class Interface < Gameboard
 			puts "	     few short words, referencing"
 			puts "	     only one subject per page.\n\n"
 			puts Rainbow("	     Slay the troll.").red
-			puts Rainbow("	     Open my inventory.").yellow
+			puts Rainbow("	     View my items.").yellow
 			puts Rainbow("	     Eat some bread.").green
 			puts Rainbow("	     Go west of here.").blue
-			puts Rainbow("	     Check my stats.\n").indigo
+			puts Rainbow("	     Read my journal.\n").indigo
             print Rainbow("	   - Move ").cyan
             print "one adjacent tile using\n"
             print Rainbow("	     north").orange + ", "
@@ -204,7 +204,9 @@ class Interface < Gameboard
 			print "	   - Press "
             print Rainbow("return").cyan
 			puts " for the current"
-            puts "	     coordinate's list of targets.\n\n"
+            puts "	     coordinate's list of targets,"
+            puts "	     or to quickly pass time.\n\n"
+
 		end
     end
     def bigmap
