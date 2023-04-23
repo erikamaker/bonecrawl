@@ -66,7 +66,7 @@ class Gameboard
         x = @@player_stats[:heart]
         y = @@player_stats[:block]
         x - (magnitude - y)
-        @@player_stats[:heart] = x
+        @@player_stats[:heart] -= x
     end
     def turn_page
         reset_sightline
@@ -74,9 +74,13 @@ class Gameboard
         toggle_idle
     end
     def game_over
-        puts @@player_stats[:heart]
         if @@player_stats[:heart] < 1
-            print "GAME OVER"
+            sleep 2
+            puts "	   - Hearts expired, you collapse"
+            puts "	     where you stand.\n\n\n\n"
+            print Rainbow("---------------------------------------------------------").red
+            print Rainbow("[     - SPIRIT x x x x  -   ╱   - HEARTS x x x x  -     ]").red
+            print Rainbow("---------------------------------------------------------\n\n\n").red
             sleep 3
             exit!
         end

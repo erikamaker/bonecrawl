@@ -430,6 +430,7 @@ class Character < Gamepiece
     def special_properties
         return if !player_near?
         return if !@hostile
+        draw_backdrop
         puts "	   - The demon strikes to attack"
         unique_attack_script
         attack_outcome
