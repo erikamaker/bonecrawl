@@ -371,40 +371,24 @@ class Character < Gamepiece
     def initialize
         @moveset = MOVES[1] | MOVES[6..8].flatten
         @hostile = false
-        @desires = desires
         @friends = false
+        @desires = desires
     end
     def targets
-        subtype | ["character","person","entity","soul"]         # TODO: add individual body parts to SPEECH
+        subtype | ["character","person","entity","soul"]         # TODO: add individual body parts to SPEECH?
+    end
+    def update_profile
+        @profile[:hostile] = @hostile
     end
     def become_hostile
         @hostile = true
+        @profile[:hostile] = @hostile
+        update_profile
     end
     def become_friends
         @hostile = false
         @friends = true
-    end
-    def wanted_cargo
-        @@inventory.find { |item| item.targets == desires.targets }
-    end
-    def ask_for_desires
-        print Rainbow("	   - Offer your #{desires.targets[0]}?\n").cyan
-        print Rainbow("	     >>  ").purple
-        choice = gets.chomp
-        print "\n"
-        if choice.eql?("yes")
-            exchange_gifts
-        else
-           puts "INSERT BATTLE ANIMATION \n\n"
-        end
-    end
-    def exchange_gifts
-        reward_animation
-        puts "	   - To help you on your journey,"
-        puts "	     you're given a #{@content.targets[0]}.\n\n"
-        @content.take
-        wanted_cargo.remove_from_inventory
-        become_friends
+        update_profile
     end
     def full_script
         if !@friends
@@ -416,6 +400,49 @@ class Character < Gamepiece
     end
     def talk
         @hostile ? hostile_script : full_script
+    end
+    def wanted_cargo
+        @@inventory.find { |item| item.targets == desires.targets }
+    end
+    def hit_chance
+        rand(@profile[:focus]..3)
+    end
+    def ask_for_desires
+        print Rainbow("	   - Give your #{@desires.targets[0]}?\n").cyan
+        print Rainbow("	     Yes / No  >>  ").purple
+        choice = gets.chomp
+        print "\n"
+        if choice.eql?("yes")
+            exchange_gifts
+        else
+            hostile_script
+            become_hostile
+        end
+    end
+    def exchange_gifts
+        reward_animation
+        puts "	   - To help you on your journey,"
+        puts "	     you're given 1 #{@content.targets[0]}.\n\n"
+        @content.take
+        wanted_cargo.remove_from_inventory
+        become_friends
+    end
+    def special_properties
+        return if !player_near?
+        return if !@hostile
+        puts "	   - The demon strikes to attack"
+        unique_attack_script
+        attack_outcome
+    end
+    def attack_outcome
+        if hit_chance.eql?(3)
+            start = @@player_stats[:heart]
+            damage_player(@profile[:attack])
+            total = start - damage_player(@profile[:attack])
+            puts Rainbow("	   - It costs you #{total} heart points.\n").red
+        else
+            puts Rainbow("	   - You narrowly avoid its blow.\n").green
+        end
     end
 end
 

@@ -28,9 +28,9 @@ stats = Identification.new
 ##############################################################################################################################################################################################################################################################
 
 
-tom = Hellion.new
-tom.minimap = [[0,1,2]]
-tom.content = [Apple.new,Berry.new,Bread.new].sample
+cpu1 = Hellion.new
+cpu1.minimap = [[0,1,2]]
+cpu1.content = [Apple.new,Berry.new,Bread.new,RedFlower.new].sample
 
 
 room_1 = Dungeon.new
@@ -166,7 +166,7 @@ apples = AppleSpawner.new
 apples.minimap = [[0,6,-4]]
 
 
-level_1 = [ room_1, tom, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, door_3, tree, apples, torch_1, pull_1, table_1, food_1, pick_1, drug_1 ]
+levels = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, cpu1, door_3, tree, apples, torch_1, pull_1, table_1, food_1, pick_1, drug_1 ]
 
 
 ##############################################################################################################################################################################################################################################################
@@ -181,8 +181,9 @@ loop do
     console.tutorial_screen
     console.suggest_tutorial
     location.detect_movement
-    level_1.each { |piece| piece.assemble }
+    levels.each { |piece| piece.assemble }
     rucksack.assemble
     console.no_target
+    console.game_over
     console.page_bottom
 end

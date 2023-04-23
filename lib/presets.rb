@@ -820,8 +820,7 @@ class GrowingFruit < Edible
         end
     end
     def feed
-        puts Rainbow("	   - You take one to eat later.\n").orange
-        push_to_inventory
+        take
     end
     def special_properties
         harvest_cycle
@@ -866,7 +865,8 @@ class GrowingFruit < Edible
     end
     def take
         view
-        puts Rainbow("	   - You pluck one from the tree. \n").orange
+        puts Rainbow("	   - You pluck one from the tree").orange
+        puts Rainbow("	     to eat later.\n").orange
         @@inventory.push(@group[0])
         @group.delete(@group[0])
     end
@@ -1236,7 +1236,7 @@ class RedFlower < Blossom
 		@profile = { :effect => :sedation, :defense => 2 , :attack => -1, :duration => '10 pages'}
 	end
     def subtype
-		["crimson flower","crimson","red"]
+		["blood flower","crimson","red"]
 	end
 	def description
 		puts "	   - When burned, it's a powerful"
@@ -1446,7 +1446,7 @@ class Hellion < Character
     def initialize
         super
         @desires = Lighter.new
-        @profile = {:attack => 2, :defense => 2, :hostile => @hostile}
+        @profile = {:attack => 2, :defense => 2, :focus => 1, :hostile => @hostile}
     end
     def subtype
         ["hellion","goat","monster","enemy","demon","daemon"]
@@ -1458,6 +1458,9 @@ class Hellion < Character
     def hostile_script
         puts "	   - Its black pupils quiver with"
         puts "	     rage. It looks rabid.\n\n"
+    end
+    def unique_attack_script
+        puts "	     with a butcher's cleaver.\n\n"
     end
     def description
         puts "	   - It's a hellion. Goat-like in"
@@ -1480,5 +1483,4 @@ class Hellion < Character
         puts "	   - It says this place isn't all"
         puts "	     that it seems. Be vigilant.\n\n"
     end
-
 end

@@ -12,6 +12,8 @@ class Gameboard
         @@page_count = 0
         @@player_stats = {
             :heart => 1,
+            :block => 0,
+            :focus => 0,
             :souls => 0,
             :slays => 0,
             :bones => 0,
@@ -60,10 +62,24 @@ class Gameboard
     def decrement_page(count)
         @@page_count -= count
     end
+    def damage_player(magnitude)
+        x = @@player_stats[:heart]
+        y = @@player_stats[:block]
+        x - (magnitude - y)
+        @@player_stats[:heart] = x
+    end
     def turn_page
         reset_sightline
         increment_page(1)
         toggle_idle
+    end
+    def game_over
+        puts @@player_stats[:heart]
+        if @@player_stats[:heart] < 1
+            print "GAME OVER"
+            sleep 3
+            exit!
+        end
     end
 end
 
