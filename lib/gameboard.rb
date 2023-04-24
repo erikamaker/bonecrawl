@@ -11,9 +11,9 @@ class Gameboard
         @@encounters = []
         @@page_count = 0
         @@player_stats = {
-            :heart => 1,
+            :heart => 4,
             :block => 0,
-            :focus => 0,
+            :focus => 1,
             :souls => 0,
             :slays => 0,
             :bones => 0,
@@ -62,28 +62,10 @@ class Gameboard
     def decrement_page(count)
         @@page_count -= count
     end
-    def damage_player(magnitude)
-        x = @@player_stats[:heart]
-        y = @@player_stats[:block]
-        x - (magnitude - y)
-        @@player_stats[:heart] -= x
-    end
     def turn_page
         reset_sightline
         increment_page(1)
         toggle_idle
-    end
-    def game_over
-        if @@player_stats[:heart] < 1
-            sleep 2
-            puts "	   - Hearts expired, you collapse"
-            puts "	     where you stand.\n\n\n\n"
-            print Rainbow("---------------------------------------------------------").red
-            print Rainbow("[     - SPIRIT x x x x  -   ╱   - HEARTS x x x x  -     ]").red
-            print Rainbow("---------------------------------------------------------\n\n\n").red
-            sleep 3
-            exit!
-        end
     end
 end
 
@@ -263,4 +245,18 @@ class Interface < Gameboard
         draw_map
         draw_page_count
 	end
+    def game_over
+        if @@player_stats[:heart] < 1
+            puts "	   - Hearts expired, you collapse"
+            puts "	     where you stand. A clamor of"
+            puts "	     demonic hands drag your soul"
+            puts "	     back to its assigned dungeon.\n\n"
+            page_bottom
+            puts "\n"
+            print Rainbow("---------------------------------------------------------").red
+            print Rainbow("[     - SPIRIT x x x x  -   ╱   - HEARTS x x x x  -     ]").red
+            print Rainbow("---------------------------------------------------------\n\n\n").red
+            exit!
+        end
+    end
 end

@@ -325,8 +325,6 @@ class Container < Gamepiece
     end
     def give_content
         animate_opening
-        content.minimap = minimap
-        content.assemble
         content.take
     end
 end
@@ -390,28 +388,29 @@ class Character < Gamepiece
         @friends = true
         update_profile
     end
-    def full_script
-        if !@friends
-            default_script
-            ask_for_desires if wanted_cargo
+    def conversation
+        if @friends
+            unlocked_script
         else
-           friendly_script
+            default_script
+            barter if player_leverage
         end
     end
     def talk
-        @hostile ? hostile_script : full_script
+        if @hostile
+            hostile_script
+        else conversation
+        end
     end
-    def wanted_cargo
-        @@inventory.find { |item| item.targets == desires.targets }
+    def player_leverage
+        @@inventory.find do |item|
+            item.targets == desires.targets
+        end
     end
     def hit_chance
         rand(@profile[:focus]..3)
     end
-    def ask_for_desires
-        print Rainbow("	   - Give your #{@desires.targets[0]}?\n").cyan
-        print Rainbow("	     Yes / No  >>  ").purple
-        choice = gets.chomp
-        print "\n"
+    def bartering_outcome(choice)
         if choice.eql?("yes")
             exchange_gifts
         else
@@ -419,27 +418,61 @@ class Character < Gamepiece
             become_hostile
         end
     end
+    def barter
+        print Rainbow("	   - Trade your #{@desires.targets[0]}?\n").cyan
+        print Rainbow("	     Yes / No  >>  ").purple
+        choice = gets.chomp
+        print "\n"
+        bartering_outcome(choice)
+    end
     def exchange_gifts
         reward_animation
-        puts "	   - To help you on your journey,"
-        puts "	     you're given 1 #{@content.targets[0]}.\n\n"
-        @content.take
-        wanted_cargo.remove_from_inventory
+        reward = @content.sample
+        puts Rainbow("	   - To help you on your journey,").orange
+        puts Rainbow("	     you're given 1 #{reward.targets[0]}.\n").orange
+        reward.take
+        @content.push(player_leverage)
+        player_leverage.remove_from_inventory
         become_friends
     end
     def special_properties
-        return if !player_near?
-        return if !@hostile
-        draw_backdrop
-        puts "	   - The demon strikes to attack"
+        if @profile[:hearts] == 0
+            puts Rainbow("	   - You defeat the hellion.\n\n").green
+            @contents.each { |i| i.take }
+            remove_from_board
+        end
+    end
+    def assemble
+        special_properties
+        player_near? ? reveal_targets : return
+        player_idle? ? draw_backdrop : interact
+        demon_attack if @hostile
+    end
+    def demon_attack
+        puts Rainbow("	   - The demon strikes to attack").orange
         unique_attack_script
         attack_outcome
+    end
+    def damage_player(magnitude)
+        x = @@player_stats[:heart]
+        y = @@player_stats[:block]
+        x - (magnitude - y)
+       # @@player_stats[:heart] -= x
+    end
+    def harm
+        chance = rand(@@player_stats[:focus]..1)
+        puts Rainbow("	   - You move to strike the demon.").orange
+        become_hostile
+        #return if chance < 3
+        puts Rainbow("	     You hit it! #{@profile[:hearts]} left.\n\n").green
+
+        @profile[:hearts] -= 1 # update this to reflect an actual value
     end
     def attack_outcome
         if hit_chance.eql?(3)
             start = @@player_stats[:heart]
             damage_player(@profile[:attack])
-            total = start - damage_player(@profile[:attack])
+            total = start - damage_player(1)
             puts Rainbow("	   - It costs you #{total} heart points.\n").red
         else
             puts Rainbow("	   - You narrowly avoid its blow.\n").green

@@ -1446,12 +1446,12 @@ class Hellion < Character
     def initialize
         super
         @desires = Lighter.new
-        @profile = {:attack => 2, :defense => 2, :focus => 1, :hostile => @hostile}
+        @profile = {:attack => 2, :defense => 2, :hearts => 4, :focus => 1, :hostile => @hostile}
     end
     def subtype
         ["hellion","goat","monster","enemy","demon","daemon"]
     end
-    def draw_backdrop                                            # Viewing this character should tell you a general description and also return its profile.
+    def draw_backdrop
         puts "	   - A dark hellion stands on two\n"
         puts "	     cloven hooves. It stinks.\n\n"
     end
@@ -1460,7 +1460,7 @@ class Hellion < Character
         puts "	     rage. It looks rabid.\n\n"
     end
     def unique_attack_script
-        puts "	     with a butcher's cleaver.\n\n"
+        puts Rainbow("	     with a butcher's cleaver.\n").orange
     end
     def description
         puts "	   - It's a hellion. Goat-like in"
@@ -1471,15 +1471,15 @@ class Hellion < Character
     def reward_animation
         puts "	   - The hellion lowers its voice."
         puts "	     It barely whispers a rumor...\n\n"
-        puts Rainbow("	     There's a third cell lost to").orange
-        puts Rainbow("	     the ages on this floor.\n").orange
+        puts Rainbow("	     There's a third cell lost to").green
+        puts Rainbow("	     the ages on this floor.\n").green
     end
     def default_script
         puts "	   - It leers at you, dark pupils"
         puts "	     flexing in its yellow eyes."
         puts "	     It says it lost its lighter.\n\n"
     end
-    def friendly_script
+    def unlocked_script
         puts "	   - It says this place isn't all"
         puts "	     that it seems. Be vigilant.\n\n"
     end
