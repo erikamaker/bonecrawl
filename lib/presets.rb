@@ -1445,8 +1445,9 @@ end
 class Hellion < Character
     def initialize
         super
+        @content = [Apple.new,Berry.new,Bread.new,RedFlower.new]
         @desires = Lighter.new
-        @profile = {:attack => 2, :defense => 2, :hearts => 4, :focus => 1, :hostile => @hostile}
+        @profile = {:attack => 5, :defense => 2, :hearts => 4, :focus => 1, :hostile => @hostile}
     end
     def subtype
         ["hellion","goat","monster","enemy","demon","daemon"]

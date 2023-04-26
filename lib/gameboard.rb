@@ -25,6 +25,16 @@ class Gameboard
             :speech => 0
         }
     end
+    def damage_player(magnitude)
+        heart = @@player_stats[:heart]
+        block = @@player_stats[:block]
+        total = (heart + block) - magnitude
+        total = 1 if total < 1
+        @@player_stats[:heart] -= total
+    end
+    def player_focus
+        rand(@@player_stats[:focus]..4)
+    end
     def action_select
         prompt_player
         process_input
@@ -247,10 +257,14 @@ class Interface < Gameboard
 	end
     def game_over
         if @@player_stats[:heart] < 1
-            puts "	   - Hearts expired, you collapse"
-            puts "	     where you stand. A clamor of"
+            sleep 2
+
+            puts Rainbow("	   - Hearts expired, you collapse").purple
+            print Rainbow("	     where you stand. ").purple
+            puts "A clamor of"
             puts "	     demonic hands drag your soul"
             puts "	     back to its assigned dungeon.\n\n"
+            sleep 2
             page_bottom
             puts "\n"
             print Rainbow("---------------------------------------------------------").red

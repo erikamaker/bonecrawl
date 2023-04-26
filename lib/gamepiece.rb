@@ -437,8 +437,8 @@ class Character < Gamepiece
     end
     def special_properties
         if @profile[:hearts] == 0
-            puts Rainbow("	   - You defeat the hellion.\n\n").green
-            @contents.each { |i| i.take }
+            puts Rainbow("	   - You defeat the hellion.\n\n").purple
+            @content.each { |item| item.take }
             remove_from_board
         end
     end
@@ -453,33 +453,25 @@ class Character < Gamepiece
         unique_attack_script
         attack_outcome
     end
-    def damage_player(magnitude)
-        x = @@player_stats[:heart]
-        y = @@player_stats[:block]
-        x - (magnitude - y)
-       # @@player_stats[:heart] -= x
-    end
     def harm
-        chance = rand(@@player_stats[:focus]..1)
+        chance = rand(@@player_stats[:focus]..4)
         puts Rainbow("	   - You move to strike the demon.").orange
         become_hostile
         #return if chance < 3
-        puts Rainbow("	     You hit it! #{@profile[:hearts]} left.\n\n").green
-
+        puts Rainbow("	     You hit it! #{@profile[:hearts]} hearts remain.\n").green
         @profile[:hearts] -= 1 # update this to reflect an actual value
+        hostile_script
     end
     def attack_outcome
         if hit_chance.eql?(3)
             start = @@player_stats[:heart]
-            damage_player(@profile[:attack])
-            total = start - damage_player(1)
+            print damage_player(@profile[:attack])
+            total = start - @@player_stats[:heart]
             puts Rainbow("	   - It costs you #{total} heart points.\n").red
         else
             puts Rainbow("	   - You narrowly avoid its blow.\n").green
         end
     end
 end
-
-
 
 

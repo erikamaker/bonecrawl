@@ -30,7 +30,6 @@ stats = Identification.new
 
 cpu1 = Hellion.new
 cpu1.minimap = [[0,1,2]]
-cpu1.content = [Apple.new,Berry.new,Bread.new,RedFlower.new]
 
 
 room_1 = Dungeon.new
