@@ -435,37 +435,48 @@ class Character < Gamepiece
         player_leverage.remove_from_inventory
         become_friends
     end
-    def special_properties
-        if @profile[:hearts] == 0
-            puts Rainbow("	   - You defeat the hellion.\n\n").purple
-            @content.each { |item| item.take }
-            remove_from_board
-        end
-    end
     def assemble
-        special_properties
         player_near? ? reveal_targets : return
         player_idle? ? draw_backdrop : interact
-        demon_attack if @hostile
+        if @profile[:hearts] > 1
+            demon_attack if @hostile
+        end
+
     end
     def demon_attack
         puts Rainbow("	   - The demon strikes to attack").orange
         unique_attack_script
         attack_outcome
     end
+    def list_rewards
+        @content.each {|item| puts "	       - 1 #{item.targets[0]}"}
+    end
+    def take_everything
+        @content.each { |item| item.push_to_inventory }
+    end
+    def demon_death
+        if @profile[:hearts] < 1
+            puts Rainbow("	     The demon is slain. It drops\n").purple
+            list_rewards
+            take_everything
+            remove_from_board
+        end
+    end
+
     def harm
-        chance = rand(@@player_stats[:focus]..4)
+        #chance = rand(@@player_stats[:focus]..4)
         puts Rainbow("	   - You move to strike the demon.").orange
         become_hostile
-        #return if chance < 3
-        puts Rainbow("	     You hit it! #{@profile[:hearts]} hearts remain.\n").green
         @profile[:hearts] -= 1 # update this to reflect an actual value
+        puts Rainbow("	     You hit it! #{@profile[:hearts]} hearts remain.\n").green
         hostile_script
+        demon_death
+
+
     end
     def attack_outcome
         if hit_chance.eql?(3)
             start = @@player_stats[:heart]
-            print damage_player(@profile[:attack])
             total = start - @@player_stats[:heart]
             puts Rainbow("	   - It costs you #{total} heart points.\n").red
         else
