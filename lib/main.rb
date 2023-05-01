@@ -30,6 +30,10 @@ stats = Identification.new
 
 cpu1 = Hellion.new
 cpu1.minimap = [[0,1,2]]
+def cpu1.unique_bartering_script
+    puts "	   - It asks if it can have yours,"
+    print "	     in exchange for a secret.\n\n"
+end
 
 
 room_1 = Dungeon.new

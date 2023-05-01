@@ -375,55 +375,51 @@ class Character < Gamepiece
     def targets
         subtype | ["character","person","entity","soul"]         # TODO: add individual body parts to SPEECH?
     end
-    def update_profile
-        @profile[:hostile] = @hostile
+    def demon_is_alive
+        @profile[:hearts] > 0
+    end
+    def demon_is_slain
+        @profile[:hearts] < 1
     end
     def become_hostile
         @hostile = true
-        @profile[:hostile] = @hostile
-        update_profile
+        hostile_script
     end
     def become_friends
         @hostile = false
         @friends = true
-        update_profile
     end
-    def conversation
-        if @friends
-            unlocked_script
-        else
-            default_script
-            barter if player_leverage
-        end
-    end
-    def talk
-        if @hostile
-            hostile_script
-        else conversation
-        end
-    end
-    def player_leverage
+    def player_has_leverage
         @@inventory.find do |item|
             item.targets == desires.targets
         end
     end
-    def hit_chance
-        rand(@profile[:focus]..3)
+    def talk
+        if @hostile
+            puts "	   - It's in no mood to socialize.\n\n"
+        else conversation
+        end
+    end
+    def conversation
+        @friends ? unlocked_script : business_as_usual
+    end
+    def business_as_usual
+        default_script
+        barter if player_has_leverage
+    end
+    def barter
+        unique_bartering_script
+        print Rainbow("	     Yes / No  >>  ").purple
+        choice = gets.chomp
+        print "\n"
+        bartering_outcome(choice)
     end
     def bartering_outcome(choice)
         if choice.eql?("yes")
             exchange_gifts
         else
-            hostile_script
             become_hostile
         end
-    end
-    def barter
-        print Rainbow("	   - Trade your #{@desires.targets[0]}?\n").cyan
-        print Rainbow("	     Yes / No  >>  ").purple
-        choice = gets.chomp
-        print "\n"
-        bartering_outcome(choice)
     end
     def exchange_gifts
         reward_animation
@@ -431,57 +427,82 @@ class Character < Gamepiece
         puts Rainbow("	   - To help you on your journey,").orange
         puts Rainbow("	     you're given 1 #{reward.targets[0]}.\n").orange
         reward.take
-        @content.push(player_leverage)
-        player_leverage.remove_from_inventory
+        @content.push(@desires)
+        @desires.remove_from_inventory
         become_friends
+    end
+    def demon_chance
+        rand(@profile[:focus]..2) == 2
+    end
+    def player_chance
+        rand(@@player_stats[:focus]..2) == 2
+    end
+    def player_hits_demon
+        @profile[:hearts] -= 1 # update this to reflect the weapon's value
+        print Rainbow("	     You hit it. #{@profile[:hearts]} heart").green
+        print Rainbow("s").green if @profile[:hearts] != 1
+        print Rainbow(" remain").green
+        print Rainbow("s").green if @profile[:hearts] == 1
+        print Rainbow(".\n\n").green
+
+    end
+    def player_misses_demon
+        puts Rainbow("	     The demon dodges your attack.\n").red
+    end
+    def special_properties
+        @profile[:hostile] = @hostile
+        if demon_is_alive
+            demon_attack
+        end
     end
     def assemble
         player_near? ? reveal_targets : return
         player_idle? ? draw_backdrop : interact
-        if @profile[:hearts] > 1
-            demon_attack if @hostile
+        special_properties
+    end
+    def harm
+        # choose_your_weapon
+        # player_attack_outcome
+        puts Rainbow("	   - You move to strike the demon.").orange
+        if player_chance
+            player_hits_demon
+            become_hostile if demon_is_alive
+            demon_death_scene if demon_is_slain
+        else player_misses_demon
+            become_hostile
         end
-
     end
     def demon_attack
-        puts Rainbow("	   - The demon strikes to attack").orange
-        unique_attack_script
-        attack_outcome
-    end
-    def list_rewards
-        @content.each {|item| puts "	       - 1 #{item.targets[0]}"}
-    end
-    def take_everything
-        @content.each { |item| item.push_to_inventory }
-    end
-    def demon_death
-        if @profile[:hearts] < 1
-            puts Rainbow("	     The demon is slain. It drops\n").purple
-            list_rewards
-            take_everything
-            remove_from_board
+        if @hostile
+            puts Rainbow("	   - The demon strikes to attack").orange
+            unique_attack_script
+            attack_outcome
         end
     end
-
-    def harm
-        #chance = rand(@@player_stats[:focus]..4)
-        puts Rainbow("	   - You move to strike the demon.").orange
-        become_hostile
-        @profile[:hearts] -= 1 # update this to reflect an actual value
-        puts Rainbow("	     You hit it! #{@profile[:hearts]} hearts remain.\n").green
-        hostile_script
-        demon_death
-
-
-    end
     def attack_outcome
-        if hit_chance.eql?(3)
-            start = @@player_stats[:heart]
-            total = start - @@player_stats[:heart]
+        if demon_chance
+            total = @@player_stats[:heart] - damage_player(@profile[:attack])
             puts Rainbow("	   - It costs you #{total} heart points.\n").red
         else
             puts Rainbow("	   - You narrowly avoid its blow.\n").green
         end
+    end
+    def demon_death_scene
+        if @profile[:hearts] == 0
+            puts Rainbow("	   - The demon is slain. It drops:\n").purple
+            list_rewards
+            take_everything
+            remove_from_board
+            puts Rainbow("	   - You stuff the spoils of this").orange
+            puts Rainbow("	     victory in your rucksack.\n").orange
+        end
+    end
+    def list_rewards
+        @content.each {|item| puts "	       - 1 #{item.targets[0]}"}
+        puts "\n"
+    end
+    def take_everything
+        @content.each { |item| item.push_to_inventory }
     end
 end
 

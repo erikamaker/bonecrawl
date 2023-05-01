@@ -28,8 +28,7 @@ class Gameboard
     def damage_player(magnitude)
         heart = @@player_stats[:heart]
         block = @@player_stats[:block]
-        total = (heart + block) - magnitude
-        total = 1 if total < 1
+        total = magnitude - block
         @@player_stats[:heart] -= total
     end
     def player_focus
@@ -260,10 +259,10 @@ class Interface < Gameboard
             sleep 2
 
             puts Rainbow("	   - Hearts expired, you collapse").purple
-            print Rainbow("	     where you stand. ").purple
-            puts "A clamor of"
-            puts "	     demonic hands drag your soul"
-            puts "	     back to its assigned dungeon.\n\n"
+            print Rainbow("	     where you stand.\n\n").purple
+            sleep 2
+            puts "	   - A clamor of demons drag your"
+            puts "	     soul to its assigned cell.\n\n"
             sleep 2
             page_bottom
             puts "\n"

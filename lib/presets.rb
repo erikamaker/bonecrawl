@@ -1447,7 +1447,7 @@ class Hellion < Character
         super
         @content = [Apple.new,Berry.new,Bread.new,RedFlower.new]
         @desires = Lighter.new
-        @profile = {:attack => 5, :defense => 2, :hearts => 4, :focus => 1, :hostile => @hostile}
+        @profile = {:attack => 1, :defense => 2, :hearts => 4, :focus => 1, :hostile => @hostile}
     end
     def subtype
         ["hellion","goat","monster","enemy","demon","daemon"]
@@ -1472,8 +1472,8 @@ class Hellion < Character
     def reward_animation
         puts "	   - The hellion lowers its voice."
         puts "	     It barely whispers a rumor...\n\n"
-        puts Rainbow("	     There's a third cell lost to").green
-        puts Rainbow("	     the ages on this floor.\n").green
+        puts Rainbow("	   \" There's a third cell lost to").green
+        puts Rainbow("	     the ages on this floor. \"\n").green
     end
     def default_script
         puts "	   - It leers at you, dark pupils"
