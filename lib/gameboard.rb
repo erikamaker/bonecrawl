@@ -298,10 +298,7 @@ class Interface < Gameboard
             puts "	     soul to its assigned cell.\n\n"
             sleep 2
             page_bottom
-            puts "\n"
-            print Rainbow("---------------------------------------------------------").red
-            print Rainbow("[     - SPIRIT x x x x  -   ╱   - HEARTS x x x x  -     ]").red
-            print Rainbow("---------------------------------------------------------\n\n\n").red
+            puts "\n\n\n"
             exit!
         end
     end

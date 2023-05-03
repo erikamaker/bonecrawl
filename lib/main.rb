@@ -178,12 +178,20 @@ levels = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, cpu1
 
 
 loop do
-    system("clear")  # Clear the screen
-    console.turn_page
-    console.page_top
-    print "\e[?25h"  # Enable the blinking cursor again
+
+
+
+
 
     player.action_select
+    system("clear")  # Clear the screen
+    print Rainbow("\n---------------------------------------------------------\n").blue.bright
+    print Rainbow("[").blue.bright
+    print Rainbow("         - BONE CRAWL / ERIKA MAKER / 2019 © -         ").violet
+    print Rainbow("]").blue.bright
+    print Rainbow("\n---------------------------------------------------------").blue.bright
+
+    print "\n\n\n\n\n"
     console.tutorial_screen
     console.suggest_tutorial
     location.detect_movement
@@ -192,9 +200,14 @@ loop do
     console.no_target
     console.game_over
     console.page_bottom
+
+    console.page_top
+
+   # console.page_bottom
     console.turn_page
-    player.press_enter_to_continue
+
     print "\e[8;#{ENV['LINES']};#{ENV['COLUMNS']}t"  # Resize terminal window
+
 
   end
 
