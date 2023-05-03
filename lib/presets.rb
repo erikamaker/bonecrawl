@@ -1472,8 +1472,10 @@ class Hellion < Character
     def reward_animation
         puts "	   - The hellion lowers its voice."
         puts "	     It barely whispers a rumor...\n\n"
+        sleep 2
         puts Rainbow("	   \" There's a third cell lost to").green
         puts Rainbow("	     the ages on this floor. \"\n").green
+        sleep 2
     end
     def default_script
         puts "	   - It leers at you, dark pupils"

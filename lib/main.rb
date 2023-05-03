@@ -15,7 +15,6 @@ require './presets.rb'
 ##############################################################################################################################################################################################################################################################
 
 
-print "\e[8;57;57t"
 console = Interface.new
 player = Gameboard.new
 location = Position.new
@@ -177,9 +176,13 @@ levels = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, cpu1
 ##############################################################################################################################################################################################################################################################
 
 
+
 loop do
+    system("clear")  # Clear the screen
     console.turn_page
     console.page_top
+    print "\e[?25h"  # Enable the blinking cursor again
+
     player.action_select
     console.tutorial_screen
     console.suggest_tutorial
@@ -189,4 +192,10 @@ loop do
     console.no_target
     console.game_over
     console.page_bottom
-end
+    console.turn_page
+    player.press_enter_to_continue
+    print "\e[8;#{ENV['LINES']};#{ENV['COLUMNS']}t"  # Resize terminal window
+
+  end
+
+

@@ -25,6 +25,29 @@ class Gameboard
             :speech => 0
         }
     end
+    def remove_from_board
+        @minimap = [0]
+        remove_from_inventory
+    end
+    def remove_from_inventory
+        @@inventory.delete(self)
+    end
+    def search_inventory(types)
+        types = Array(types)
+        @@inventory.find do |item|
+            types.any? do |type|
+              item.is_a?(type)
+            end
+        end
+    end
+    def press_enter_to_continue
+        print Rainbow("\n             - Press Return to Continue -\n").red
+        print "\e[?25l"  # Disable the blinking cursor
+
+        process_input
+        toggle_engaged
+    end
+
     def damage_player(magnitude)
         heart = @@player_stats[:heart]
         block = @@player_stats[:block]
@@ -75,6 +98,7 @@ class Gameboard
         reset_sightline
         increment_page(1)
         toggle_idle
+        reset_input
     end
 end
 
@@ -149,12 +173,22 @@ end
 class Interface < Gameboard
 	def page_top
         print Rainbow("\n---------------------------------------------------------\n").blue.bright
-		print Rainbow("[     - ").blue.bright
+		print Rainbow("[   ").blue.bright
         print_spirit_meter
-        print Rainbow(" -   ╱   - ").blue.bright
+        print Rainbow("  |   ").blue.bright
 		print_hearts_meter
-		print Rainbow(" -     ]").blue.bright
-		print Rainbow("\n---------------------------------------------------------\n\n\n").blue.bright
+		print Rainbow("  |   ").blue.bright
+        toggle_key_icon
+        print Rainbow("]").blue.bright
+		print Rainbow("\n---------------------------------------------------------\n\n").blue.bright
+    end
+    def toggle_key_icon
+        print "KEYS "
+
+        if search_inventory([Key,Lockpick])
+            print Rainbow(" ⌐0  ").orange
+        else print "     "
+        end
     end
     def print_spirit_meter
         print "SPIRIT "
@@ -217,7 +251,6 @@ class Interface < Gameboard
 			puts " for the current"
             puts "	     coordinate's list of targets,"
             puts "	     or to quickly pass time.\n\n"
-
 		end
     end
     def bigmap
