@@ -15,6 +15,7 @@ require './presets.rb'
 ##############################################################################################################################################################################################################################################################
 
 
+print "\e[8;40;57t"
 console = Interface.new
 player = Gameboard.new
 location = Position.new
@@ -181,8 +182,6 @@ loop do
 
 
 
-
-
     player.action_select
     system("clear")  # Clear the screen
     print Rainbow("\n---------------------------------------------------------\n").blue.bright
@@ -190,7 +189,6 @@ loop do
     print Rainbow("         - BONE CRAWL / ERIKA MAKER / 2019 © -         ").violet
     print Rainbow("]").blue.bright
     print Rainbow("\n---------------------------------------------------------").blue.bright
-
     print "\n\n\n\n\n"
     console.tutorial_screen
     console.suggest_tutorial
@@ -205,8 +203,6 @@ loop do
 
    # console.page_bottom
     console.turn_page
-
-    print "\e[8;#{ENV['LINES']};#{ENV['COLUMNS']}t"  # Resize terminal window
 
 
   end

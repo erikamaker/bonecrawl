@@ -19,7 +19,7 @@ MOVES =
     ["mine", "dig", "tunnel", "bore", "burrow", "gouge", "drill", "break"],
     ["help", "assist", "menu", "moves", "moveslist", "moveset", "hint"],
     ["lift","raise","hoist","elevate","uplift","heft","upraise"],
-    ["drink","guzzle","swallow"]]
+    ["equip","prepare","select","enable","use"]]
 
 SPEECH =
     ["a", "aboard", "above", "across", "about", "above", "across", "after",

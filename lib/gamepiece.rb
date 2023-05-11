@@ -57,7 +57,10 @@ class Gamepiece < Gameboard
             harm: MOVES[8],
             burn: MOVES[9],
             feed: MOVES[10],
-            mine: MOVES[11]
+           drink: MOVES[11],
+            mine: MOVES[12],
+            lift: MOVES[14],
+           equip: MOVES[15]
         }
     end
     def parse_action
@@ -170,11 +173,11 @@ class Edible < Portable
         end
 	end
     def heal_player
-        @@player_stats[:heart] += heal_amount
+        @@statistics[:heart] += heal_amount
     end
     def heal_amount
-        if @@player_stats[:heart] + profile[:hearts] > 4
-            (4 - @@player_stats[:heart])
+        if @@statistics[:heart] + profile[:hearts] > 4
+            (4 - @@statistics[:heart])
         else
             profile[:hearts]
         end
@@ -197,7 +200,7 @@ class Drink < Edible
 		subtype | ["drink"]
 	end
 	def moveset
-		[MOVES[1..2],MOVES[10],MOVES[15]].flatten
+		[MOVES[1..2],MOVES[10..11]].flatten
 	end
     def animate_ingestion
         puts "	   - You drink the #{subtype[0]}, healing"
@@ -409,27 +412,41 @@ class Character < Gamepiece
     end
     def exchange_gifts
         reward_animation
-        reward = @content.sample
+        reward = @rewards.sample
         puts Rainbow("	   - To help you on your journey,").orange
         puts Rainbow("	     you're given 1 #{reward.targets[0]}.\n").orange
         reward.take
+        @rewards.delete(reward)
+
         @content.push(@desires)
-        @desires.remove_from_inventory
+        player_has_leverage.remove_from_inventory
         become_friends
     end
     def demon_chance
         rand(@profile[:focus]..2) == 2
     end
     def player_chance
-        rand(@@player_stats[:focus]..2) == 2
+        rand(@@statistics[:focus]..2) == 2
+    end
+    def weapon_equipped
+        @@weapons[:weapon] != nil
+    end
+    def player_damage
+        if weapon_equipped
+            @@weapons[:weapon].profile[:damage]
+        else 1
+        end
     end
     def player_hits_demon
-        @profile[:hearts] -= 1 # update this to reflect the weapon's value
-        print Rainbow("	     You hit it. #{@profile[:hearts]} heart").green
-        print Rainbow("s").green if @profile[:hearts] != 1
-        print Rainbow(" remain").green
-        print Rainbow("s").green if @profile[:hearts] == 1
-        print Rainbow(".\n\n").green
+        @profile[:hearts] -= player_damage
+        if @profile[:hearts] > 0
+            print Rainbow("	     You hit it. #{@profile[:hearts]} heart").green
+            print Rainbow("s").green if @profile[:hearts] > 1
+            print Rainbow(" remain").green
+            print Rainbow("s").green if @profile[:hearts] == 1
+            print Rainbow(".\n\n").green
+        else print Rainbow("	     The attack proves fatal.\n\n").green
+        end
 
     end
     def player_misses_demon
@@ -446,10 +463,7 @@ class Character < Gamepiece
         player_idle? ? draw_backdrop : interact
         special_properties
     end
-    def harm
-        # choose_your_weapon
-        # player_attack_outcome
-        puts Rainbow("	   - You move to strike the demon.").orange
+    def player_attack_result
         if player_chance
             player_hits_demon
             become_hostile if demon_is_alive
@@ -458,23 +472,44 @@ class Character < Gamepiece
             become_hostile
         end
     end
+    def harm
+        puts Rainbow("	   - You move to strike the demon").orange
+        print Rainbow("	     with your ").orange
+        if weapon_equipped
+            print(Rainbow("#{@@weapons[:weapon].targets[0]}.\n\n").orange)
+        else print(Rainbow("bare hands.\n\n").orange)
+        end
+        player_attack_result
+    end
     def demon_attack
         if @hostile
             puts Rainbow("	   - The demon strikes to attack").orange
-            unique_attack_script
+            print Rainbow("	     with its #{demon_weapon_equipped}\n\n").orange
             attack_outcome
+        end
+    end
+    def demon_weapon_equipped
+        if @weapons[0]
+            @weapons[0]
+        else "bare hands.\n\n"
+        end
+    end
+    def demon_damage
+        if @weapons[0]
+            @weapons[0].profile[:damage]
+        else 1
         end
     end
     def attack_outcome
         if demon_chance
-            total = @@player_stats[:heart] - damage_player(@profile[:attack])
+            total = @@statistics[:heart] - damage_player(demon_damage)
             puts Rainbow("	   - It costs you #{total} heart points.\n").red
         else
             puts Rainbow("	   - You narrowly avoid its blow.\n").green
         end
     end
     def demon_death_scene
-        if @profile[:hearts] == 0
+        if @profile[:hearts] < 1
             puts Rainbow("	   - The demon is slain. It drops:\n").purple
             list_rewards
             take_everything

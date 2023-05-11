@@ -93,7 +93,7 @@ class Identification < Portable
     end
     def display_stats
         puts Rainbow("	          - Prisoner Stats -\n").green
-        @@player_stats.each do |key, value|
+        @@statistics.each do |key, value|
             dots = Rainbow(".").purple * (24 - key.to_s.length)
             space = " " * 13
             puts space + "#{key.capitalize} #{dots} #{value}"
@@ -102,7 +102,7 @@ class Identification < Portable
     end
     def display_skill
         puts Rainbow("	          - Skill Progress -\n").orange
-        @@skill_stats.each do |key, value|
+        @@weapons.each do |key, value|
             dots = Rainbow(".").red * (24 - key.to_s.length)
             space = " " * 13
             puts space + "#{key.capitalize} #{dots} #{value}"
@@ -175,7 +175,7 @@ end
 class Inventory < Container
     def view ; open end
     def targets
-        ["knapsack","ruck sack","backpack","sack","bag","pack","items","inventory","stuff","things"]
+        ["rucksack","knapsack","ruck sack","backpack","sack","bag","pack","items","inventory","stuff","things"]
     end
     def minimap
         [@@position]
@@ -190,6 +190,7 @@ class Inventory < Container
             manage_inventory
             reset_input
 		end
+        toggle_idle
     end
     def show_contents
         @@inventory.group_by { |item| item.targets[0] }.each do |item, total|
@@ -211,7 +212,7 @@ class Inventory < Container
         bag_action(item)
     end
     def bag_action(item)
-        if MOVES[1..11].flatten.none?(@@action)
+        if MOVES[1..15].flatten.none?(@@action)  # TO DO : make this more exclusive (the help keyword shouldn't work, for instance)
             puts Rainbow("           - You close your #{targets[0]} shut.\n").red
         elsif item.nil?
             puts Rainbow("           - You don't have that.\n").red
@@ -371,7 +372,7 @@ class Mushroom < Edible
     def side_effect
         puts "	     The walls begin to breathe."
         puts "	     Colors whirl in your eyes.\n\n"
-        @@player_stats[:Ascension] = profile[:duration]
+        @@statistics[:Ascension] = profile[:duration]
     end
 end
 
@@ -747,7 +748,6 @@ class Tree < Fixture
 	end
     def view
         description
-        toggle_idle
     end
 end
 
@@ -865,8 +865,7 @@ class GrowingFruit < Edible
     end
     def take
         view
-        puts Rainbow("	   - You pluck one from the tree").orange
-        puts Rainbow("	     to eat later.\n").orange
+        puts Rainbow("	   - You pluck one from the tree.\n\n").orange
         @@inventory.push(@group[0])
         @group.delete(@group[0])
     end
@@ -1245,7 +1244,7 @@ class RedFlower < Blossom
     def burn_effect
         puts Rainbow("	     A flushed and dreamy feeling").orange
         print Rainbow("	     tickles through your body.\n\n").orange
-        @@player_stats[:sedation] = 10
+        @@statistics[:sedation] = 10
         view_profile
     end
 end
@@ -1258,13 +1257,13 @@ class PurpleFlower < Blossom
 		["purple flower","purple","violet","indigo"]
 	end
     def description
-		puts Rainbow("	   - It's an aggressive stimulant.").orange
-		puts Rainbow("	     Its combusted form is smoke.\n\n").orange
+		puts Rainbow("	   - It's an aggressive stimulant.")
+		puts Rainbow("	     Its combusted form is smoke.\n\n")
 	end
     def burn_effect
         puts "	     You feel light as a feather,"
         puts "	     and sharp as a razor.\n\n"
-        @@player_stats[:agitation] = 10
+        @@statistics[:agitation] = 10
     end
 end
 
@@ -1275,8 +1274,16 @@ end
 
 
 class Weapon < Tool
+	def moveset
+		MOVES[1..2].flatten | MOVES[15]
+	end
     def targets
         subtype | ["weapon"]
+    end
+    def equip
+        view
+        puts Rainbow("	   - You equip the #{targets[0]}.\n\n").orange
+        @@weapons[:weapon] = self
     end
 end
 
@@ -1313,6 +1320,22 @@ class Knife3 < Knife
     def description
         puts "	   - It's a sacred dagger wrought"
 		puts "	     from sterling silver.\n\n"
+    end
+end
+
+class Cleaver < Weapon
+    def subtype
+        ["cleaver", "axe","blade"]
+    end
+end
+
+class Cleaver1 < Cleaver
+    def initialize
+        @profile = {:build => "iron", :lifespan => rand(10..20), :damage => 1}
+	end
+    def description
+        puts "	   - It's a butcher's cleaver. It"
+		puts "	     feels heavy in your hand.\n\n"
     end
 end
 
@@ -1445,9 +1468,11 @@ end
 class Hellion < Character
     def initialize
         super
-        @content = [Apple.new,Berry.new,Bread.new,RedFlower.new]
+        @weapons = [Cleaver1.new]
+        @rewards = [Apple.new,Bread.new]
+        @content = @weapons | @rewards
         @desires = Lighter.new
-        @profile = {:attack => 1, :defense => 2, :hearts => 4, :focus => 1, :hostile => @hostile}
+        @profile = {:defense => 2, :hearts => 4, :focus => 1}
     end
     def subtype
         ["hellion","goat","monster","enemy","demon","daemon"]
@@ -1460,9 +1485,6 @@ class Hellion < Character
         puts "	   - Its black pupils quiver with"
         puts "	     rage. It looks rabid.\n\n"
     end
-    def unique_attack_script
-        puts Rainbow("	     with a butcher's cleaver.\n").orange
-    end
     def description
         puts "	   - It's a hellion. Goat-like in"
         puts "	     its appearance, these demons"
@@ -1472,10 +1494,8 @@ class Hellion < Character
     def reward_animation
         puts "	   - The hellion lowers its voice."
         puts "	     It barely whispers a rumor...\n\n"
-        sleep 2
         puts Rainbow("	   \" There's a third cell lost to").green
         puts Rainbow("	     the ages on this floor. \"\n").green
-        sleep 2
     end
     def default_script
         puts "	   - It leers at you, dark pupils"

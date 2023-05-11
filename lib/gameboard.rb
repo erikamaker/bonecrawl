@@ -6,11 +6,11 @@
 class Gameboard
     def initialize
         @@world_map = []
-        @@position= [0,1,2]
+        @@position = [0,1,2]
         @@inventory = []
         @@encounters = []
         @@page_count = 0
-        @@player_stats = {
+        @@statistics = {
             :heart => 4,
             :block => 0,
             :focus => 1,
@@ -18,7 +18,8 @@ class Gameboard
             :slays => 0,
             :bones => 0,
         }
-        @@skill_stats = {
+        @@weapons = {
+            :weapon => nil,
             :arrows => 0,
             :blades => 0,
             :magick => 0,
@@ -40,22 +41,14 @@ class Gameboard
             end
         end
     end
-    def press_enter_to_continue
-        print Rainbow("\n             - Press Return to Continue -\n").red
-        print "\e[?25l"  # Disable the blinking cursor
-
-        process_input
-        toggle_engaged
-    end
-
     def damage_player(magnitude)
-        heart = @@player_stats[:heart]
-        block = @@player_stats[:block]
+        heart = @@statistics[:heart]
+        block = @@statistics[:block]
         total = magnitude - block
-        @@player_stats[:heart] -= total
+        @@statistics[:heart] -= total
     end
     def player_focus
-        rand(@@player_stats[:focus]..4)
+        rand(@@statistics[:focus]..4)
     end
     def action_select
         prompt_player
@@ -81,7 +74,7 @@ class Gameboard
         @@state = :player_idle
     end
     def toggle_engaged
-        moves = MOVES[1..13].flatten
+        moves = MOVES[1..15].flatten
         return if moves.none?(@@action)
         @@state = :player_engaged
     end
@@ -130,6 +123,14 @@ class Position < Gameboard
     def activated_barrier
         @@position[1] -= direction[@@target][0]
         @@position[2] -= direction[@@target][1]
+    end
+    def no_direction_detected
+        print Rainbow("	   - Move ").cyan
+        print "one adjacent tile using\n"
+        print Rainbow("	     north").orange + ", "
+        print Rainbow("south").orange + ", "
+        print Rainbow("east").orange + ", or "
+        print Rainbow("west").orange + ".\n\n"
     end
     def detect_direction
         if directions.include?(@@target)
@@ -192,19 +193,19 @@ class Interface < Gameboard
     end
     def print_spirit_meter
         print "SPIRIT "
-		@@player_stats[:souls] = [@@player_stats[:souls], 4].min
-		@@player_stats[:souls].times { print Rainbow("■ ").orange }
-		(4 - @@player_stats[:souls]).times { print Rainbow("■ ").cyan }
+		@@statistics[:souls] = [@@statistics[:souls], 4].min
+		@@statistics[:souls].times { print Rainbow("■ ").orange }
+		(4 - @@statistics[:souls]).times { print Rainbow("■ ").cyan }
     end
     def print_hearts_meter
         print "HEARTS "
-		@@player_stats[:heart] = [@@player_stats[:heart], 4].min
-		if @@player_stats[:heart] > 1
-		    @@player_stats[:heart].times { print Rainbow("♥ ").red }
+		@@statistics[:heart] = [@@statistics[:heart], 4].min
+		if @@statistics[:heart] > 1
+		    @@statistics[:heart].times { print Rainbow("♥ ").red }
 		else
             print Rainbow("♥ ").red.blink
 		end
-		(4 - @@player_stats[:heart]).times { print Rainbow("♥ ").cyan }
+		(4 - @@statistics[:heart]).times { print Rainbow("♥ ").cyan }
     end
     def nontraditional_move
         MOVES.flatten.none?(@@action) || (@@target.eql?(@@action))
@@ -240,12 +241,6 @@ class Interface < Gameboard
 			puts Rainbow("	     Eat some bread.").green
 			puts Rainbow("	     Go west of here.").blue
 			puts Rainbow("	     Read my journal.\n").indigo
-            print Rainbow("	   - Move ").cyan
-            print "one adjacent tile using\n"
-            print Rainbow("	     north").orange + ", "
-            print Rainbow("south").orange + ", "
-            print Rainbow("east").orange + ", or "
-            print Rainbow("west").orange + ".\n\n"
 			print "	   - Press "
             print Rainbow("return").cyan
 			puts " for the current"
@@ -288,7 +283,7 @@ class Interface < Gameboard
         draw_page_count
 	end
     def game_over
-        if @@player_stats[:heart] < 1
+        if @@statistics[:heart] < 1
             sleep 2
 
             puts Rainbow("	   - Hearts expired, you collapse").purple
@@ -298,7 +293,10 @@ class Interface < Gameboard
             puts "	     soul to its assigned cell.\n\n"
             sleep 2
             page_bottom
-            puts "\n\n\n"
+            print Rainbow("\n---------------------------------------------------------\n").red.bright
+            print Rainbow("[   SPIRIT X X X X   |   HEARTS X X X X   |   KEYS      ]").red
+            print Rainbow("\n---------------------------------------------------------").red.bright
+            puts "\n\n\n\n\n\n"
             exit!
         end
     end
