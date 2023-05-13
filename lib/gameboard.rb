@@ -132,9 +132,8 @@ class Inventory < Gameboard
 		else
             show_contents
             manage_inventory
-            reset_input
 		end
-        toggle_idle
+        reset_input
     end
     def show_contents
         @@inventory.group_by { |item| item.targets[0] }.each do |item, total|
@@ -166,6 +165,54 @@ class Inventory < Gameboard
             item.interact
             puts Rainbow("           - You tie your rucksack shut.\n").red
         end
+    end
+end
+
+
+##############################################################################################################################################################################################################################################################
+#####    STATISTICS    #######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Statistics < Gameboard
+    def synonyms
+        ["hell pass","pass","card","id","identification","stats","statistics"]
+    end
+    def load_synonyms
+        @@encounters | synonyms
+    end
+    def opening_or_viewing
+        (MOVES[1] | MOVES[3]).include?(@@action)
+    end
+    def target_isnt_stats
+        synonyms.none?(@@target)
+    end
+    def detect_usage
+        return if target_isnt_stats
+        if opening_or_viewing
+            load_synonyms
+            display_stats
+            display_skill
+            reset_input
+        end
+    end
+    def display_stats
+        puts Rainbow("	          - Prisoner Stats -\n").green
+        @@statistics.each do |key, value|
+            dots = Rainbow(".").purple * (24 - key.to_s.length)
+            space = " " * 13
+            puts space + "#{key.capitalize} #{dots} #{value}"
+        end
+        puts "\n\n"
+    end
+    def display_skill
+        puts Rainbow("	          - Skill Progress -\n").orange
+        @@weapons.each do |key, value|
+            dots = Rainbow(".").red * (24 - key.to_s.length)
+            space = " " * 13
+            puts space + "#{key.capitalize} #{dots} #{value}"
+        end
+        puts "\n"
     end
 end
 
@@ -247,6 +294,14 @@ end
 
 
 class Interface < Gameboard
+    def header
+        print Rainbow("\n---------------------------------------------------------\n").blue.bright
+        print Rainbow("[").blue.bright
+        print Rainbow("         - BONE CRAWL / ERIKA MAKER / 2019 © -         ").violet
+        print Rainbow("]").blue.bright
+        print Rainbow("\n---------------------------------------------------------").blue.bright
+        print "\n\n\n\n\n"
+    end
 	def page_top
         print Rainbow("\n---------------------------------------------------------\n").blue.bright
 		print Rainbow("[   ").blue.bright
