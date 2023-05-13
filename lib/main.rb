@@ -179,9 +179,6 @@ levels = [ room_1, drain_1, lighter, grease, door_1, hook_1, key_1, door_2, cpu1
 
 
 loop do
-
-
-
     player.action_select
     system("clear")  # Clear the screen
     console.header
@@ -196,9 +193,7 @@ loop do
     console.page_bottom
     console.page_top
     console.turn_page
-
-
-  end
+end
 
 
 

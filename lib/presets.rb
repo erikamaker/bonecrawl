@@ -1187,7 +1187,7 @@ end
 
 class Weapon < Tool
 	def moveset
-		MOVES[1..2].flatten | MOVES[15]
+		MOVES[1..2].flatten | MOVES[14]
 	end
     def targets
         subtype | ["weapon"]

@@ -17,9 +17,10 @@ MOVES =
     ["eat", "bite", "consume", "devour", "ingest", "munch", "snack"],
     ["drink", "guzzle", "swallow", "quaff", "swill", "imbibe", "swig", "sip"],
     ["mine", "dig", "tunnel", "bore", "burrow", "gouge", "drill", "break"],
-    ["help", "assist", "menu", "moves", "moveslist", "moveset", "hint"],
     ["lift","raise","hoist","elevate","uplift","heft","upraise"],
-    ["equip","prepare","select","enable","use"]]
+    ["equip","prepare","select","enable","use"],
+    ["help", "assist", "menu", "moves", "moveslist", "moveset", "hint"]]
+
 
 SPEECH =
     ["a", "aboard", "above", "across", "about", "above", "across", "after",
@@ -34,3 +35,9 @@ SPEECH =
     "then", "these", "this", "those", "through", "to", "toward", "towards", "under",
     "underneath", "until", "upon", "via", "when", "where", "wherever",
     "while", "with", "within", "without"]
+
+
+BODY_PARTS =
+    ["Head", "Torso", "Arm", "Leg", "Hand", "Foot", "Eye", "Ear", "Nose",
+    "Mouth", "Neck", "Shoulder", "Elbow", "Wrist", "Knee", "Ankle", "Hip", "Chest",
+    "Back", "Abdomen", "Thigh", "Calf", "Toe", "Finger"]

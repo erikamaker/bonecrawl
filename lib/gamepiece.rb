@@ -19,16 +19,13 @@ class Gamepiece < Gameboard
     def reveal_targets
         @@encounters |= targets
     end
-    def player_near?
+    def player_near
         minimap.include?(@@position)
-    end
-    def player_idle?
-        @@state == :player_idle
     end
     def assemble
         special_properties
-        player_near? ? reveal_targets : return
-        player_idle? ? draw_backdrop : interact
+        player_near ? reveal_targets : return
+        player_idle ? draw_backdrop : interact
     end
     def view
         description
@@ -59,8 +56,8 @@ class Gamepiece < Gameboard
             feed: MOVES[10],
            drink: MOVES[11],
             mine: MOVES[12],
-            lift: MOVES[14],
-           equip: MOVES[15]
+            lift: MOVES[13],
+           equip: MOVES[14]
         }
     end
     def parse_action
@@ -362,7 +359,7 @@ class Character < Gamepiece
         @desires = desires
     end
     def targets
-        subtype | ["character","person","entity","soul"]         # TODO: add individual body parts to SPEECH?
+        subtype | ["character","person"]
     end
     def demon_is_alive
         @profile[:hearts] > 0
@@ -458,8 +455,8 @@ class Character < Gamepiece
         end
     end
     def assemble
-        player_near? ? reveal_targets : return
-        player_idle? ? draw_backdrop : interact
+        player_near ? reveal_targets : return
+        player_idle ? draw_backdrop : interact
         special_properties
     end
     def player_attack_result
@@ -483,7 +480,7 @@ class Character < Gamepiece
     def demon_attack
         if @hostile
             puts Rainbow("	   - The demon strikes to attack").orange
-            print Rainbow("	     with its #{demon_weapon_equipped}\n\n").orange
+            print Rainbow("	     with its #{demon_weapon_equipped.targets[0]}.\n\n").orange
             attack_outcome
         end
     end
