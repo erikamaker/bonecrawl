@@ -445,7 +445,6 @@ class Character < Gamepiece
             print Rainbow(" remain").green
             print Rainbow("s").green if @profile[:hearts] == 1
             print Rainbow(".\n\n").green
-        else print Rainbow("	     The attack proves fatal.\n\n").green
         end
 
     end

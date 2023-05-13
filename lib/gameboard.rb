@@ -42,7 +42,6 @@ class Gameboard
         end
     end
     def damage_player(magnitude)
-        heart = @@statistics[:heart]
         block = @@statistics[:block]
         total = magnitude - block
         @@statistics[:heart] -= total
@@ -94,6 +93,82 @@ class Gameboard
         reset_input
     end
 end
+
+
+
+
+##############################################################################################################################################################################################################################################################
+#####    MOVEMENT    #########################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+
+class Inventory < Gameboard
+    def synonyms
+        ["rucksack","knapsack","backpack","bag","pack","items","inventory","stuff","things"]
+    end
+    def load_synonyms
+        @@encounters | synonyms
+    end
+    def opening_or_viewing
+        (MOVES[1] | MOVES[3]).include?(@@action)
+    end
+    def target_isnt_inventory
+        synonyms.none?(@@target)
+    end
+    def detect_usage
+        return if target_isnt_inventory
+        if opening_or_viewing
+            load_synonyms
+            open_inventory
+            toggle_engaged
+        end
+    end
+    def open_inventory
+        print Rainbow("	   - You reach into your rucksack.\n\n").red
+        if @@inventory.empty?
+			print "	   - It's empty.\n\n"
+            print Rainbow("           - You close your rucksack shut.\n\n").red
+		else
+            show_contents
+            manage_inventory
+            reset_input
+		end
+        toggle_idle
+    end
+    def show_contents
+        @@inventory.group_by { |item| item.targets[0] }.each do |item, total|
+            dots = (24 - item.length)
+            item_copy = item
+            print "	     #{item_copy.split.each{|word| word.capitalize!}.join(' ')}"
+            dots.times do
+                print Rainbow(".").purple
+            end
+            puts " #{total.count}"
+        end
+    end
+    def manage_inventory
+        print Rainbow("\n\n	   - What next?").cyan
+        print Rainbow("  >>  ").purple
+        process_input
+        item = @@inventory.find { |item| item.targets.include?(@@target) }
+        puts "\n\n"
+        bag_action(item)
+    end
+    def bag_action(item)
+        if MOVES[1..15].flatten.none?(@@action)  # TO DO : make this more exclusive (the help keyword shouldn't work, for instance)
+            puts Rainbow("           - You tie your rucksack shut.\n").red
+        elsif item.nil?
+            puts Rainbow("           - You don't have that.\n").red
+        elsif MOVES[2].include?(@@action)
+            puts Rainbow("           - You already have it.\n").red
+        else
+            item.interact
+            puts Rainbow("           - You tie your rucksack shut.\n").red
+        end
+    end
+end
+
 
 
 ##############################################################################################################################################################################################################################################################
@@ -207,8 +282,14 @@ class Interface < Gameboard
 		end
 		(4 - @@statistics[:heart]).times { print Rainbow("♥ ").cyan }
     end
+    def not_a_move
+        MOVES.flatten.none?(@@action)
+    end
+    def input_stutter
+        (@@target.eql?(@@action))
+    end
     def nontraditional_move
-        MOVES.flatten.none?(@@action) || (@@target.eql?(@@action))
+        not_a_move || input_stutter
     end
     def tutorial_selected
         MOVES[13].include?(@@target)
@@ -285,7 +366,6 @@ class Interface < Gameboard
     def game_over
         if @@statistics[:heart] < 1
             sleep 2
-
             puts Rainbow("	   - Hearts expired, you collapse").purple
             print Rainbow("	     where you stand.\n\n").purple
             sleep 2

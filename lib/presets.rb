@@ -81,7 +81,6 @@ class Jar < Tool
 end
 
 
-
 ##############################################################################################################################################################################################################################################################
 #####    PLAYER ASSETS    ####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
@@ -172,58 +171,6 @@ class Barrel < Container
 	end
 end
 
-class Inventory < Container
-    def view ; open end
-    def targets
-        ["rucksack","knapsack","ruck sack","backpack","sack","bag","pack","items","inventory","stuff","things"]
-    end
-    def minimap
-        [@@position]
-    end
-    def open
-        print Rainbow("	   - You reach into your rucksack.\n\n").red
-        if @@inventory.empty?
-			print "	   - It's empty.\n\n"
-            print Rainbow("           - You close your rucksack shut.\n\n").red
-		else
-            show_contents
-            manage_inventory
-            reset_input
-		end
-        toggle_idle
-    end
-    def show_contents
-        @@inventory.group_by { |item| item.targets[0] }.each do |item, total|
-            dots = (24 - item.length)
-            item_copy = item
-            print "	     #{item_copy.split.each{|word| word.capitalize!}.join(' ')}"
-            dots.times do
-                print Rainbow(".").purple
-            end
-            puts " #{total.count}"
-        end
-    end
-    def manage_inventory
-        print Rainbow("\n\n	   - What next?").cyan
-        print Rainbow("  >>  ").purple
-        process_input
-        item = @@inventory.find { |item| item.targets.include?(@@target) }
-        puts "\n\n"
-        bag_action(item)
-    end
-    def bag_action(item)
-        if MOVES[1..15].flatten.none?(@@action)  # TO DO : make this more exclusive (the help keyword shouldn't work, for instance)
-            puts Rainbow("           - You close your #{targets[0]} shut.\n").red
-        elsif item.nil?
-            puts Rainbow("           - You don't have that.\n").red
-        elsif MOVES[2].include?(@@action)
-            puts Rainbow("           - You already have it.\n").red
-        else
-            item.interact
-            puts Rainbow("           - You close your #{targets[0]} shut.\n").red
-        end
-    end
-end
 
 
 ##############################################################################################################################################################################################################################################################

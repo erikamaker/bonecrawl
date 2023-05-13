@@ -19,7 +19,7 @@ print "\e[8;40;57t"
 console = Interface.new
 player = Gameboard.new
 location = Position.new
-rucksack = Inventory.new
+inventory = Inventory.new
 stats = Identification.new
 
 
@@ -193,15 +193,12 @@ loop do
     console.tutorial_screen
     console.suggest_tutorial
     location.detect_movement
+    inventory.detect_usage
     levels.each { |piece| piece.assemble }
-    rucksack.assemble
     console.no_target
     console.game_over
     console.page_bottom
-
     console.page_top
-
-   # console.page_bottom
     console.turn_page
 
 
