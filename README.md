@@ -25,7 +25,7 @@ In 2003, my mom linked me to a .zip file of some text adventures. That's all it 
 
 > I've been polishing some old classes and building the battling methods. NPC class is pretty much finished. Battling is coming along well! I just need to implement special stats to keep things a little more interesting. Coming down the line is: complete battling system including special stats items / attacks, crafting system (really simple idea in mind, shouldn't take long), and then some level building before release! 
 
-Oh, and the engine doesn't scroll anymore. I worked an escape sequence into the main loop that closes the old frame before its successor displays. Lots of small cosmetic tweaks the last month. 
+> Oh, and the engine doesn't scroll anymore. I worked an escape sequence into the main loop that closes the old frame before its successor displays. Lots of small cosmetic tweaks the last month. 
 
 5/14/23 
 
