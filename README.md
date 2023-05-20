@@ -1,6 +1,3 @@
-![mockup](https://user-images.githubusercontent.com/118931925/225107805-62ca450a-a079-47e0-97ec-76eddb036285.png)
-
-
 # THERE'S BEEN A MISTAKE
 
 You wake up in a dim dungeon, dead. A prisoner of the sprawling underworld, your eternal fate is demonic torture. Except, you don't belong here.
