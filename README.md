@@ -6,19 +6,16 @@ Fight through the nine labyrinthian levels of perdition. Face treacherous demons
 
 # ABOUT THE ENGINE 
 
-The idea was to create a text-based RPG that felt action-oriented. It needed to work with words alone, yet stay far away from the realm of multiple-choice CYOAs to maximize on replayability. I wanted the player to experience a full and unique adventure, complete with NSWE navigation, a visual grid map of coordinates, a hearts bar display, inventory management, dynamic terrain, tools and weapons crafting, turn-based battling, layered lore, magick casting, reactive characters, environmental puzzles, and a heck of a lot more. 
-
-I don't know that I'll ever complete this project, because I always plan on adding more content. If you're interested in collaborating (either in code or content), please reach out!
-
-
-
-# ABOUT THE AUTHOR
-
 In 2003, my mom linked me to a .zip file of some text adventures. That's all it took. Very shy, I spent a lot of my youth on solo adventures that unfolded before me in terminal-green characters across a curved black screen. For 20 years, I've dreamt of building my own adventure and, in 2019, I broke ground on the rogue-like realization of its engine. Here it is, warts and all.
 
+The idea was to create a text-based RPG that felt action-oriented. It needed to work with words alone, yet stay far away from the realm of multiple-choice CYOAs to maximize on replayability. I wanted the player to experience a full and unique adventure, complete with NSWE navigation, a visual grid map of coordinates, a hearts bar display, inventory management, dynamic terrain, tools and weapons crafting, turn-based battling, layered lore, magick casting, reactive characters, environmental puzzles, and a heck of a lot more. 
 
 
 # PROGRESS UPDATE
+
+> I never liked that the Board class contained (what should have been) the player (class) data, and knew that the classes should be distinct from one another. So, I abstracted the player from the board, and made it its own class. Now that I'm not possessed by that spirit, it's time to finish up the last few classes. 
+
+5/30/23
 
 > I've been polishing some old classes and building the battling methods. NPC class is pretty much finished. Battling is coming along well! I just need to implement special stats to keep things a little more interesting. Coming down the line is: complete battling system including special stats items / attacks, crafting system (really simple idea in mind, shouldn't take long), and then some level building before release! 
 
