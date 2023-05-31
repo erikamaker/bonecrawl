@@ -1,6 +1,3 @@
-![mockup](https://user-images.githubusercontent.com/118931925/225107805-62ca450a-a079-47e0-97ec-76eddb036285.png)
-
-
 # THERE'S BEEN A MISTAKE
 
 You wake up in a dim dungeon, dead. A prisoner of the sprawling underworld, your eternal fate is demonic torture. Except, you don't belong here.
@@ -23,11 +20,19 @@ In 2003, my mom linked me to a .zip file of some text adventures. That's all it 
 
 # PROGRESS UPDATE
 
-Getting really close to the end for a complete demo and test level. Just need to work on the NPC class, and the crafting system a little more. I've been distracted with work, studying, and the melting of Midwestern snow. I expect a surge of inspiration any day now, and I'll get a webpage ready on bonecrawl.com.
+> I've been polishing some old classes and building the battling methods. NPC class is pretty much finished. Battling is coming along well! I just need to implement special stats to keep things a little more interesting. Coming down the line is: complete battling system including special stats items / attacks, crafting system (really simple idea in mind, shouldn't take long), and then some level building before release! 
+
+> Oh, and the engine doesn't scroll anymore. I worked an escape sequence into the main loop that closes the old frame before its successor displays. Lots of small cosmetic tweaks the last month. 
+
+5/14/23 
+
+
+> Getting really close to the end for a complete demo and test level. Just need to work on the NPC class, and the crafting system a little more. I've been distracted with work, studying, and the melting of Midwestern snow. I expect a surge of inspiration any day now, and I'll get a webpage ready on bonecrawl.com.
 
 4/11/23
 
-The terminal-based engine is nearing completion, but there's still work to do. Following its completion, I will be building a website at www.bonecrawl.com, where players may can a demo and download the game. Each level will be released in installments. I would love to one day add MMORPG functionality, so that friends can meet up in their own levels to map out adventures. More than anything, I have big mobile app aspirations for this project. 
+
+> The terminal-based engine is nearing completion, but there's still work to do. Following its completion, I will be building a website at www.bonecrawl.com, where players may can a demo and download the game. Each level will be released in installments. I would love to one day add MMORPG functionality, so that friends can meet up in their own levels to map out adventures. More than anything, I have big mobile app aspirations for this project. 
 
 3/14/23
 
