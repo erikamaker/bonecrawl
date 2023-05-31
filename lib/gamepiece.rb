@@ -1,10 +1,12 @@
-##############################################################################################################################################################################################################################################################
-#####    GAMEPIECE    ########################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
+require_relative 'board'
 
-
-class Gamepiece < Gameboard
-    attr_accessor :minimap, :targets, :moveset, :profile
+class Gamepiece < Board
+    attr_accessor :location, :targets, :moveset, :profile
+    def initialize(player)
+      super(player)
+      @location = [[-1,0,2]]
+      @player = player
+    end
     def draw_backdrop
         # Not all instances will have their
         # own backdrop. Some are hidden and
@@ -17,15 +19,10 @@ class Gamepiece < Gameboard
         # has. Some may have none at all.
     end
     def reveal_targets
-        @@encounters |= targets
+        @player.sight |= targets
     end
-    def player_near
-        minimap.include?(@@position)
-    end
-    def assemble
-        special_properties
-        player_near ? reveal_targets : return
-        player_idle ? draw_backdrop : interact
+    def player_near?
+      @location.include?(@player.position)
     end
     def view
         description
@@ -42,42 +39,25 @@ class Gamepiece < Gameboard
             puts space + "#{key.capitalize} #{dots} #{value}"
         end
     end
-    def actions
-        {
-            view: MOVES[1],
-            take: MOVES[2],
-            open: MOVES[3],
-            push: MOVES[4],
-            pull: MOVES[5],
-            talk: MOVES[6],
-            give: MOVES[7],
-            harm: MOVES[8],
-            burn: MOVES[9],
-            feed: MOVES[10],
-           drink: MOVES[11],
-            mine: MOVES[12],
-            lift: MOVES[13],
-           equip: MOVES[14]
-        }
-    end
-    def parse_action
-        actions.each do |action, moves|
-            send(action) if moves.include?(@@action)
-        end
+    def assemble
+        special_properties
+        player_near?  ? reveal_targets : return
+        @player.player_idle?  ? draw_backdrop : interact
     end
     def interact
-		return if targets.none?(@@target)
-        if moveset.include?(@@action)
-			parse_action
-		else
-            wrong_move
-		end
+      return if targets.none?(@player.target)
+      if moveset.include?(@player.action)
+          parse_action
+      else
+          wrong_move
+      end
     end
-    def wrong_move
-        puts "	   - It proves useless to try. A"
-        puts "	     page passes in vain.\n\n"
+    def parse_action
+      actions.each do |action, moves|
+          send(action) if moves.include?(@player.action)
+      end
     end
-end
+  end
 
 
 ##############################################################################################################################################################################################################################################################
@@ -108,23 +88,117 @@ class Portable < Gamepiece
     end
     def push_to_inventory
         remove_from_board
-        @@inventory.push(self)
+        @player.items.push(self)
 	end
 end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    TOOLS     ###########################################################################################################################################################################################################################################
+#####     CONTAINERS     #####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
-class Tool < Portable
-    def targets
-        subtype | ["tool"]
+class Container < Gamepiece
+    attr_accessor :content, :needkey, :state
+    def initialize(player)
+        super(player)
+        @state = "closed shut"
     end
-	def draw_backdrop
-		puts "	   - A #{targets[0]} lays here.\n\n"
+    def moveset
+        @moveset = MOVES[1] | MOVES[3]
+    end
+    def toggle_state_open
+        @state = "jammed open"
+    end
+	def view
+		puts "	   - This #{targets[0]} is #{state}.\n\n"
 	end
+    def key
+        tools = ["brass key", "lock pick"]
+        @player.items.find { |item| tools.include?(item.targets[0]) }
+    end
+    def open
+        if @state == "closed shut"
+            !needkey ? give_content : is_locked
+        else
+            puts "	   - This #{targets[0]}'s already open.\n\n"
+        end
+	end
+    def use_key
+        key.profile[:lifespan] -= 1
+        if key.profile[:lifespan] == 0
+            puts Rainbow("	   - Your #{key.targets[0]} snaps in two.").red
+            puts Rainbow("	     You toss away the pieces.\n").red
+            @player.items.delete(key)
+        end
+    end
+    def is_locked
+        if key.nil?
+            puts "	   - It won't open. It's locked.\n\n"
+        else
+            puts "	   - You twirl a #{key.targets[0]} in the"
+            puts "	     #{targets[0]}'s latch. Click.\n\n"
+            use_key
+            give_content
+        end
+	end
+    def animate_opening
+        puts Rainbow("           - It swings open and reveals a").orange
+        puts Rainbow("             hidden #{content.targets[0]}.\n").orange
+        toggle_state_open
+    end
+    def give_content
+        animate_opening
+        content.take
+    end
+end
+
+
+##############################################################################################################################################################################################################################################################
+#####    COMBUSTIBLES    #####################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Burnable < Portable
+    def moveset
+        MOVES[1..2].flatten + MOVES[9]
+    end
+    def fire_near?
+        @player.sight.none?("fire")
+    end
+    def out_of_fuel
+        puts "	    - You're out of lighter fuel.\n\n"
+    end
+    def got_fuel?
+        if @player.search_inventory(Fuel).nil?
+            out_of_fuel
+        else use_lighter
+        end
+    end
+    def got_a_light?
+        if @player.search_inventory(Lighter).nil?
+            puts "	   - There's isn't any fire here.\n\n"
+        else
+            got_fuel?
+        end
+    end
+    def use_lighter
+        puts "	   - You thumb a little fuel into"
+        puts "	     your lighter's fuel canister."
+        puts "	     It sparks a warm flame.\n\n"
+        animate_combustion
+        remove_from_board
+        fuel = @player.search_inventory(Fuel)
+        @player.remove_from_inventory(fuel)
+    end
+    def burn
+        if fire_near?
+            got_a_light?
+        else
+            animate_combustion
+            remove_from_board
+        end
+    end
 end
 
 
@@ -144,7 +218,7 @@ class Edible < Portable
         animate_ingestion
         remove_portion
         portions_left
-        heal_player
+        @player.gain_health(heal_amount)
         side_effects
     end
     def animate_ingestion
@@ -167,14 +241,12 @@ class Edible < Portable
         else
             print "You finish it.\n\n"
             remove_from_board
+            @player.remove_from_inventory(self)
         end
 	end
-    def heal_player
-        @@statistics[:heart] += heal_amount
-    end
     def heal_amount
-        if @@statistics[:heart] + profile[:hearts] > 4
-            (4 - @@statistics[:heart])
+        if @player.health + profile[:hearts] > 4
+            (4 - @player.health)
         else
             profile[:hearts]
         end
@@ -188,7 +260,7 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    INGESTIBLES    ######################################################################################################################################################################################################################################
+#####    DRINK    ############################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
@@ -199,119 +271,108 @@ class Drink < Edible
 	def moveset
 		[MOVES[1..2],MOVES[10..11]].flatten
 	end
-    def animate_ingestion
-        puts "	   - You drink the #{subtype[0]}, healing"
-		print "	     #{heal_amount} heart"
-        if heal_amount == 1
-            print(". ")
-        else print("s. ")
+end
+
+
+
+##############################################################################################################################################################################################################################################################
+#####    FRUIT    ############################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class GrowingFruit < Edible
+    def targets
+        if any_fruit?
+            subtype | ["food","edibles","produce","fruit"]
+        else
+            []
         end
+    end
+    def feed
+        take
+    end
+    def special_properties
+        harvest_cycle
+        assign_profile
+    end
+    def grow_fruit
+        if @group.count < 3
+            @group.push(@type.new)
+        end
+    end
+    def assign_profile
+        if any_fruit?
+            @profile = @group[0].profile
+        end
+    end
+    def any_fruit?
+        (@group.count) > 0 and (@group[0].profile[:portions] > 0)
+    end
+    def one_left
+        @group.count == 1
+    end
+    def last_bite?
+        if @group.count.eql?(1)
+            @group[0].profile[:portions] == 0
+        end
+    end
+    def none_left?
+        @group.count == 0
+    end
+    def be_patient
+        puts "	   - There aren't any left. They"
+        puts "	     need time to regrow.\n\n"
+    end
+    def view
+        if any_fruit?
+            description
+            view_profile
+            print "\n"
+        else
+            be_patient
+        end
+    end
+    def take
+        view
+        puts Rainbow("	   - You pluck one from the tree.\n\n").orange
+        @@inventory.push(@group[0])
+        @group.delete(@group[0])
     end
 end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    COMBUSTIBLES    #####################################################################################################################################################################################################################################
+#####    TOOLS     ###########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
-class Burnable < Portable
-    def moveset
-        MOVES[1..2].flatten + MOVES[9]
+
+class Tool < Portable
+    def targets
+        subtype | ["tool"]
     end
-    def no_fire
-        @@encounters.none?("fire")
-    end
-    def out_of_fuel
-        puts "	    - You're out of lighter fuel.\n\n"
-    end
-    def got_fuel?
-        if search_inventory(Fuel).nil?
-            out_of_fuel
-        else use_lighter
-        end
-    end
-    def got_a_light?
-        if search_inventory(Lighter).nil?
-            puts "	   - There's isn't any fire here.\n\n"
-        else
-            got_fuel?
-        end
-    end
-    def use_lighter
-        puts "	   - You thumb a little fuel into"
-        puts "	     your lighter's fuel canister."
-        puts "	     It sparks a warm flame.\n\n"
-        animate_combustion
-        remove_from_board
-        search_inventory(Fuel).remove_from_inventory
-    end
-    def burn
-        if no_fire
-            got_a_light?
-        else
-            animate_combustion
-            remove_from_board
-        end
-    end
+	def draw_backdrop
+		puts "	   - A #{targets[0]} lays here.\n\n"
+	end
 end
 
 
 ##############################################################################################################################################################################################################################################################
-#####     CONTAINERS     #####################################################################################################################################################################################################################################
+#####    WEAPONS    ##########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
-class Container < Gamepiece
-    attr_accessor :content, :needkey, :state
-    def initialize
-        @moveset = MOVES[1] | MOVES[3]
-        @state = "closed shut"
-    end
-    def toggle_state_open
-        @state = "jammed open"
-    end
-	def view
-		puts "	   - This #{targets[0]} is #{state}.\n\n"
+class Weapon < Tool
+	def moveset
+		MOVES[1..2].flatten | MOVES[14]
 	end
-    def key
-        tools = ["brass key", "lock pick"]
-        @@inventory.find { |item| tools.include?(item.targets[0]) }
+    def targets
+        subtype | ["weapon"]
     end
-    def open
-        if @state.eql?("closed shut")
-            !needkey ? give_content : is_locked
-        else
-            puts "	   - This #{targets[0]}'s already open.\n\n"
-        end
-	end
-    def use_key
-        key.profile[:lifespan] -= 1
-        if key.profile[:lifespan] == 0
-            puts Rainbow("	   - Your #{key.targets[0]} snaps in two.").red
-            puts Rainbow("	     You toss away the pieces.\n").red
-            @@inventory.delete(key)
-        end
-    end
-    def is_locked
-        if key.nil?
-            puts "	   - It won't open. It's locked.\n\n"
-        else
-            puts "	   - You twirl a #{key.targets[0]} in the"
-            puts "	     #{targets[0]}'s latch. Click.\n\n"
-            use_key
-            give_content
-            "    0¬   ⌐0   "
-        end
-	end
-    def animate_opening
-        puts Rainbow("           - It swings open and reveals a").orange
-        puts Rainbow("             hidden #{content.targets[0]}.\n").orange
-        toggle_state_open
-    end
-    def give_content
-        animate_opening
-        content.take
+    def equip
+        view
+        puts Rainbow("	   - You equip the #{targets[0]}.\n\n").orange
+        @weapon = self
     end
 end
 
@@ -352,7 +413,8 @@ end
 
 class Character < Gamepiece
     attr_accessor :hostile, :desires, :content, :friends, :subtype
-    def initialize
+    def initialize(player)
+        super(player)
         @moveset = MOVES[1] | MOVES[6..8].flatten
         @hostile = false
         @friends = false
@@ -376,7 +438,7 @@ class Character < Gamepiece
         @friends = true
     end
     def player_has_leverage
-        @@inventory.find do |item|
+        @player.items.find do |item|
             item.targets == desires.targets
         end
     end
@@ -401,7 +463,7 @@ class Character < Gamepiece
         bartering_outcome(choice)
     end
     def bartering_outcome(choice)
-        if choice.eql?("yes")
+        if choice == "yes"
             exchange_gifts
         else
             become_hostile
@@ -414,7 +476,6 @@ class Character < Gamepiece
         puts Rainbow("	     you're given 1 #{reward.targets[0]}.\n").orange
         reward.take
         @rewards.delete(reward)
-
         @content.push(@desires)
         player_has_leverage.remove_from_inventory
         become_friends
@@ -423,14 +484,14 @@ class Character < Gamepiece
         rand(@profile[:focus]..2) == 2
     end
     def player_chance
-        rand(@@statistics[:focus]..2) == 2
+        rand(@player.focus..2) == 2
     end
     def weapon_equipped
-        @@weapons[:weapon] != nil
+        @weapon != nil
     end
     def player_damage
         if weapon_equipped
-            @@weapons[:weapon].profile[:damage]
+            @weapon.profile[:damage]
         else 1
         end
     end
@@ -455,8 +516,8 @@ class Character < Gamepiece
         end
     end
     def assemble
-        player_near ? reveal_targets : return
-        player_idle ? draw_backdrop : interact
+        player_near? ? reveal_targets : return
+        @player.player_idle? ? draw_backdrop : interact
         special_properties
     end
     def player_attack_result
@@ -472,7 +533,7 @@ class Character < Gamepiece
         puts Rainbow("	   - You move to strike the demon").orange
         print Rainbow("	     with your ").orange
         if weapon_equipped
-            print(Rainbow("#{@@weapons[:weapon].targets[0]}.\n\n").orange)
+            print(Rainbow("#{@weapon.targets[0]}.\n\n").orange)
         else print(Rainbow("bare hands.\n\n").orange)
         end
         player_attack_result
@@ -498,7 +559,7 @@ class Character < Gamepiece
     end
     def attack_outcome
         if demon_chance
-            total = @@statistics[:heart] - damage_player(demon_damage)
+            total = @player.health - @player.lose_health(demon_damage)
             puts Rainbow("	   - It costs you #{total} heart points.\n").red
         else
             puts Rainbow("	   - You narrowly avoid its blow.\n").green
@@ -522,5 +583,3 @@ class Character < Gamepiece
         @content.each { |item| item.push_to_inventory }
     end
 end
-
-

@@ -1,387 +1,4 @@
-##############################################################################################################################################################################################################################################################
-#####    TOOLS     ###########################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Pickaxe1 < Tool
-	def initialize
-        @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
-	end
-    def subtype
-        ["pickaxe","iron pickaxe"]
-    end
-    def description
-        puts "	   - Trolls mine for precious ore"
-		puts "	     under the dungeon with these.\n\n"
-    end
-end
-
-class Lockpick < Tool
-    def initialize
-        @profile = {:build => "copper", :lifespan => rand(2..4), :damage => 1}
-    end
-    def subtype
-        ["lock pick", "metal lock pick", "metal pick", "pick", "tool"]
-    end
-	def description
-		puts "	   - Maybe it belonged to another"
-		print "	     prisoner like you?\n\n"
-	end
-end
-
-class Key < Tool
-	def initialize
-        @profile = {:build => "brass", :lifespan => 1}
-	end
-    def subtype
-        ["brass key","key"]
-    end
-	def description
-		puts "	   - It's brittle and tarnished."
-		puts "	     It can be used just once.\n\n"
-	end
-end
-
-class Lighter < Tool
-    def initialize
-        @profile = {:build => "silver", :damage => 1}
-	end
-    def subtype
-        ["silver lighter", "lighter"]
-    end
-    def description
-		puts "	   - It's handy when there isn't"
-        puts "	     any fire. It burns most all"
-        puts "	     types of oil, fat, or wax.\n\n"
-	end
-end
-
-class Jar < Tool
-    def initialize
-        @profile = {:build => "glass"}
-        @holding = []
-    end
-    def currently_full
-        !@holding.empty?
-    end
-    def moveset
-        if currently_full
-            [MOVES[1..2],MOVES[15]].flatten
-        else MOVES[1..2].flatten
-        end
-    end
-    def subtype
-        ["jar", "bottle", "flask"]
-    end
-    def description
-	    puts "	   - It's a simple glass jar. It"
-        print "	     currently holds "
-        @holding ? "#{@holding[0]}" : "nothing"
-	end
-end
-
-
-##############################################################################################################################################################################################################################################################
-#####    CONTAINERS    #######################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Toilet < Container
-	def needkey
-		false
-	end
-	def targets
-        ["drain","toilet","bowl","lid"]
-    end
-    def draw_backdrop
-		puts "	   - A dirty lidded toilet sticks"
-		puts "	     out of the wall here.\n\n"
-	end
-end
-
-class Chest < Container
-    def needkey
-        true
-    end
-    def targets
-        ["chest","strongbox","lootbox","box"]
-    end
-    def draw_backdrop
-		puts "	   - A wooden chest rests against"
-		puts "	     the dungeon wall.\n\n"
-	end
-end
-
-class Urn < Container
-    def needkey
-        false
-    end
-    def targets
-        ["urn","jar","bottle","remains"]
-    end
-    def draw_backdrop
-		puts "	   - An ornate clay urn sits here.\n\n"
-	end
-end
-
-class Barrel < Container
-    def needkey
-        false
-    end
-    def targets
-        ["barrel","keg","drum","vat"]
-    end
-    def draw_backdrop
-		puts "	   - A wooden barrel sits against"
-		puts "	     the wall here.\n\n"
-	end
-end
-
-
-##############################################################################################################################################################################################################################################################
-#####    DOORS    ############################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Door < Container
-    def needkey
-        true
-    end
-    def special_properties
-        if state.eql?("jammed open")
-            content.assemble
-        end
-    end
-    def give_content
-        puts Rainbow("           - A new path is revealed. Your").orange
-        puts Rainbow("             map has been updated.\n ").orange
-        content.assemble
-        content.overview
-        toggle_state_open
-    end
-	def targets
-		["door","exit"]
-	end
-	def draw_backdrop
-		puts "	   - You stand near the threshold"
-		puts "	     of a heavy iron door.\n\n"
-	end
-end
-
-
-##############################################################################################################################################################################################################################################################
-#####     PULL SWITCHES     ##################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Lever < Pullable
-    def targets
-        ["lever","handle","switch"]
-    end
-	def draw_backdrop
-		puts "	   - An iron lever juts out from"
-		puts "	     the wall where you stand.\n\n"
-	end
-	def view
-		if @unpulled
-			puts "	   - This lever isn't pulled yet."
-			puts "	     It could do anything.\n\n"
-		else
-            puts "	   - It's stuck down and locked.\n\n"
-		end
-	end
-end
-
-class Rope < Pullable
-    def targets
-        ["rope","twine","switch"]
-    end
-	def draw_backdrop
-        puts "	   - A frayed rope dangles above"
-        puts "	     where you stand. It's huge.\n\n"
-	end
-	def view
-		if @state.eql?("unpulled")
-		    puts "	   - It feels tied to something.\n\n"
-		else
-            print "	   - It won't move any further.\n\n"
-		end
-	end
-end
-
-
-##############################################################################################################################################################################################################################################################
-#####    FOOD    #############################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Bread < Edible
-    def initialize
-		@profile = { :hearts => 2, :portions => 3 }
-	end
-    def subtype
-       ["loaf", "bread", "golden bread"]
-    end
-	def draw_backdrop
-		puts "	   - Some goblish bread sits here.\n\n"
-	end
-	def description
-		puts "	   - It's soft and buttery. Cook\n"
-        puts "	     it down with fruit or meat.\n\n"
-	end
-end
-
-class Apple < Edible
-    def initialize
-        @profile = { :hearts => 1, :portions => 3 }
-    end
-    def subtype
-        ["apple"]
-	end
-	def draw_backdrop
-		puts "	   - An indigo apple sits here.\n\n"
-	end
-	def description
-		puts "	   - Blue apples like these tend"
-        puts "	     to grow underground.\n\n"
-
-	end
-end
-
-class Berry < Edible
-    def initialize
-        @profile = { :hearts => 1, :portions => 1 }
-    end
-    def subtype
-        ["berry","berries","blackberries"]
-	end
-	def draw_backdrop
-		puts "	   - A single blackberry, perhaps"
-        puts "	     spilt by mistake, lays here.\n\n"
-	end
-	def description
-		puts "	   - Berries like this are bitter."
-        puts "	     They don't heal much on their"
-        puts "	     own, but cook well with bread.\n\n"
-	end
-end
-
-class Mushroom < Edible
-    def initialize
-        @profile = { :hearts => 4, :portions => 1, :effect => "trance", :duration => 10}
-    end
-    def subtype
-        ["fungi","fungus","mushroom","shroom","toadstool","stool"]
-	end
-	def draw_backdrop
-		puts "	   - A small blue mushroom blooms"
-        puts "	     on the wall here.\n\n"
-	end
-	def description
-		puts "	   - Toadstools like these induce"
-        puts "	     waking dreams when eaten.\n\n"
-	end
-    def side_effect
-        puts "	     The walls begin to breathe."
-        puts "	     Colors whirl in your eyes.\n\n"
-        @@statistics[:Ascension] = profile[:duration]
-    end
-end
-
-class Jerky < Edible
-    def initialize
-        @profile = { :hearts => 2, :portions => 2}
-    end
-    def subtype
-        ["jerky","meat"]
-	end
-	def draw_backdrop
-		puts "	   - A small strip of smoked meat"
-        puts "	     lays across the ground here.\n\n"
-	end
-	def description
-		puts "	   - It's dry and salty. It might"
-        puts "	     cook well with some bread.\n\n"
-	end
-end
-
-
-##############################################################################################################################################################################################################################################################
-#####    DRINKS    ###########################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Elixer < Drink   # No backdrop, because you'll never see it until it's already obtained.
-    def initialize
-		@profile = { :effect => "health", :portions => 3, :hearts => 3 }
-	end
-    def subtype
-       ["elixer", "potion", "medicine"]
-    end
-	def description
-		puts "	   - It's a hearty health elixer."
-        puts "	     One drink fully restores all"
-        puts "	     heart points.\n\n"
-	end
-end
-
-class Anodyne < Drink
-    def initialize
-        @profile = { :effect => :sedation, :duration => 10, :defense => +2, :portions => 3 }
-    end
-    def subtype
-        ["anodyne","narcotic","analgesic","pain reliever"]
-	end
-	def description
-		puts "	   - Made from boiled red blossom"
-        puts "	     petals, it protects its user"
-        puts "	     from pain for 10 pages.\n\n"
-
-	end
-end
-
-class Water < Drink
-    def initialize
-        @profile = { :effect => "blessing", :duration => 3, :magnitude => 3, :portions => 3 }
-    end
-    def subtype
-        ["water","holy water"]
-	end
-	def description
-		puts "	   - It's water bottled by a rebel"
-        puts "	     cherub. It blesses one's soul"
-        puts "	     with luck against all odds.\n\n"
-	end
-end
-
-class Cure < Drink
-    def initialize
-        @profile = { :effect => "exorcism", :portions => 1 }
-    end
-    def subtype
-        ["antidote","cure","exorcism"]
-	end
-	def description
-		puts "	   - Difficult to concoct, it will"
-        puts "	     exorcise demonic curses. It's"
-        puts "	     a painful draught to swallow.\n\n"
-	end
-end
-
-class Brew < Drink
-    def initialize
-        @profile = { :effect => "aggression", :duration => 3, :magnitude => 3, :portions => 2 }
-    end
-    def subtype
-        ["brew","daemon brew"]
-	end
-	def description
-		puts "	   - Caustic and frothy, this will"
-        puts "	     raise one's aggression to its"
-        puts "	     brim for 3 pages.\n\n"
-	end
-end
-
+require_relative 'gamepiece'
 
 ##############################################################################################################################################################################################################################################################
 #####    TILES    ############################################################################################################################################################################################################################################
@@ -390,7 +7,8 @@ end
 
 class Tiles < Fixture
 	attr_accessor  :subtype, :built_of, :terrain, :borders, :general, :targets
-	def initialize
+	def initialize(player)
+        super(player)
 		@general = ["around","room","area","surroundings"] | subtype
 		@borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
 		@terrain = ["terrain","medium","material"] | built_of
@@ -400,13 +18,13 @@ class Tiles < Fixture
         overview
     end
     def special_properties
-        @@world_map |= minimap
-        @@encounters.include?("vein") and moveset | MOVES[12]
+        @@map |= @location
+        @player.sight.include?("vein") and moveset | MOVES[12]
     end
 	def parse_action
-		case @@target
+		case @player.target
 		when *general
-            toggle_idle
+            @player.toggle_idle
 			overview
 		when *terrain
 			view_type
@@ -719,72 +337,6 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    FRUIT    ############################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class GrowingFruit < Edible
-    def targets
-        if any_fruit?
-            subtype | ["food","edibles","produce","fruit"]
-        else
-            []
-        end
-    end
-    def feed
-        take
-    end
-    def special_properties
-        harvest_cycle
-        assign_profile
-    end
-    def grow_fruit
-        if @group.count < 3
-            @group.push(@type.new)
-        end
-    end
-    def assign_profile
-        if any_fruit?
-            @profile = @group[0].profile
-        end
-    end
-    def any_fruit?
-        (@group.count) > 0 and (@group[0].profile[:portions] > 0)
-    end
-    def one_left
-        @group.count == 1
-    end
-    def last_bite?
-        if @group.count.eql?(1)
-            @group[0].profile[:portions] == 0
-        end
-    end
-    def none_left?
-        @group.count == 0
-    end
-    def be_patient
-        puts "	   - There aren't any left. They"
-        puts "	     need time to regrow.\n\n"
-    end
-    def view
-        if any_fruit?
-            description
-            view_profile
-            print "\n"
-        else
-            be_patient
-        end
-    end
-    def take
-        view
-        puts Rainbow("	   - You pluck one from the tree.\n\n").orange
-        @@inventory.push(@group[0])
-        @group.delete(@group[0])
-    end
-end
-
-
-##############################################################################################################################################################################################################################################################
 #####    APPLE SPAWNER    ####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
@@ -848,64 +400,358 @@ class BerrySpawner < GrowingFruit
 end
 
 
+
+
 ##############################################################################################################################################################################################################################################################
-#####    ORE     #############################################################################################################################################################################################################################################
+#####    TOOLS     ###########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
-class Ore < Portable
-    def targets
-        subtype | ["metal","ore"]
+class Lockpick < Tool
+  def initialize(player)
+      super(player)
+      @profile = {:build => "copper", :lifespan => rand(2..4), :damage => 1}
+  end
+  def subtype
+      ["lock pick", "metal lock pick", "metal pick", "pick", "tool"]
+  end
+  def description
+  	puts "	   - Maybe it belonged to another"
+  	print "	     prisoner like you?\n\n"
+  end
+end
+
+class Pickaxe1 < Tool
+	def initialize(player)
+        super(player)
+        @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
+	end
+    def subtype
+        ["pickaxe","iron pickaxe"]
     end
-    def view
-        puts "	   - Raw #{subtype[0]} like this dwells"
-        puts "       in Troll tunnels underground.\n\n"
-        view_profile
+    def description
+        puts "	   - Trolls mine for precious ore"
+		puts "	     under the dungeon with these.\n\n"
+    end
+end
+
+class Key < Tool
+	def initialize(player)
+        super(player)
+        @profile = {:build => "brass", :lifespan => 1}
+	end
+    def subtype
+        ["brass key","key"]
+    end
+	def description
+		puts "	   - It's brittle and tarnished."
+		puts "	     It can be used just once.\n\n"
+	end
+end
+
+class Lighter < Tool
+    def initialize(player)
+        super(player)
+        @profile = {:build => "silver", :damage => 1}
+	end
+    def subtype
+        ["silver lighter", "lighter"]
+    end
+    def description
+		puts "	   - It's handy when there isn't"
+        puts "	     any fire. It burns most all"
+        puts "	     types of oil, fat, or wax.\n\n"
+	end
+end
+
+class Jar < Tool
+    def initialize(player)
+        super(player)
+        @profile = {:build => "glass"}
+        @holding = []
+    end
+    def currently_full
+        !@holding.empty?
+    end
+    def moveset
+        if currently_full
+            MOVES[1..2] | MOVES[15]
+        else MOVES[1..2].flatten
+        end
+    end
+    def subtype
+        ["jar", "bottle", "flask"]
+    end
+    def description
+	    puts "	   - It's a simple glass jar. It"
+        print "	     currently holds "
+        @holding ? "#{@holding[0]}" : "nothing"
+	end
+end
+
+
+##############################################################################################################################################################################################################################################################
+#####    WEAPONS    ##########################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Knife < Weapon
+    def subtype
+        ["knife","dagger","blade"]
+    end
+end
+
+class Knife1 < Knife
+	def initialize(player)
+        super(player)
+        @profile = {:build => "bone", :lifespan => rand(1..6), :damage => 2}
+	end
+    def description
+        puts "	   - It's a weak dagger made from"
+		puts "	     spare skeleton parts.\n\n"
+    end
+end
+
+class Knife2 < Knife
+    def initialize(player)
+        super(player)
+        @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
+	end
+    def description
+        puts "	   - It's a sturdy dagger wrought"
+		puts "	     from honed copper.\n\n"
+    end
+end
+
+class Knife3 < Knife
+    def initialize(player)
+        super(player)
+        @profile = {:build => "silver", :lifespan => rand(14..21), :damage => 4}
+	end
+    def description
+        puts "	   - It's a sacred dagger wrought"
+		puts "	     from sterling silver.\n\n"
+    end
+end
+
+class Cleaver < Weapon
+    def subtype
+        ["cleaver", "axe","blade"]
+    end
+end
+
+class Cleaver1 < Cleaver
+    def initialize(player)
+        super(player)
+        @profile = {:build => "iron", :lifespan => rand(10..20), :damage => 1}
+	end
+    def description
+        puts "	   - It's a butcher's cleaver. It"
+		puts "	     feels heavy in your hand.\n\n"
+    end
+end
+
+
+class Bread < Edible
+    def initialize(player)
+        super(player)
+		@profile = { :hearts => 2, :portions => 3 }
+	end
+    def subtype
+       ["loaf", "bread", "golden bread"]
+    end
+	def draw_backdrop
+		puts "	   - Some goblish bread sits here.\n\n"
+	end
+	def description
+		puts "	   - It's soft and buttery. Cook\n"
+        puts "	     it down with fruit or meat.\n\n"
+	end
+end
+
+class Apple < Edible
+    def initialize(player)
+        super(player)
+        @profile = { :hearts => 1, :portions => 3 }
+    end
+    def subtype
+        ["apple"]
+	end
+	def draw_backdrop
+		puts "	   - An indigo apple sits here.\n\n"
+	end
+	def description
+		puts "	   - Blue apples like these tend"
+        puts "	     to grow underground.\n\n"
+
+	end
+end
+
+class Berry < Edible
+    def initialize(player)
+        super(player)
+        @profile = { :hearts => 1, :portions => 1 }
+    end
+    def subtype
+        ["berry","berries","blackberries"]
+	end
+	def draw_backdrop
+		puts "	   - A single blackberry, perhaps"
+        puts "	     spilt by mistake, lays here.\n\n"
+	end
+	def description
+		puts "	   - Berries like this are bitter."
+        puts "	     They don't heal much on their"
+        puts "	     own, but cook well with bread.\n\n"
+	end
+end
+
+class Mushroom < Edible
+    def initialize(player)
+        super(player)
+        @profile = { :hearts => 4, :portions => 1, :effect => "trance", :duration => 10}
+    end
+    def subtype
+        ["fungi","fungus","mushroom","shroom","toadstool","stool"]
+	end
+	def draw_backdrop
+		puts "	   - A small blue mushroom blooms"
+        puts "	     on the wall here.\n\n"
+	end
+	def description
+		puts "	   - Toadstools like these induce"
+        puts "	     waking dreams when eaten.\n\n"
+	end
+    def side_effect
+        puts "	     The walls begin to breathe."
+        puts "	     Colors whirl in your eyes.\n\n"
+    end
+end
+
+class Jerky < Edible
+    def initialize(player)
+        super(player)
+        @profile = { :hearts => 2, :portions => 2}
+    end
+    def subtype
+        ["jerky","meat"]
+	end
+	def draw_backdrop
+		puts "	   - A small strip of smoked meat"
+        puts "	     lays across the ground here.\n\n"
+	end
+	def description
+		puts "	   - It's dry and salty. It might"
+        puts "	     cook well with some bread.\n\n"
+	end
+end
+
+
+##############################################################################################################################################################################################################################################################
+#####    DRINKS    ###########################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Elixer < Drink   # No backdrop, because you'll never see it until it's already obtained.
+    def initialize(player)
+        super(player)
+		@profile = { :effect => :health, :portions => 3, :hearts => 3 }
+	end
+    def subtype
+       ["elixer", "potion", "medicine"]
+    end
+	def description
+		puts "	   - It's a hearty health elixer."
+        puts "	     One drink fully restores all"
+        puts "	     heart points.\n\n"
+	end
+end
+
+class Water < Drink
+    def initialize(player)
+        super(player)
+        @profile = { :effect => :blessing, :duration => 3, :magnitude => 3, :portions => 3 }
+    end
+    def subtype
+        ["water","holy water"]
+	end
+	def description
+		puts "	   - It's water bottled by a rebel"
+        puts "	     cherub. It blesses one's soul"
+        puts "	     with luck against all odds.\n\n"
+	end
+end
+
+class Tonic < Drink
+    def initialize(player)
+        super(player)
+        @profile = { :effect => :exorcism, :portions => 1 }
+    end
+    def subtype
+        ["antidote","cure","exorcism"]
+	end
+	def description
+		puts "	   - Difficult to concoct, it will"
+        puts "	     exorcise demonic curses. It's"
+        puts "	     a painful draught to swallow.\n\n"
+	end
+end
+
+##############################################################################################################################################################################################################################################################
+#####    SUBSTANCES     ######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Blossom < Burnable
+    def targets
+        subtype | ["flower","blossom","plant","drug"]
+    end
+    def animate_combustion
+        puts "	   - You hold the blossom against"
+        puts "	     the fire, inhaling its smoke."
+        burn_effect
         print "\n"
     end
     def draw_backdrop
-        puts "     - A hunk of #{subtype} ore sits on"
-        puts "	     the ground at your feet.\n\n"
-    end
+		puts "	   - A #{subtype[1]} flower blooms here.\n\n"
+	end
 end
 
-class Silver < Ore
+class RedFlower < Blossom
+    def initialize(player)
+        super(player)
+		@profile = { :effect => :sedation, :defense => 2 , :attack => -1, :duration => '10 pages'}
+	end
     def subtype
-       ["silver"]
-    end
-end
-
-class Copper < Ore
-    def subtype
-       ["copper"]
-    end
-end
-
-class Brass < Ore
-    def subtype
-       ["brass"]
-    end
-end
-
-
-##############################################################################################################################################################################################################################################################
-#####    JEWELS     ##########################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Jewel < Portable
-    def targets
-       ["gem","jewel","geode","stone","crystal","rock","shard"]
-    end
-    def view
-        puts "	   - It's a cherub rock. It grows"
-		puts "	     where fallen angels dwell.\n\n"
+		["blood flower","crimson","red"]
+	end
+	def description
+		puts "	   - When burned, it's a powerful"
+		puts "	     pain reliever and sedative.\n\n"
+	end
+    def burn_effect
+        puts Rainbow("	     A flushed and dreamy feeling").orange
+        print Rainbow("	     tickles through your body.\n\n").orange
         view_profile
-        print "\n"
     end
-    def draw_backdrop
-        puts "	   - A milky white jewel juts out"
-        puts "	     of the cavern wall.\n\n"
+end
+
+class PurpleFlower < Blossom
+    def initialize(player)
+        super(player)
+		@profile = { :effect => :agitation }
+	end
+    def subtype
+		["purple flower","purple","violet","indigo"]
+	end
+    def description
+		puts Rainbow("	   - It's an aggressive stimulant.")
+		puts Rainbow("	     Its combusted form is smoke.\n\n")
+	end
+    def burn_effect
+        puts "	     You feel light as a feather,"
+        puts "	     and sharp as a razor.\n\n"
+        @agitation = 10
     end
 end
 
@@ -1122,135 +968,6 @@ class Salt < Portable
     end
 end
 
-##############################################################################################################################################################################################################################################################
-#####    SUBSTANCES     ######################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Blossom < Burnable
-    def targets
-        subtype | ["flower","blossom","plant","drug"]
-    end
-    def animate_combustion
-        puts "	   - You hold the blossom against"
-        puts "	     the fire, inhaling its smoke."
-        burn_effect
-        print "\n"
-    end
-    def draw_backdrop
-		puts "	   - A #{subtype[1]} flower blooms here.\n\n"
-	end
-end
-
-class RedFlower < Blossom
-    def initialize
-		@profile = { :effect => :sedation, :defense => 2 , :attack => -1, :duration => '10 pages'}
-	end
-    def subtype
-		["blood flower","crimson","red"]
-	end
-	def description
-		puts "	   - When burned, it's a powerful"
-		puts "	     pain reliever and sedative.\n\n"
-	end
-    def burn_effect
-        puts Rainbow("	     A flushed and dreamy feeling").orange
-        print Rainbow("	     tickles through your body.\n\n").orange
-        @@statistics[:sedation] = 10
-        view_profile
-    end
-end
-
-class PurpleFlower < Blossom
-    def initialize
-		@profile = { :effect => :agitation }
-	end
-    def subtype
-		["purple flower","purple","violet","indigo"]
-	end
-    def description
-		puts Rainbow("	   - It's an aggressive stimulant.")
-		puts Rainbow("	     Its combusted form is smoke.\n\n")
-	end
-    def burn_effect
-        puts "	     You feel light as a feather,"
-        puts "	     and sharp as a razor.\n\n"
-        @@statistics[:agitation] = 10
-    end
-end
-
-
-##############################################################################################################################################################################################################################################################
-#####    WEAPONS    ##########################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Weapon < Tool
-	def moveset
-		MOVES[1..2].flatten | MOVES[14]
-	end
-    def targets
-        subtype | ["weapon"]
-    end
-    def equip
-        view
-        puts Rainbow("	   - You equip the #{targets[0]}.\n\n").orange
-        @@weapons[:weapon] = self
-    end
-end
-
-class Knife < Weapon
-    def subtype
-        ["knife","dagger","blade"]
-    end
-end
-
-class Knife1 < Knife
-	def initialize
-        @profile = {:build => "bone", :lifespan => rand(1..6), :damage => 2}
-	end
-    def description
-        puts "	   - It's a weak dagger made from"
-		puts "	     spare skeleton parts.\n\n"
-    end
-end
-
-class Knife2 < Knife
-    def initialize
-        @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
-	end
-    def description
-        puts "	   - It's a sturdy dagger wrought"
-		puts "	     from honed copper.\n\n"
-    end
-end
-
-class Knife3 < Knife
-    def initialize
-        @profile = {:build => "silver", :lifespan => rand(14..21), :damage => 4}
-	end
-    def description
-        puts "	   - It's a sacred dagger wrought"
-		puts "	     from sterling silver.\n\n"
-    end
-end
-
-class Cleaver < Weapon
-    def subtype
-        ["cleaver", "axe","blade"]
-    end
-end
-
-class Cleaver1 < Cleaver
-    def initialize
-        @profile = {:build => "iron", :lifespan => rand(10..20), :damage => 1}
-	end
-    def description
-        puts "	   - It's a butcher's cleaver. It"
-		puts "	     feels heavy in your hand.\n\n"
-    end
-end
-
 
 ##############################################################################################################################################################################################################################################################
 #####    CLOTHES     #########################################################################################################################################################################################################################################
@@ -1371,6 +1088,138 @@ class GoldRing < Ring  # Requires 1 silver
 end
 
 
+
+
+##############################################################################################################################################################################################################################################################
+#####    CONTAINERS    #######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Toilet < Container
+	def needkey
+		false
+	end
+	def targets
+        ["drain","toilet","bowl","lid"]
+    end
+    def draw_backdrop
+		puts "	   - A dirty lidded toilet sticks"
+		puts "	     out of the wall here.\n\n"
+	end
+end
+
+class Chest < Container
+    def needkey
+        true
+    end
+    def targets
+        ["chest","strongbox","lootbox","box"]
+    end
+    def draw_backdrop
+		puts "	   - A wooden chest rests against"
+		puts "	     the dungeon wall.\n\n"
+	end
+end
+
+class Urn < Container
+    def needkey
+        false
+    end
+    def targets
+        ["urn","jar","bottle","remains"]
+    end
+    def draw_backdrop
+		puts "	   - An ornate clay urn sits here.\n\n"
+	end
+end
+
+class Barrel < Container
+    def needkey
+        false
+    end
+    def targets
+        ["barrel","keg","drum","vat"]
+    end
+    def draw_backdrop
+		puts "	   - A wooden barrel sits against"
+		puts "	     the wall here.\n\n"
+	end
+end
+
+
+
+##############################################################################################################################################################################################################################################################
+#####    DOORS    ############################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Door < Container
+    def needkey
+        true
+    end
+    def special_properties
+        if state == "jammed open"
+            content.assemble
+        end
+    end
+    def give_content
+        puts Rainbow("           - A new path is revealed. Your").orange
+        puts Rainbow("             map has been updated.\n ").orange
+        content.assemble
+        content.overview
+        toggle_state_open
+    end
+	def targets
+		["door","exit"]
+	end
+	def draw_backdrop
+		puts "	   - You stand near the threshold"
+		puts "	     of a heavy iron door.\n\n"
+	end
+end
+
+
+##############################################################################################################################################################################################################################################################
+#####     PULL SWITCHES     ##################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Lever < Pullable
+    def targets
+        ["lever","handle","switch"]
+    end
+	def draw_backdrop
+		puts "	   - An iron lever juts out from"
+		puts "	     the wall where you stand.\n\n"
+	end
+	def view
+		if @unpulled
+			puts "	   - This lever isn't pulled yet."
+			puts "	     It could do anything.\n\n"
+		else
+            puts "	   - It's stuck down and locked.\n\n"
+		end
+	end
+end
+
+class Rope < Pullable
+    def targets
+        ["rope","twine","switch"]
+    end
+	def draw_backdrop
+        puts "	   - A frayed rope dangles above"
+        puts "	     where you stand. It's huge.\n\n"
+	end
+	def view
+		if @state.eql?("unpulled")
+		    puts "	   - It feels tied to something.\n\n"
+		else
+            print "	   - It won't move any further.\n\n"
+		end
+	end
+end
+
+
 ##############################################################################################################################################################################################################################################################
 #####    CHARACTERS     ######################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
@@ -1378,12 +1227,12 @@ end
 
 
 class Hellion < Character
-    def initialize
-        super
-        @weapons = [Cleaver1.new]
-        @rewards = [Apple.new,Bread.new]
+    def initialize(player)
+        super(player)
+        @weapons = [Cleaver1.new(@player)]
+        @rewards = [Apple.new(@player),Bread.new(@player)]
         @content = @weapons | @rewards
-        @desires = Lighter.new
+        @desires = Lighter.new(@player)
         @profile = {:defense => 2, :hearts => 4, :focus => 1}
     end
     def subtype
