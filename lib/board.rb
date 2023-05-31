@@ -32,10 +32,10 @@ class Board
     }
   end
   def remove_from_board
-    @position = [0]
+    @location = [0]
   end
   def move_piece(new_plot)
-    @position = new_plot
+    @location = new_plot
   end
   def increment_page(count)
     @@page += count

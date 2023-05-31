@@ -28,6 +28,7 @@ def cpu1.unique_bartering_script
   puts "	   - It asks if it can have yours,"
   print "	     in exchange for a secret.\n\n"
 end
+cpu1.territory = room_1.location
 
 hall_1 = Corridor.new(pl1)
 hall_1.location = [[-1,1,0],[-1,1,-1],[-1,1,-2]]

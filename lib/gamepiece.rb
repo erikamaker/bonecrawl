@@ -412,12 +412,13 @@ end
 
 
 class Character < Gamepiece
-    attr_accessor :hostile, :desires, :content, :friends, :subtype
+    attr_accessor :hostile, :desires, :content, :friends, :subtype, :territory
     def initialize(player)
         super(player)
         @moveset = MOVES[1] | MOVES[6..8].flatten
         @hostile = false
         @friends = false
+        @territory = territory
         @desires = desires
     end
     def targets
@@ -429,9 +430,18 @@ class Character < Gamepiece
     def demon_is_slain
         @profile[:hearts] < 1
     end
+    def draw_backdrop
+        if @hostile
+            puts Rainbow("	   - An angry #{subtype[0]} stalks you.\n\n").purple
+        else docile_backdrop
+        end
+    end
     def become_hostile
-        @hostile = true
-        hostile_script
+        if !@hostile
+            @hostile = true
+            hostile_script
+            @location = @territory
+        end
     end
     def become_friends
         @hostile = false

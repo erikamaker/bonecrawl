@@ -34,6 +34,7 @@ def cpu1.unique_bartering_script
     puts "	   - It asks if it can have yours,"
     print "	     in exchange for a secret.\n\n"
 end
+cpu.hostile_area = room_1.minimap
 
 
 room_1 = Dungeon.new

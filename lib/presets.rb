@@ -1238,7 +1238,7 @@ class Hellion < Character
     def subtype
         ["hellion","goat","monster","enemy","demon","daemon"]
     end
-    def draw_backdrop
+    def docile_backdrop
         puts "	   - A dark hellion stands on two\n"
         puts "	     cloven hooves. It stinks.\n\n"
     end
