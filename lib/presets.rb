@@ -145,7 +145,8 @@ end
 
 
 class Fire < Fixture
-	def initialize
+	def initialize(player)
+        super(player)
 		@targets = subtype | ["fire","light","flame","flames"]
 	end
 end
@@ -172,13 +173,10 @@ class Fireplace < Fire
 		puts "	   - Hot coals smolder in an iron"
 		puts "	     grate built into of the wall.\n\n"
 	end
-    def heal_amount
-        4
-    end
 	def view
 		puts "	   - You warm your hands and toes"
-		puts "	     at the fire. It heals you.\n\n"
-        heal_player
+		puts "	     at the fire. It's healing.\n\n"
+        @player.gain_health(4 - @player.health)
     end
 end
 
@@ -189,7 +187,8 @@ end
 
 
 class Hook < Fixture
-    def initialize
+    def initialize(player)
+        super(player)
         @targets = ["hook","rusty hook","metal hook"]
     end
     def draw_backdrop
@@ -201,7 +200,7 @@ class Hook < Fixture
         puts "	     tells you the goblins use it"
         puts "	     to hang more than just coats"
         puts "	     and keys.\n\n"
-        toggle_idle
+        @player.toggle_idle
     end
 end
 
@@ -212,12 +211,13 @@ end
 
 
 class Surface < Fixture
-	def initialize
+	def initialize(player)
+        super(player)
 		@targets = subtype | ["surface"]
 	end
     def view
         subtype_view
-        toggle_idle
+       @player.toggle_idle
     end
 end
 
@@ -342,12 +342,13 @@ end
 
 
 class AppleSpawner < GrowingFruit
-    def initialize
+    def initialize(player)
+        super(player)
         @group = []
-        @type = Apple
+        @type = Apple.new(@player)
     end
     def harvest_cycle
-        if @@page_count % 30 == 0
+        if @@page % 30 == 0
             grow_fruit
         end
     end
@@ -371,12 +372,13 @@ class AppleSpawner < GrowingFruit
 end
 
 class BerrySpawner < GrowingFruit
-    def initialize
+    def initialize(player)
+        super(player)
         @group = []
         @type = Berry
     end
     def harvest_cycle
-        if (@@page_count % 40 == 0)
+        if (@@page % 40 == 0)
             grow_fruit
         end
     end
@@ -981,9 +983,12 @@ class Clothes < Portable
 end
 
 class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
-    def initialize
-        @targets = ["hoodie","sweater","sweatshirt"]
+    def initialize(player)
+        super(player)
         @profile = {:defense => 5, :lifespan => 30}
+    end
+    def subtype
+        ["hoodie","sweater","sweatshirt"]
     end
     def draw_backdrop
         puts "	   - A dark hoodie lays in a pile"

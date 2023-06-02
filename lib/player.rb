@@ -14,7 +14,7 @@ class Player < Board
     @state = :idle
     @effect = :norm
     @weapon = nil
-    @position = [-1,0,2]
+    @position = [0,1,2]
     @sight = []
     @items = []
     @health = 2

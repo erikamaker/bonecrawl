@@ -297,7 +297,7 @@ class GrowingFruit < Edible
     end
     def grow_fruit
         if @group.count < 3
-            @group.push(@type.new)
+            @group.push(@type)
         end
     end
     def assign_profile
@@ -335,7 +335,7 @@ class GrowingFruit < Edible
     def take
         view
         puts Rainbow("	   - You pluck one from the tree.\n\n").orange
-        @@inventory.push(@group[0])
+        @player.items.push(@group[0])
         @group.delete(@group[0])
     end
 end
@@ -371,7 +371,7 @@ class Weapon < Tool
     end
     def equip
         view
-        puts Rainbow("	   - You equip the #{targets[0]}.\n\n").orange
+        puts Rainbow("	   - You equip the #{targets[0]}.\n\n").orange  # TODO: weaponsa aren't equipping for some reason.
         @weapon = self
     end
 end
@@ -384,7 +384,8 @@ end
 
 class Pullable < Gamepiece
     attr_accessor :content
-    def initialize
+    def initialize(player)
+        super(player)
         @moveset = MOVES[1] | MOVES[5]
         @unpulled = true
     end
@@ -432,7 +433,7 @@ class Character < Gamepiece
     end
     def draw_backdrop
         if @hostile
-            puts Rainbow("	   - An angry #{subtype[0]} stalks you.\n\n").purple
+            puts "	   - A violent #{subtype[0]} stalks you.\n\n"
         else docile_backdrop
         end
     end
@@ -487,7 +488,7 @@ class Character < Gamepiece
         reward.take
         @rewards.delete(reward)
         @content.push(@desires)
-        player_has_leverage.remove_from_inventory
+        @player.remove_from_inventory(player_has_leverage)
         become_friends
     end
     def demon_chance
@@ -540,18 +541,19 @@ class Character < Gamepiece
         end
     end
     def harm
-        puts Rainbow("	   - You move to strike the demon").orange
-        print Rainbow("	     with your ").orange
+        puts "	   - You move to strike the demon"
+        print "	     with your "
         if weapon_equipped
-            print(Rainbow("#{@weapon.targets[0]}.\n\n").orange)
-        else print(Rainbow("bare hands.\n\n").orange)
+            print(Rainbow("#{@weapon.targets[0]}.\n\n").purple)
+        else print(Rainbow("bare hands.\n\n").purple)
         end
         player_attack_result
     end
     def demon_attack
         if @hostile
-            puts Rainbow("	   - The demon strikes to attack").orange
-            print Rainbow("	     with its #{demon_weapon_equipped.targets[0]}.\n\n").orange
+            puts "	   - The #{subtype[0]} strikes to attack"
+            print "	     with its "
+            print Rainbow("#{demon_weapon_equipped.targets[0]}.\n\n").purple
             attack_outcome
         end
     end
@@ -577,7 +579,7 @@ class Character < Gamepiece
     end
     def demon_death_scene
         if @profile[:hearts] < 1
-            puts Rainbow("	   - The demon is slain. It drops:\n").purple
+            puts Rainbow("	   - The demon is slain. It drops:\n").cyan
             list_rewards
             take_everything
             remove_from_board

@@ -48,8 +48,6 @@ def room_1.overview
 end
 
 
-torch_1 = Torch.new
-torch_1.minimap = [[0,2,2],[0,2,-1],[0,5,-4]]
 
 
 drain_1 = Toilet.new
@@ -76,10 +74,10 @@ hook_1 = Hook.new
 hook_1.minimap = [[0,2,0]]
 
 
-key_1 = Key.new
-key_1.minimap = [[0,2,0]]
-def key_1.draw_backdrop
-    puts "	   - A brass key dangles from it.\n\n"
+hoodie_1 = Hoodie.new
+hoodie_1.minimap = [[0,2,0]]
+def hoodie_1.draw_backdrop
+    puts "	   - A black hoodie hangs from it.\n\n"
 end
 
 
