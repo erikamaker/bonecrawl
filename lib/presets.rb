@@ -340,29 +340,7 @@ end
 #####    APPLE SPAWNER    ####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
-class AppleSpawner < Fruit
-    def initialize(player)
-        super(player)
-        @group = []
-        @type = Apple.new(@player)
-    end
-    def subtype
-        ["apple","apples"]
-    end
-    def draw_backdrop
-		if any_fruit?
-            puts "	   - A fat blue apple hangs off"
-            puts "	     the end of a thin branch.\n\n"
 
-        else
-            puts "	   - Its branches bear no fruit.\n\n"
-        end
-    end
-    def description
-		puts "	   - Deeply blue and glimmering,"
-        puts "	     one matures every 30 pages.\n\n"
-	end
-end
 
 
 
@@ -936,7 +914,7 @@ class Clothes < Tool
         self.push_to_inventory if @player.items.none?(self)
         view
         puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
-        @player.jacket = self
+        @player.armor = self
     end
 end
 

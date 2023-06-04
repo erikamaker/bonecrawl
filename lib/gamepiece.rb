@@ -285,6 +285,11 @@ class Fruit < Edible
     end
     def feed
         take
+        animate_ingestion
+        remove_portion
+        portions_left
+        @player.gain_health(heal_amount)
+        side_effects
     end
     def special_properties
         assign_profile
@@ -304,17 +309,49 @@ class Fruit < Edible
         end
     end
     def grow_fruit
-        if @group.count < 1
-          new_apple = @type.clone
-          @group.push(new_apple)
+        if @group.count < 3
+            @group.push(@type.clone)
         end
     end
     def take
         view
-        puts Rainbow("	   - You pluck the ripe fruit.\n\n").orange
+        puts Rainbow("	   - You pluck the ripe fruit.\n").orange
         @player.items.push(@group[0])
         @group.delete(@group[0])
     end
+end
+
+class AppleSpawner < Fruit
+    def initialize(player)
+        super(player)
+        @group = []
+        @type = Apple.new(@player)
+    end
+    def subtype
+        ["apple","apples"]
+    end
+    def draw_backdrop
+		if any_fruit?
+            print "	   - #{@group.count} fat apple"
+            @group.count > 1 ? print("s ") : print(" ")
+            print "hang"
+            @group.count == 1 ? print("s ") : print(" ")
+            print "on the end\n"
+            puts "	     of a crooked branch.\n\n"
+        else
+            puts "	   - Its branches bear no fruit.\n\n"
+        end
+    end
+    def grow_fruit
+        if @group.count < 3
+          new_apple = Apple.new(@player)
+          @group.push(new_apple)
+        end
+      end
+    def description
+		puts "	   - Deeply blue and glimmering,"
+        puts "	     one matures every 30 pages.\n\n"
+	end
 end
 
 
@@ -549,9 +586,9 @@ class Character < Gamepiece
         end
     end
     def player_defense
-        if @player.jacket
-            puts Rainbow("	     Your #{@player.jacket.targets[0]} absorbs #{@player.jacket.profile[:defense]}.").cyan
-            @player.jacket.profile[:lifespan] -= demon_damage
+        if @player.armor
+            puts Rainbow("	     Your #{@player.armor.targets[0]} absorbs #{@player.armor.profile[:defense]}.").cyan
+            @player.armor.profile[:lifespan] -= demon_damage
         end
         print "\n"
     end

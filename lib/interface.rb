@@ -52,7 +52,7 @@ module Interface
   end
   def print_defense_meter
     print "DEFENSE "
-    @defense = @jacket.profile[:defense] if !@jacket.nil?
+    @defense = @armor.profile[:defense] if !@armor.nil?
   	@defense = [@defense, 4].min
   	@defense.times { print Rainbow("■ ").orange }
   	(4 - @defense).times { print Rainbow("■ ").cyan }

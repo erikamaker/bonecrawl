@@ -6,7 +6,7 @@ require_relative 'navigation'
 class Player < Board
   include Inventory
   include Navigation
-  attr_accessor :items, :health, :state, :target, :action, :sight, :position, :focus, :weapon, :jacket
+  attr_accessor :items, :health, :state, :target, :action, :sight, :position, :focus, :weapon, :armor
   def initialize
     super
     @action = :start
@@ -14,7 +14,7 @@ class Player < Board
     @state = :idle
     @effect = :norm
     @weapon = nil
-    @jacket = nil
+    @armor = nil
     @position = [0,1,2]
     @sight = []
     @items = []
