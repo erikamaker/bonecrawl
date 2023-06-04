@@ -5,7 +5,7 @@
 
 
 require_relative 'vocabulary'
-require_relative 'renderer'
+require_relative 'interface'
 require_relative 'board'
 require_relative 'gamepiece'
 require_relative 'presets'
@@ -36,8 +36,8 @@ def room_1.overview
   puts "	     your cell's only exit.\n\n"
 end
 
-sword_1 = Sword.new(pl1)
-sword_1.location = [[0,1,2]]
+lighter = Lighter.new(pl1)
+lighter.location = [[0,1,2]]
 
 
 drain_1 = Toilet.new(pl1)
@@ -162,7 +162,7 @@ fire_1.location = [[0,1,-4]]
 #####    GAME LOOP     #######################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
-levels = [ room_1, drain_1, sword_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, apples, torch_1, pull_1, table_1, bread_1, grease, pick_1, fire_1 ]
+levels = [ room_1, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, apples, torch_1, pull_1, table_1, bread_1, grease, pick_1, fire_1 ]
 
 
 

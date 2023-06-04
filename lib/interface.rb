@@ -34,8 +34,8 @@ module Interface
   end
   def page_top
     print Rainbow("\n---------------------------------------------------------\n").blue.bright
-  	print Rainbow("[   ").blue.bright
-    print_spirit_meter
+  	print Rainbow("[  ").blue.bright
+    print_defense_meter
     print Rainbow("  |   ").blue.bright
   	print_hearts_meter
   	print Rainbow("  |   ").blue.bright
@@ -50,11 +50,12 @@ module Interface
     else print "     "
     end
   end
-  def print_spirit_meter
-    print "SPIRIT "
-  	@spirit = [@spirit, 4].min
-  	@spirit.times { print Rainbow("■ ").orange }
-  	(4 - @spirit).times { print Rainbow("■ ").cyan }
+  def print_defense_meter
+    print "DEFENSE "
+    @defense = @jacket.profile[:defense] if !@jacket.nil?
+  	@defense = [@defense, 4].min
+  	@defense.times { print Rainbow("■ ").orange }
+  	(4 - @defense).times { print Rainbow("■ ").cyan }
   end
   def print_hearts_meter
     print "HEARTS "
@@ -158,7 +159,7 @@ module Interface
       sleep 2
       page_bottom
       print Rainbow("\n---------------------------------------------------------\n").red.bright
-      print Rainbow("[   SPIRIT X X X X   |   HEARTS X X X X   |   KEYS      ]").red
+      print Rainbow("[  DEFENSE X X X X   |   HEARTS X X X X   |   KEYS      ]").red
       print Rainbow("\n---------------------------------------------------------").red.bright
       puts "\n\n\n\n\n\n"
       exit!

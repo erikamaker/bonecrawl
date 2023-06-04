@@ -335,16 +335,6 @@ class Tool < Portable
 	def draw_backdrop
 		puts "	   - A #{targets[0]} lays here.\n\n"
 	end
-    def determine_type
-        @player.weapon = self if self.is_a?(Weapon)
-        @player.jacket = self if self.is_a?(Clothes)
-    end
-    def equip
-        self.push_to_inventory if @player.items.none?(self)
-        view
-        puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
-        determine_type
-    end
 end
 
 
@@ -356,6 +346,12 @@ end
 class Weapon < Tool
     def targets
         subtype | ["weapon"]
+    end
+    def equip
+        self.push_to_inventory if @player.items.none?(self)
+        view
+        puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
+        @player.weapon = self
     end
 end
 
@@ -552,10 +548,19 @@ class Character < Gamepiece
         else 1
         end
     end
+    def player_defense
+        if @player.jacket
+            puts Rainbow("	     Your #{@player.jacket.targets[0]} absorbs #{@player.jacket.profile[:defense]}.").cyan
+            @player.jacket.profile[:lifespan] -= demon_damage
+        end
+        print "\n"
+    end
     def attack_outcome
         if demon_chance
             total = @player.health - @player.lose_health(demon_damage)
-            puts Rainbow("	   - It costs you #{total} heart points.\n").red
+            print Rainbow("	   - It costs you #{total} heart point").red
+            total > 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
+            player_defense
         else
             puts Rainbow("	   - You narrowly avoid its blow.\n").green
         end

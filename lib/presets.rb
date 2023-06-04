@@ -351,8 +351,8 @@ class AppleSpawner < Fruit
     end
     def draw_backdrop
 		if any_fruit?
-            puts "	   - A bright blue apple hangs"
-            puts "	     heavy on a thin branch.\n\n"
+            puts "	   - A fat blue apple hangs off"
+            puts "	     the end of a thin branch.\n\n"
 
         else
             puts "	   - Its branches bear no fruit.\n\n"
@@ -360,7 +360,7 @@ class AppleSpawner < Fruit
     end
     def description
 		puts "	   - Deeply blue and glimmering,"
-        puts "	     they mature every 30 pages.\n\n"
+        puts "	     one matures every 30 pages.\n\n"
 	end
 end
 
@@ -606,7 +606,7 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-class Elixer < Drink   # No backdrop, because you'll never see it until it's already obtained.
+class Elixer < Drink
     def initialize(player)
         super(player)
 		@profile = { :effect => :health, :portions => 3, :hearts => 3 }
@@ -932,12 +932,18 @@ class Clothes < Tool
     def targets
         subtype | ["clothing","clothes","garb","armor"]
     end
+    def equip
+        self.push_to_inventory if @player.items.none?(self)
+        view
+        puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
+        @player.jacket = self
+    end
 end
 
 class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
     def initialize(player)
         super(player)
-        @profile = {:defense => 5, :lifespan => 30}
+        @profile = {:defense => 2, :lifespan => 30}
     end
     def subtype
         ["hoodie","sweater","sweatshirt"]
@@ -956,7 +962,7 @@ end
 class Jeans < Clothes   # Requires 1 copper ore, and 3 spider spools
     def initialize
         @targets = ["jeans","denim","pants","trousers"]
-        @profile = {:defense => 5, :lifespan => 20}
+        @profile = {:defense => 3, :lifespan => 20}
     end
     def draw_backdrop
         puts "	   - A pair of denim jeans lay on"
@@ -1190,7 +1196,7 @@ class Hellion < Character
         @rewards = [Apple.new(@player),Bread.new(@player)]
         @content = @weapons | @rewards
         @desires = Lighter.new(@player)
-        @profile = {:defense => 2, :hearts => 4, :focus => 1}
+        @profile = {:hearts => 10, :focus => 1}
     end
     def subtype
         ["hellion","goat","monster","enemy","demon","daemon"]

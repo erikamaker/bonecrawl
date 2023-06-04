@@ -1,4 +1,4 @@
-require_relative 'renderer'
+require_relative 'interface'
 require_relative 'vocabulary'
 
 module Inventory

@@ -1,4 +1,4 @@
-require_relative 'renderer'
+require_relative 'interface'
 
 module Navigation
   def directions
