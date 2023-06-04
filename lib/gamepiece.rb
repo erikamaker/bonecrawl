@@ -1,22 +1,17 @@
 require_relative 'board'
 
 class Gamepiece < Board
-    attr_accessor :location, :targets, :moveset, :profile
+    attr_accessor :location, :targets, :moveset, :profile, :player
     def initialize(player)
       super(player)
       @location = [[-1,0,2]]
       @player = player
     end
     def draw_backdrop
-        # Not all instances will have their
-        # own backdrop. Some are hidden and
-        # will return nil.
+        # Not all instances have a backdrop.
     end
     def special_properties
-        # For example, fruit spawners grow
-        # fruit on a schedule. This is for
-        # any ad hoc logic a specific piece
-        # has. Some may have none at all.
+        # Unique behavior at activation.
     end
     def reveal_targets
         @player.sight |= targets
@@ -39,7 +34,7 @@ class Gamepiece < Board
             puts space + "#{key.capitalize} #{dots} #{value}"
         end
     end
-    def assemble
+    def activate
         special_properties
         player_near?  ? reveal_targets : return
         @player.player_idle?  ? draw_backdrop : interact
@@ -280,7 +275,7 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-class GrowingFruit < Edible
+class Fruit < Edible
     def targets
         if any_fruit?
             subtype | ["food","edibles","produce","fruit"]
@@ -292,53 +287,36 @@ class GrowingFruit < Edible
         take
     end
     def special_properties
-        harvest_cycle
         assign_profile
+        harvest_cycle
     end
-    def grow_fruit
-        if @group.count < 3
-            @group.push(@type)
+    def harvest_cycle
+        if @@page % 30 == 0
+            grow_fruit
         end
+    end
+    def any_fruit?
+        @group[0] != nil
     end
     def assign_profile
         if any_fruit?
             @profile = @group[0].profile
         end
     end
-    def any_fruit?
-        (@group.count) > 0 and (@group[0].profile[:portions] > 0)
-    end
-    def one_left
-        @group.count == 1
-    end
-    def last_bite?
-        if @group.count.eql?(1)
-            @group[0].profile[:portions] == 0
-        end
-    end
-    def none_left?
-        @group.count == 0
-    end
-    def be_patient
-        puts "	   - There aren't any left. They"
-        puts "	     need time to regrow.\n\n"
-    end
-    def view
-        if any_fruit?
-            description
-            view_profile
-            print "\n"
-        else
-            be_patient
+    def grow_fruit
+        if @group.count < 1
+          new_apple = @type.clone
+          @group.push(new_apple)
         end
     end
     def take
         view
-        puts Rainbow("	   - You pluck one from the tree.\n\n").orange
+        puts Rainbow("	   - You pluck the ripe fruit.\n\n").orange
         @player.items.push(@group[0])
         @group.delete(@group[0])
     end
 end
+
 
 
 ##############################################################################################################################################################################################################################################################
@@ -348,12 +326,25 @@ end
 
 
 class Tool < Portable
+    def moveset
+		MOVES[1..2].flatten | MOVES[14]
+	end
     def targets
         subtype | ["tool"]
     end
 	def draw_backdrop
 		puts "	   - A #{targets[0]} lays here.\n\n"
 	end
+    def determine_type
+        @player.weapon = self if self.is_a?(Weapon)
+        @player.jacket = self if self.is_a?(Clothes)
+    end
+    def equip
+        self.push_to_inventory if @player.items.none?(self)
+        view
+        puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
+        determine_type
+    end
 end
 
 
@@ -363,16 +354,8 @@ end
 
 
 class Weapon < Tool
-	def moveset
-		MOVES[1..2].flatten | MOVES[14]
-	end
     def targets
         subtype | ["weapon"]
-    end
-    def equip
-        view
-        puts Rainbow("	   - You equip the #{targets[0]}.\n\n").orange  # TODO: weaponsa aren't equipping for some reason.
-        @weapon = self
     end
 end
 
@@ -390,7 +373,7 @@ class Pullable < Gamepiece
         @unpulled = true
     end
     def special_properties
-        content.assemble if !@unpulled
+        content.activate if !@unpulled
     end
     def toggle_state_pulled
         @unpulled = false
@@ -498,11 +481,11 @@ class Character < Gamepiece
         rand(@player.focus..2) == 2
     end
     def weapon_equipped
-        @weapon != nil
+        @player.weapon != nil
     end
     def player_damage
         if weapon_equipped
-            @weapon.profile[:damage]
+            @player.weapon.profile[:damage]
         else 1
         end
     end
@@ -526,7 +509,7 @@ class Character < Gamepiece
             demon_attack
         end
     end
-    def assemble
+    def activate
         player_near? ? reveal_targets : return
         @player.player_idle? ? draw_backdrop : interact
         special_properties
@@ -544,7 +527,7 @@ class Character < Gamepiece
         puts "	   - You move to strike the demon"
         print "	     with your "
         if weapon_equipped
-            print(Rainbow("#{@weapon.targets[0]}.\n\n").purple)
+            print(Rainbow("#{@player.weapon.targets[0]}.\n\n").purple)
         else print(Rainbow("bare hands.\n\n").purple)
         end
         player_attack_result

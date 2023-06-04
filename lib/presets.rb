@@ -340,27 +340,20 @@ end
 #####    APPLE SPAWNER    ####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
-
-class AppleSpawner < GrowingFruit
+class AppleSpawner < Fruit
     def initialize(player)
         super(player)
         @group = []
         @type = Apple.new(@player)
-    end
-    def harvest_cycle
-        if @@page % 30 == 0
-            grow_fruit
-        end
     end
     def subtype
         ["apple","apples"]
     end
     def draw_backdrop
 		if any_fruit?
-            print "	   - #{@group.count} indigo "
-            one_left ? print("apple ") : print("apples ")
-            one_left ? print("hangs ") : print("hang ")
-            print "off its\n	     twisty branches.\n\n"
+            puts "	   - A bright blue apple hangs"
+            puts "	     heavy on a thin branch.\n\n"
+
         else
             puts "	   - Its branches bear no fruit.\n\n"
         end
@@ -371,7 +364,9 @@ class AppleSpawner < GrowingFruit
 	end
 end
 
-class BerrySpawner < GrowingFruit
+
+
+class BerrySpawner < Fruit
     def initialize(player)
         super(player)
         @group = []
@@ -423,7 +418,7 @@ class Lockpick < Tool
   end
 end
 
-class Pickaxe1 < Tool
+class Pickaxe < Tool
 	def initialize(player)
         super(player)
         @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
@@ -466,31 +461,6 @@ class Lighter < Tool
 	end
 end
 
-class Jar < Tool
-    def initialize(player)
-        super(player)
-        @profile = {:build => "glass"}
-        @holding = []
-    end
-    def currently_full
-        !@holding.empty?
-    end
-    def moveset
-        if currently_full
-            MOVES[1..2] | MOVES[15]
-        else MOVES[1..2].flatten
-        end
-    end
-    def subtype
-        ["jar", "bottle", "flask"]
-    end
-    def description
-	    puts "	   - It's a simple glass jar. It"
-        print "	     currently holds "
-        @holding ? "#{@holding[0]}" : "nothing"
-	end
-end
-
 
 ##############################################################################################################################################################################################################################################################
 #####    WEAPONS    ##########################################################################################################################################################################################################################################
@@ -498,61 +468,46 @@ end
 
 
 class Knife < Weapon
-    def subtype
-        ["knife","dagger","blade"]
-    end
-end
-
-class Knife1 < Knife
 	def initialize(player)
         super(player)
-        @profile = {:build => "bone", :lifespan => rand(1..6), :damage => 2}
+        @profile = { :build => "bone", :lifespan => rand(5..10), :damage => 2 }
 	end
+    def subtype
+        ["knife","dagger"]
+    end
     def description
         puts "	   - It's a weak dagger made from"
-		puts "	     spare skeleton parts.\n\n"
-    end
-end
-
-class Knife2 < Knife
-    def initialize(player)
-        super(player)
-        @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
-	end
-    def description
-        puts "	   - It's a sturdy dagger wrought"
-		puts "	     from honed copper.\n\n"
-    end
-end
-
-class Knife3 < Knife
-    def initialize(player)
-        super(player)
-        @profile = {:build => "silver", :lifespan => rand(14..21), :damage => 4}
-	end
-    def description
-        puts "	   - It's a sacred dagger wrought"
-		puts "	     from sterling silver.\n\n"
+		puts "	     scrapped skeleton parts.\n\n"
     end
 end
 
 class Cleaver < Weapon
+    def initialize(player)
+        super(player)
+        @profile = { :build => "iron", :lifespan => rand(10..15), :damage => 3 }
+	end
     def subtype
         ["cleaver", "axe","blade"]
     end
-end
-
-class Cleaver1 < Cleaver
-    def initialize(player)
-        super(player)
-        @profile = {:build => "iron", :lifespan => rand(10..20), :damage => 1}
-	end
     def description
         puts "	   - It's a butcher's cleaver. It"
 		puts "	     feels heavy in your hand.\n\n"
     end
 end
 
+class Sword < Weapon
+    def initialize(player)
+        super(player)
+        @profile = { :build => "silver", :lifespan => rand(15..25), :damage => 4 }
+	end
+    def subtype
+        ["sword"]
+    end
+    def description
+        puts "	   - It's a sturdy skeleton sword"
+		puts "	     infused with sacred silver.\n\n"
+    end
+end
 
 class Bread < Edible
     def initialize(player)
@@ -560,14 +515,13 @@ class Bread < Edible
 		@profile = { :hearts => 2, :portions => 3 }
 	end
     def subtype
-       ["loaf", "bread", "golden bread"]
+       ["bread"]
     end
 	def draw_backdrop
-		puts "	   - Some goblish bread sits here.\n\n"
+		puts "	   - Some goblin bread sits here.\n\n"
 	end
 	def description
-		puts "	   - It's soft and buttery. Cook\n"
-        puts "	     it down with fruit or meat.\n\n"
+		puts "	   - It's stale and burnt.\n\n"
 	end
 end
 
@@ -585,33 +539,31 @@ class Apple < Edible
 	def description
 		puts "	   - Blue apples like these tend"
         puts "	     to grow underground.\n\n"
-
 	end
 end
 
-class Berry < Edible
+class Plum < Edible
     def initialize(player)
         super(player)
-        @profile = { :hearts => 1, :portions => 1 }
+        @profile = { :hearts => 1, :portions => 3 }
     end
     def subtype
-        ["berry","berries","blackberries"]
+        ["apple"]
 	end
 	def draw_backdrop
-		puts "	   - A single blackberry, perhaps"
-        puts "	     spilt by mistake, lays here.\n\n"
+		puts "	   - A jet black plum sits here.\n\n"
 	end
 	def description
-		puts "	   - Berries like this are bitter."
-        puts "	     They don't heal much on their"
-        puts "	     own, but cook well with bread.\n\n"
+		puts "	   - Black plums like these are"
+        puts "	     sweet and juicy.\n\n"
+
 	end
 end
 
 class Mushroom < Edible
     def initialize(player)
         super(player)
-        @profile = { :hearts => 4, :portions => 1, :effect => "trance", :duration => 10}
+        @profile = { :hearts => 4, :portions => 1, :effect => :entranced, :duration => 10 }
     end
     def subtype
         ["fungi","fungus","mushroom","shroom","toadstool","stool"]
@@ -630,10 +582,10 @@ class Mushroom < Edible
     end
 end
 
-class Jerky < Edible
+class Flesh < Edible
     def initialize(player)
         super(player)
-        @profile = { :hearts => 2, :portions => 2}
+        @profile = { :hearts => 2, :portions => 2 }
     end
     def subtype
         ["jerky","meat"]
@@ -976,7 +928,7 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-class Clothes < Portable
+class Clothes < Tool
     def targets
         subtype | ["clothing","clothes","garb","armor"]
     end
@@ -1164,13 +1116,13 @@ class Door < Container
     end
     def special_properties
         if state == "jammed open"
-            content.assemble
+            content.activate
         end
     end
     def give_content
         puts Rainbow("           - A new path is revealed. Your").orange
         puts Rainbow("             map has been updated.\n ").orange
-        content.assemble
+        content.activate
         content.overview
         toggle_state_open
     end
@@ -1234,7 +1186,7 @@ end
 class Hellion < Character
     def initialize(player)
         super(player)
-        @weapons = [Cleaver1.new(@player)]
+        @weapons = [Cleaver.new(@player)]
         @rewards = [Apple.new(@player),Bread.new(@player)]
         @content = @weapons | @rewards
         @desires = Lighter.new(@player)

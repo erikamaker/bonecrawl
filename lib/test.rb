@@ -36,8 +36,8 @@ def room_1.overview
   puts "	     your cell's only exit.\n\n"
 end
 
-lighter = Lighter.new(pl1)
-lighter.location = [[0,1,2]]
+sword_1 = Sword.new(pl1)
+sword_1.location = [[0,1,2]]
 
 
 drain_1 = Toilet.new(pl1)
@@ -95,7 +95,7 @@ hellion_1.territory = hall_1.location | room_2.location
 
 chest_1 = Chest.new(pl1)
 chest_1.location = [[0,5,-4]]
-chest_1.content = Knife1.new(pl1)
+chest_1.content = Knife.new(pl1)
 
 
 pull_1 = Lever.new(pl1)
@@ -162,7 +162,7 @@ fire_1.location = [[0,1,-4]]
 #####    GAME LOOP     #######################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
-levels = [ room_1, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, apples, torch_1, pull_1, table_1, bread_1, grease, pick_1, fire_1 ]
+levels = [ room_1, drain_1, sword_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, apples, torch_1, pull_1, table_1, bread_1, grease, pick_1, fire_1 ]
 
 
 
@@ -173,7 +173,7 @@ loop do
   pl1.detect_movement
   pl1.tutorial_screen
   pl1.suggest_tutorial
-  levels.each { |piece| piece.assemble }
+  levels.each { |piece| piece.activate }
   pl1.load_inventory
   pl1.no_target
   pl1.game_over
