@@ -1,9 +1,9 @@
-require_relative 'gamepiece'
 require_relative 'inventory'
 require_relative 'navigation'
+require_relative 'board'
 
 
-class Player < Board
+class Player
   include Inventory
   include Navigation
   attr_accessor :items, :health, :state, :target, :action, :sight, :position, :focus, :weapon, :armor
@@ -67,7 +67,7 @@ class Player < Board
   end
   def turn_page
     reset_sight
-    increment_page(1)
+    Board.increment_page(1)
     toggle_idle
     reset_input
   end

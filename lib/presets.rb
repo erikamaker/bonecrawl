@@ -7,8 +7,8 @@ require_relative 'gamepiece'
 
 class Tiles < Fixture
 	attr_accessor  :subtype, :built_of, :terrain, :borders, :general, :targets
-	def initialize(player)
-        super(player)
+	def initialize
+        super
 		@general = ["around","room","area","surroundings"] | subtype
 		@borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
 		@terrain = ["terrain","medium","material"] | built_of
@@ -19,12 +19,12 @@ class Tiles < Fixture
     end
     def special_properties
         @@map |= @location
-        @player.sight.include?("vein") and moveset | MOVES[12]
+        @@player.sight.include?("vein") and moveset | MOVES[12]
     end
 	def parse_action
-		case @player.target
+		case @@player.target
 		when *general
-            @player.toggle_idle
+            @@player.toggle_idle
 			overview
 		when *terrain
 			view_type
@@ -145,8 +145,8 @@ end
 
 
 class Fire < Fixture
-	def initialize(player)
-        super(player)
+	def initialize
+        super
 		@targets = subtype | ["fire","light","flame","flames"]
 	end
 end
@@ -176,7 +176,7 @@ class Fireplace < Fire
 	def view
 		puts "	   - You warm your hands and toes"
 		puts "	     at the fire. It's healing.\n\n"
-        @player.gain_health(4 - @player.health)
+        @@player.gain_health(4 - @@player.health)
     end
 end
 
@@ -187,8 +187,8 @@ end
 
 
 class Hook < Fixture
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @targets = ["hook","rusty hook","metal hook"]
     end
     def draw_backdrop
@@ -200,7 +200,7 @@ class Hook < Fixture
         puts "	     tells you the goblins use it"
         puts "	     to hang more than just coats"
         puts "	     and keys.\n\n"
-        @player.toggle_idle
+        @@player.toggle_idle
     end
 end
 
@@ -211,13 +211,13 @@ end
 
 
 class Surface < Fixture
-	def initialize(player)
-        super(player)
+	def initialize
+        super
 		@targets = subtype | ["surface"]
 	end
     def view
         subtype_view
-       @player.toggle_idle
+       @@player.toggle_idle
     end
 end
 
@@ -345,8 +345,8 @@ end
 
 
 class BerrySpawner < Fruit
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @group = []
         @type = Berry
     end
@@ -383,8 +383,8 @@ end
 
 
 class Lockpick < Tool
-  def initialize(player)
-      super(player)
+  def initialize
+      super
       @profile = {:build => "copper", :lifespan => rand(2..4), :damage => 1}
   end
   def subtype
@@ -397,8 +397,8 @@ class Lockpick < Tool
 end
 
 class Pickaxe < Tool
-	def initialize(player)
-        super(player)
+	def initialize
+        super
         @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
 	end
     def subtype
@@ -411,8 +411,8 @@ class Pickaxe < Tool
 end
 
 class Key < Tool
-	def initialize(player)
-        super(player)
+	def initialize
+        super
         @profile = {:build => "brass", :lifespan => 1}
 	end
     def subtype
@@ -425,8 +425,8 @@ class Key < Tool
 end
 
 class Lighter < Tool
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = {:build => "silver", :damage => 1}
 	end
     def subtype
@@ -446,8 +446,8 @@ end
 
 
 class Knife < Weapon
-	def initialize(player)
-        super(player)
+	def initialize
+        super
         @profile = { :build => "bone", :lifespan => rand(5..10), :damage => 2 }
 	end
     def subtype
@@ -460,8 +460,8 @@ class Knife < Weapon
 end
 
 class Cleaver < Weapon
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = { :build => "iron", :lifespan => rand(10..15), :damage => 3 }
 	end
     def subtype
@@ -474,8 +474,8 @@ class Cleaver < Weapon
 end
 
 class Sword < Weapon
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = { :build => "silver", :lifespan => rand(15..25), :damage => 4 }
 	end
     def subtype
@@ -488,8 +488,8 @@ class Sword < Weapon
 end
 
 class Bread < Edible
-    def initialize(player)
-        super(player)
+    def initialize
+        super
 		@profile = { :hearts => 2, :portions => 3 }
 	end
     def subtype
@@ -504,8 +504,8 @@ class Bread < Edible
 end
 
 class Apple < Edible
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = { :hearts => 1, :portions => 3 }
     end
     def subtype
@@ -521,8 +521,8 @@ class Apple < Edible
 end
 
 class Plum < Edible
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = { :hearts => 1, :portions => 3 }
     end
     def subtype
@@ -539,8 +539,8 @@ class Plum < Edible
 end
 
 class Mushroom < Edible
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = { :hearts => 4, :portions => 1, :effect => :entranced, :duration => 10 }
     end
     def subtype
@@ -561,8 +561,8 @@ class Mushroom < Edible
 end
 
 class Flesh < Edible
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = { :hearts => 2, :portions => 2 }
     end
     def subtype
@@ -585,8 +585,8 @@ end
 
 
 class Elixer < Drink
-    def initialize(player)
-        super(player)
+    def initialize
+        super
 		@profile = { :effect => :health, :portions => 3, :hearts => 3 }
 	end
     def subtype
@@ -600,8 +600,8 @@ class Elixer < Drink
 end
 
 class Water < Drink
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = { :effect => :blessing, :duration => 3, :magnitude => 3, :portions => 3 }
     end
     def subtype
@@ -615,8 +615,8 @@ class Water < Drink
 end
 
 class Tonic < Drink
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = { :effect => :exorcism, :portions => 1 }
     end
     def subtype
@@ -650,8 +650,8 @@ class Blossom < Burnable
 end
 
 class RedFlower < Blossom
-    def initialize(player)
-        super(player)
+    def initialize
+        super
 		@profile = { :effect => :sedation, :defense => 2 , :attack => -1, :duration => '10 pages'}
 	end
     def subtype
@@ -669,8 +669,8 @@ class RedFlower < Blossom
 end
 
 class PurpleFlower < Blossom
-    def initialize(player)
-        super(player)
+    def initialize
+        super
 		@profile = { :effect => :agitation }
 	end
     def subtype
@@ -911,16 +911,16 @@ class Clothes < Tool
         subtype | ["clothing","clothes","garb","armor"]
     end
     def equip
-        self.push_to_inventory if @player.items.none?(self)
+        self.push_to_inventory if @@player.items.none?(self)
         view
         puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
-        @player.armor = self
+        @@player.armor = self
     end
 end
 
 class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @profile = {:defense => 2, :lifespan => 30}
     end
     def subtype
@@ -1168,12 +1168,12 @@ end
 
 
 class Hellion < Character
-    def initialize(player)
-        super(player)
-        @weapons = [Cleaver.new(@player)]
-        @rewards = [Apple.new(@player),Bread.new(@player)]
+    def initialize
+        super
+        @weapons = [Cleaver.new]
+        @rewards = [Apple.new,Bread.new]
         @content = @weapons | @rewards
-        @desires = Lighter.new(@player)
+        @desires = Lighter.new
         @profile = {:hearts => 10, :focus => 1}
     end
     def subtype

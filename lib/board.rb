@@ -1,16 +1,20 @@
 require_relative 'vocabulary'
+require_relative 'player'
 
 class Board
   include Interface
-  attr_accessor :position
-  def initialize(player = nil)
+  def initialize
     @@page = 0
     @@map = []
+    @@player = Player.new
   end
-  def world_map
+  def self.player
+    @@player
+  end
+  def self.world_map
     @@map
   end
-  def page_count
+  def self.page_count
     @@page
   end
   def actions
@@ -31,19 +35,13 @@ class Board
       equip: MOVES[14]
     }
   end
-  def remove_from_board
-    @location = [0]
-  end
-  def move_piece(new_plot)
-    @location = new_plot
-  end
-  def increment_page(count)
+  def self.increment_page(count)
     @@page += count
   end
-  def decrement_page(count)
+  def self.decrement_page(count)
     @@page -= count
   end
-  def print_page
+  def self.print_page
     @@page
   end
 end

@@ -1,11 +1,10 @@
-require_relative 'board'
+require './board'
 
 class Gamepiece < Board
     attr_accessor :location, :targets, :moveset, :profile, :player
-    def initialize(player)
-      super(player)
+    def initialize
+      super
       @location = [[-1,0,2]]
-      @player = player
     end
     def draw_backdrop
         # Not all instances have a backdrop.
@@ -13,11 +12,17 @@ class Gamepiece < Board
     def special_properties
         # Unique behavior at activation.
     end
+    def remove_from_board
+        @location = [0]
+      end
+      def move_piece(new_plot)
+        @location = new_plot
+      end
     def reveal_targets
-        @player.sight |= targets
+        @@player.sight |= targets
     end
     def player_near?
-      @location.include?(@player.position)
+      @location.include?(@@player.position)
     end
     def view
         description
@@ -37,11 +42,11 @@ class Gamepiece < Board
     def activate
         special_properties
         player_near?  ? reveal_targets : return
-        @player.player_idle?  ? draw_backdrop : interact
+        @@player.player_idle?  ? draw_backdrop : interact
     end
     def interact
-      return if targets.none?(@player.target)
-      if moveset.include?(@player.action)
+      return if targets.none?(@@player.target)
+      if moveset.include?(@@player.action)
           parse_action
       else
           wrong_move
@@ -49,7 +54,7 @@ class Gamepiece < Board
     end
     def parse_action
       actions.each do |action, moves|
-          send(action) if moves.include?(@player.action)
+          send(action) if moves.include?(@@player.action)
       end
     end
   end
@@ -83,7 +88,7 @@ class Portable < Gamepiece
     end
     def push_to_inventory
         remove_from_board
-        @player.items.push(self)
+        @@player.items.push(self)
 	end
 end
 
@@ -95,8 +100,8 @@ end
 
 class Container < Gamepiece
     attr_accessor :content, :needkey, :state
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @state = "closed shut"
     end
     def moveset
@@ -110,7 +115,7 @@ class Container < Gamepiece
 	end
     def key
         tools = ["brass key", "lock pick"]
-        @player.items.find { |item| tools.include?(item.targets[0]) }
+        @@player.items.find { |item| tools.include?(item.targets[0]) }
     end
     def open
         if @state == "closed shut"
@@ -124,7 +129,7 @@ class Container < Gamepiece
         if key.profile[:lifespan] == 0
             puts Rainbow("	   - Your #{key.targets[0]} snaps in two.").red
             puts Rainbow("	     You toss away the pieces.\n").red
-            @player.items.delete(key)
+            @@player.items.delete(key)
         end
     end
     def is_locked
@@ -159,19 +164,19 @@ class Burnable < Portable
         MOVES[1..2].flatten + MOVES[9]
     end
     def fire_near?
-        @player.sight.none?("fire")
+        @@player.sight.none?("fire")
     end
     def out_of_fuel
         puts "	    - You're out of lighter fuel.\n\n"
     end
     def got_fuel?
-        if @player.search_inventory(Fuel).nil?
+        if @@player.search_inventory(Fuel).nil?
             out_of_fuel
         else use_lighter
         end
     end
     def got_a_light?
-        if @player.search_inventory(Lighter).nil?
+        if @@player.search_inventory(Lighter).nil?
             puts "	   - There's isn't any fire here.\n\n"
         else
             got_fuel?
@@ -183,8 +188,8 @@ class Burnable < Portable
         puts "	     It sparks a warm flame.\n\n"
         animate_combustion
         remove_from_board
-        fuel = @player.search_inventory(Fuel)
-        @player.remove_from_inventory(fuel)
+        fuel = @@player.search_inventory(Fuel)
+        @@player.remove_from_inventory(fuel)
     end
     def burn
         if fire_near?
@@ -213,7 +218,7 @@ class Edible < Portable
         animate_ingestion
         remove_portion
         portions_left
-        @player.gain_health(heal_amount)
+        @@player.gain_health(heal_amount)
         side_effects
     end
     def animate_ingestion
@@ -236,12 +241,12 @@ class Edible < Portable
         else
             print "You finish it.\n\n"
             remove_from_board
-            @player.remove_from_inventory(self)
+            @@player.remove_from_inventory(self)
         end
 	end
     def heal_amount
-        if @player.health + profile[:hearts] > 4
-            (4 - @player.health)
+        if @@player.health + profile[:hearts] > 4
+            (4 - @@player.health)
         else
             profile[:hearts]
         end
@@ -276,6 +281,11 @@ end
 
 
 class Fruit < Edible
+    def initialize
+        super
+        @group = []
+        @type = type.new
+    end
     def targets
         if any_fruit?
             subtype | ["food","edibles","produce","fruit"]
@@ -294,23 +304,19 @@ class Fruit < Edible
     def special_properties
         assign_profile
         harvest_cycle
+
     end
     def harvest_cycle
-        if @@page % 30 == 0
-            grow_fruit
+        if @@page % 30 == 0 and @group.count < 3
+            @group.push(@type)
         end
     end
     def any_fruit?
-        @group[0] != nil
+        @group[0]
     end
     def assign_profile
         if any_fruit?
             @profile = @group[0].profile
-        end
-    end
-    def grow_fruit
-        if @group.count < 3
-            @group.push(@type.clone)
         end
     end
     def take
@@ -322,10 +328,8 @@ class Fruit < Edible
 end
 
 class AppleSpawner < Fruit
-    def initialize(player)
-        super(player)
-        @group = []
-        @type = Apple.new(@player)
+    def type
+        Apple
     end
     def subtype
         ["apple","apples"]
@@ -342,12 +346,6 @@ class AppleSpawner < Fruit
             puts "	   - Its branches bear no fruit.\n\n"
         end
     end
-    def grow_fruit
-        if @group.count < 3
-          new_apple = Apple.new(@player)
-          @group.push(new_apple)
-        end
-      end
     def description
 		puts "	   - Deeply blue and glimmering,"
         puts "	     one matures every 30 pages.\n\n"
@@ -400,8 +398,8 @@ end
 
 class Pullable < Gamepiece
     attr_accessor :content
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @moveset = MOVES[1] | MOVES[5]
         @unpulled = true
     end
@@ -430,8 +428,8 @@ end
 
 class Character < Gamepiece
     attr_accessor :hostile, :desires, :content, :friends, :subtype, :territory
-    def initialize(player)
-        super(player)
+    def initialize
+        super
         @moveset = MOVES[1] | MOVES[6..8].flatten
         @hostile = false
         @friends = false
@@ -544,7 +542,7 @@ class Character < Gamepiece
     end
     def activate
         player_near? ? reveal_targets : return
-        @player.player_idle? ? draw_backdrop : interact
+        @@player.player_idle? ? draw_backdrop : interact
         special_properties
     end
     def player_attack_result
@@ -560,7 +558,7 @@ class Character < Gamepiece
         puts "	   - You move to strike the demon"
         print "	     with your "
         if weapon_equipped
-            print(Rainbow("#{@player.weapon.targets[0]}.\n\n").purple)
+            print(Rainbow("#{@@player.weapon.targets[0]}.\n\n").purple)
         else print(Rainbow("bare hands.\n\n").purple)
         end
         player_attack_result
@@ -586,15 +584,15 @@ class Character < Gamepiece
         end
     end
     def player_defense
-        if @player.armor
-            puts Rainbow("	     Your #{@player.armor.targets[0]} absorbs #{@player.armor.profile[:defense]}.").cyan
-            @player.armor.profile[:lifespan] -= demon_damage
+        if @@player.armor
+            puts Rainbow("	     Your #{@@player.armor.targets[0]} absorbs #{@@player.armor.profile[:defense]}.").cyan
+            @@player.armor.profile[:lifespan] -= demon_damage
         end
         print "\n"
     end
     def attack_outcome
         if demon_chance
-            total = @player.health - @player.lose_health(demon_damage)
+            total = @@player.health - @@player.lose_health(demon_damage)
             print Rainbow("	   - It costs you #{total} heart point").red
             total > 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
             player_defense

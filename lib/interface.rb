@@ -130,7 +130,7 @@ module Interface
   	  row.each do |pos|
   	  	if pos == @position
   	  	  print Rainbow("■ ").red.blink
-  	  	elsif world_map.include?(pos)
+  	  	elsif Board.world_map.include?(pos)
   	      print Rainbow("■ ").green
   	    else
           print "⬚ "
@@ -140,8 +140,8 @@ module Interface
   	end
   end
   def draw_page_count
-      (37 - page_count.to_s.length).times { print(" ") }
-  	print Rainbow("- Pg. #{page_count} -\n\n").purple
+      (37 - Board.page_count.to_s.length).times { print(" ") }
+  	print Rainbow("- Pg. #{Board.page_count} -\n\n").purple
   end
   def page_bottom
   	puts "\n\n\n"
