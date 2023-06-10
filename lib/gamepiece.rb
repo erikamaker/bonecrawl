@@ -298,7 +298,7 @@ class Fruit < Edible
         animate_ingestion
         remove_portion
         portions_left
-        @player.gain_health(heal_amount)
+       @@player.gain_health(heal_amount)
         side_effects
     end
     def special_properties
@@ -322,7 +322,7 @@ class Fruit < Edible
     def take
         view
         puts Rainbow("	   - You pluck the ripe fruit.\n").orange
-        @player.items.push(@group[0])
+       @@player.items.push(@group[0])
         @group.delete(@group[0])
     end
 end
@@ -383,10 +383,10 @@ class Weapon < Tool
         subtype | ["weapon"]
     end
     def equip
-        self.push_to_inventory if @player.items.none?(self)
+        self.push_to_inventory if @@player.items.none?(self)
         view
         puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
-        @player.weapon = self
+       @@player.weapon = self
     end
 end
 
@@ -463,7 +463,7 @@ class Character < Gamepiece
         @friends = true
     end
     def player_has_leverage
-        @player.items.find do |item|
+        @@player.items.find do |item|
             item.targets == desires.targets
         end
     end
@@ -502,21 +502,21 @@ class Character < Gamepiece
         reward.take
         @rewards.delete(reward)
         @content.push(@desires)
-        @player.remove_from_inventory(player_has_leverage)
+        @@player.remove_from_inventory(player_has_leverage)
         become_friends
     end
     def demon_chance
         rand(@profile[:focus]..2) == 2
     end
     def player_chance
-        rand(@player.focus..2) == 2
+        rand(@@player.focus..2) == 2
     end
     def weapon_equipped
-        @player.weapon != nil
+        @@player.weapon != nil
     end
     def player_damage
         if weapon_equipped
-            @player.weapon.profile[:damage]
+            @@player.weapon.profile[:damage]
         else 1
         end
     end
@@ -586,7 +586,7 @@ class Character < Gamepiece
     def player_defense
         if @@player.armor
             puts Rainbow("	     Your #{@@player.armor.targets[0]} absorbs #{@@player.armor.profile[:defense]}.").cyan
-            @@player.armor.profile[:lifespan] -= demon_damage
+            @@player.armor.profile[:lifespan] -= @@player.armor.profile[:defense]
         end
         print "\n"
     end

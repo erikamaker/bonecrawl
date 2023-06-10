@@ -28,11 +28,24 @@ module Inventory
             toggle_engaged
         end
     end
-    def open_inventory
-        reach_into_sack_animation
+      def open_inventory
+        print Rainbow("	   - You reach in your rucksack.\n\n").red
+
         if @items.empty?
-            rucksack_is_empty_animation
-		else
+            print "	   - It's empty.\n\n"
+            print Rainbow("           - You tie your rucksack shut.\n\n").red
+        else
+            armor = "#{@armor.targets[0].capitalize if @armor}"
+            weapon = "#{@weapon.targets[0].capitalize if @weapon}"
+            equipped = [armor,weapon]
+            unless @armor && @weapon
+                result = equipped[0]
+            else
+                result = equipped.join(', ')
+            end
+            print Rainbow("	     EQUIPPED : ").orange
+            print result
+            print "\n\n"
             show_contents
             manage_inventory
 		end
@@ -55,11 +68,15 @@ module Inventory
     end
     def bag_action(item)
         if MOVES[1..14].flatten.none?(@action)
+            puts "	   - Interact with your inventory"
+            puts "	     as you would in the dungeon.\n\n"
             puts Rainbow("           - You tie your rucksack shut.\n").red
+
+
         elsif item.nil?
             puts Rainbow("           - You don't have that.\n").red
         elsif MOVES[2].include?(@action)
-            puts Rainbow("           - You already have it.\n").red
+            puts Rainbow("           - You already have that.\n").red
         else
             item.interact
             puts Rainbow("           - You tie your rucksack shut.\n").red

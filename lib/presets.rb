@@ -382,7 +382,7 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-class Lockpick < Tool
+class Lockpick < Weapon
   def initialize
       super
       @profile = {:build => "copper", :lifespan => rand(2..4), :damage => 1}
@@ -396,7 +396,7 @@ class Lockpick < Tool
   end
 end
 
-class Pickaxe < Tool
+class Pickaxe < Weapon
 	def initialize
         super
         @profile = {:build => "copper", :lifespan => rand(7..13), :damage => 3}
@@ -410,28 +410,34 @@ class Pickaxe < Tool
     end
 end
 
-class Key < Tool
+class Key < Portable
 	def initialize
         super
         @profile = {:build => "brass", :lifespan => 1}
 	end
-    def subtype
-        ["brass key","key"]
+    def targets
+        ["key"]
     end
+    def draw_backdrop
+		puts "	   - A brass key lays here.\n\n"
+	end
 	def description
 		puts "	   - It's brittle and tarnished."
 		puts "	     It can be used just once.\n\n"
 	end
 end
 
-class Lighter < Tool
+class Lighter < Portable
     def initialize
         super
-        @profile = {:build => "silver", :damage => 1}
+        @profile = {:build => "silver"}
 	end
-    def subtype
-        ["silver lighter", "lighter"]
+    def targets
+        ["lighter"]
     end
+    def draw_backdrop
+		puts "	   - A silver lighter lays here.\n\n"
+	end
     def description
 		puts "	   - It's handy when there isn't"
         puts "	     any fire. It burns most all"

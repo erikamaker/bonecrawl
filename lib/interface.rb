@@ -9,13 +9,6 @@ module Interface
     puts "	   - It would be uesless to try."
     puts "	     A page passes in vain.\n\n"
   end
-  def reach_into_sack_animation
-    print Rainbow("	   - You reach into your rucksack.\n\n").red
-  end
-  def rucksack_is_empty_animation
-    print "	   - It's empty.\n\n"
-    print Rainbow("           - You close your rucksack shut.\n\n").red
-  end
   def animate_ingestion
     puts "	   - You drink the #{subtype[0]}, healing"
   	print "	     #{heal_amount} heart"
@@ -27,7 +20,7 @@ module Interface
   def header
     print Rainbow("\n---------------------------------------------------------\n").blue.bright
     print Rainbow("[").blue.bright
-    print Rainbow("          ~ BONE CRAWL - CHAPTER 1 - 2019 © ~          ").violet
+    print Rainbow("           BONE CRAWL  |  CH. 1  |  2020 ©             ").violet.bright
     print Rainbow("]").blue.bright
     print Rainbow("\n---------------------------------------------------------").blue.bright
     print "\n\n\n\n\n"

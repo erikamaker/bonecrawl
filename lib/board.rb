@@ -29,10 +29,10 @@ class Board
       harm: MOVES[8],
       burn: MOVES[9],
       feed: MOVES[10],
-      drink: MOVES[11],
+     drink: MOVES[11],
       mine: MOVES[12],
       lift: MOVES[13],
-      equip: MOVES[14]
+     equip: MOVES[14]
     }
   end
   def self.increment_page(count)
