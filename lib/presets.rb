@@ -385,7 +385,7 @@ end
 class Lockpick < Weapon
   def initialize
       super
-      @profile = {:build => "copper", :lifespan => rand(2..4), :damage => 1}
+      @profile = {:build => "copper", :lifespan => rand(2..4), :damage => 2}
   end
   def subtype
       ["lock pick", "metal lock pick", "metal pick", "pick", "tool"]

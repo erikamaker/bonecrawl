@@ -12,6 +12,9 @@ class Gamepiece < Board
     def special_properties
         # Unique behavior at activation.
     end
+    def remove_from_inventory
+        @@player.items.delete(self)
+      end
     def remove_from_board
         @location = [0]
       end
@@ -53,7 +56,7 @@ class Gamepiece < Board
       end
     end
     def parse_action
-      actions.each do |action, moves|
+      @@player.actions.each do |action, moves|
           send(action) if moves.include?(@@player.action)
       end
     end
@@ -189,7 +192,7 @@ class Burnable < Portable
         animate_combustion
         remove_from_board
         fuel = @@player.search_inventory(Fuel)
-        @@player.remove_from_inventory(fuel)
+        fuel.remove_from_inventory
     end
     def burn
         if fire_near?
@@ -241,7 +244,7 @@ class Edible < Portable
         else
             print "You finish it.\n\n"
             remove_from_board
-            @@player.remove_from_inventory(self)
+            remove_from_inventory
         end
 	end
     def heal_amount
@@ -502,7 +505,7 @@ class Character < Gamepiece
         reward.take
         @rewards.delete(reward)
         @content.push(@desires)
-        @@player.remove_from_inventory(player_has_leverage)
+        player_has_leverage.remove_from_inventory
         become_friends
     end
     def demon_chance
@@ -514,6 +517,17 @@ class Character < Gamepiece
     def weapon_equipped
         @@player.weapon != nil
     end
+    def damage_player_weapon
+        if weapon_equipped
+            @@player.weapon.profile[:lifespan] -= 1
+            if @@player.weapon.profile[:lifespan] < 1
+                puts Rainbow("	   - Your weapon breaks in half.").red
+                puts Rainbow("	     You toss away the pieces.\n").red
+                @@player.items.delete(@@player.weapon)
+                @@player.weapon = nil
+            end
+        end
+    end
     def player_damage
         if weapon_equipped
             @@player.weapon.profile[:damage]
@@ -523,16 +537,17 @@ class Character < Gamepiece
     def player_hits_demon
         @profile[:hearts] -= player_damage
         if @profile[:hearts] > 0
-            print Rainbow("	     You hit it. #{@profile[:hearts]} heart").green
+            print Rainbow("	   - You hit it. #{@profile[:hearts]} heart").green
             print Rainbow("s").green if @profile[:hearts] > 1
             print Rainbow(" remain").green
             print Rainbow("s").green if @profile[:hearts] == 1
             print Rainbow(".\n\n").green
+            damage_player_weapon
         end
 
     end
     def player_misses_demon
-        puts Rainbow("	     The demon dodges your attack.\n").red
+        puts Rainbow("	   - The demon dodges your attack.\n").red
     end
     def special_properties
         @profile[:hostile] = @hostile

@@ -28,6 +28,14 @@ module Inventory
             toggle_engaged
         end
     end
+    def print_equipped_items
+        equipped = armor, weapon
+            print Rainbow("	     WEAPON: ").orange
+            print @weapon.targets[0].split.map(&:capitalize).join(' ') if @weapon
+            print "\n"
+            print Rainbow("	      ARMOR: ").orange
+            print @armor.targets[0].split.map(&:capitalize).join(' ') if @armor
+    end
       def open_inventory
         print Rainbow("	   - You reach in your rucksack.\n\n").red
 
@@ -35,17 +43,13 @@ module Inventory
             print "	   - It's empty.\n\n"
             print Rainbow("           - You tie your rucksack shut.\n\n").red
         else
-            armor = "#{@armor.targets[0].capitalize if @armor}"
-            weapon = "#{@weapon.targets[0].capitalize if @weapon}"
-            equipped = [armor,weapon]
-            unless @armor && @weapon
-                result = equipped[0]
-            else
-                result = equipped.join(', ')
-            end
-            print Rainbow("	     EQUIPPED : ").orange
-            print result
+
+            print_equipped_items
             print "\n\n"
+
+
+
+
             show_contents
             manage_inventory
 		end

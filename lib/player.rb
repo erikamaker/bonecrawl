@@ -23,6 +23,24 @@ class Player
     @defense = 0
     @focus = 1
   end
+  def actions
+    {
+      view: MOVES[1],
+      take: MOVES[2],
+      open: MOVES[3],
+      push: MOVES[4],
+      pull: MOVES[5],
+      talk: MOVES[6],
+      give: MOVES[7],
+      harm: MOVES[8],
+      burn: MOVES[9],
+      feed: MOVES[10],
+     drink: MOVES[11],
+      mine: MOVES[12],
+      lift: MOVES[13],
+     equip: MOVES[14]
+    }
+  end
   def action_select
     prompt_player
     process_input
@@ -49,9 +67,6 @@ class Player
     moves = MOVES[1..15].flatten
     return if moves.none?(@action)
     @state = :engaged
-  end
-  def remove_from_inventory(item)
-    @items.delete(item) { |i| i == item }
   end
   def lose_health(magnitude)
     @health -= (magnitude - @defense)
