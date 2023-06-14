@@ -14,7 +14,7 @@ class Gamepiece < Board
     end
     def remove_from_inventory
         @@player.items.delete(self)
-      end
+    end
     def remove_from_board
         @location = [0]
       end
@@ -117,8 +117,7 @@ class Container < Gamepiece
 		puts "	   - This #{targets[0]} is #{state}.\n\n"
 	end
     def key
-        tools = ["brass key", "lock pick"]
-        @@player.items.find { |item| tools.include?(item.targets[0]) }
+        @@player.items.find {|i| i.is_a?(Lockpick) or i.is_a?(Key)}
     end
     def open
         if @state == "closed shut"
@@ -129,11 +128,7 @@ class Container < Gamepiece
 	end
     def use_key
         key.profile[:lifespan] -= 1
-        if key.profile[:lifespan] == 0
-            puts Rainbow("	   - Your #{key.targets[0]} snaps in two.").red
-            puts Rainbow("	     You toss away the pieces.\n").red
-            @@player.items.delete(key)
-        end
+        key.break_item
     end
     def is_locked
         if key.nil?
@@ -279,85 +274,6 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    FRUIT    ############################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Fruit < Edible
-    def initialize
-        super
-        @group = []
-        @type = type.new
-    end
-    def targets
-        if any_fruit?
-            subtype | ["food","edibles","produce","fruit"]
-        else
-            []
-        end
-    end
-    def feed
-        take
-        animate_ingestion
-        remove_portion
-        portions_left
-       @@player.gain_health(heal_amount)
-        side_effects
-    end
-    def special_properties
-        assign_profile
-        harvest_cycle
-
-    end
-    def harvest_cycle
-        if @@page % 30 == 0 and @group.count < 3
-            @group.push(@type)
-        end
-    end
-    def any_fruit?
-        @group[0]
-    end
-    def assign_profile
-        if any_fruit?
-            @profile = @group[0].profile
-        end
-    end
-    def take
-        view
-        puts Rainbow("	   - You pluck the ripe fruit.\n").orange
-       @@player.items.push(@group[0])
-        @group.delete(@group[0])
-    end
-end
-
-class AppleSpawner < Fruit
-    def type
-        Apple
-    end
-    def subtype
-        ["apple","apples"]
-    end
-    def draw_backdrop
-		if any_fruit?
-            print "	   - #{@group.count} fat apple"
-            @group.count > 1 ? print("s ") : print(" ")
-            print "hang"
-            @group.count == 1 ? print("s ") : print(" ")
-            print "on the end\n"
-            puts "	     of a crooked branch.\n\n"
-        else
-            puts "	   - Its branches bear no fruit.\n\n"
-        end
-    end
-    def description
-		puts "	   - Deeply blue and glimmering,"
-        puts "	     one matures every 30 pages.\n\n"
-	end
-end
-
-
-
-##############################################################################################################################################################################################################################################################
 #####    TOOLS     ###########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
@@ -369,6 +285,13 @@ class Tool < Portable
 	end
     def targets
         subtype | ["tool"]
+    end
+    def break_item
+        if profile[:lifespan] == 0
+            puts Rainbow("	   - Your #{targets[0]} snaps in two.").red
+            puts Rainbow("	     You toss away the pieces.\n").red
+            remove_from_inventory
+        end
     end
 	def draw_backdrop
 		puts "	   - A #{targets[0]} lays here.\n\n"
@@ -511,14 +434,10 @@ class Character < Gamepiece
     def demon_chance
         rand(@profile[:focus]..2) == 2
     end
-    def player_chance
-        rand(@@player.focus..2) == 2
-    end
-    def weapon_equipped
-        @@player.weapon != nil
-    end
+
+
     def damage_player_weapon
-        if weapon_equipped
+        if @@player.weapon_equipped?
             @@player.weapon.profile[:lifespan] -= 1
             if @@player.weapon.profile[:lifespan] < 1
                 puts Rainbow("	   - Your weapon breaks in half.").red
@@ -529,7 +448,7 @@ class Character < Gamepiece
         end
     end
     def player_damage
-        if weapon_equipped
+        if @@player.weapon_equipped?
             @@player.weapon.profile[:damage]
         else 1
         end
@@ -572,7 +491,7 @@ class Character < Gamepiece
     def harm
         puts "	   - You move to strike the demon"
         print "	     with your "
-        if weapon_equipped
+        if @@player.weapon_equipped?
             print(Rainbow("#{@@player.weapon.targets[0]}.\n\n").purple)
         else print(Rainbow("bare hands.\n\n").purple)
         end
@@ -582,11 +501,11 @@ class Character < Gamepiece
         if @hostile
             puts "	   - The #{subtype[0]} strikes to attack"
             print "	     with its "
-            print Rainbow("#{demon_weapon_equipped.targets[0]}.\n\n").purple
+            print Rainbow("#{demon_weapon_equipped?.targets[0]}.\n\n").purple
             attack_outcome
         end
     end
-    def demon_weapon_equipped
+    def demon_weapon_equipped?
         if @weapons[0]
             @weapons[0]
         else "bare hands.\n\n"

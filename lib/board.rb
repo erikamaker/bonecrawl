@@ -23,7 +23,7 @@ class Board
   def self.decrement_page(count)
     @@page -= count
   end
-  def self.print_page
+  def self.page_count
     @@page
   end
 end

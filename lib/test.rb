@@ -143,13 +143,6 @@ pick_1 = Lockpick.new
 pick_1.location = [[0,4,-4]]
 
 
-tree = AppleTree.new
-tree.location = [[0,6,-4]]
-
-
-apples = AppleSpawner.new
-apples.location = [[0,6,-4]]
-
 fire_1 = Fireplace.new
 fire_1.location = [[0,1,-4]]
 
@@ -161,7 +154,7 @@ fire_1.location = [[0,1,-4]]
 #####    GAME LOOP     #######################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
-levels = [ room_1, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, apples, torch_1, pull_1, table_1, bread_1, grease, pick_1, fire_1 ]
+levels = [ room_1, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, torch_1, pull_1, table_1, bread_1, grease, pick_1, fire_1 ]
 
 
 
@@ -170,9 +163,9 @@ loop do
   system("clear")  # Clear the screen
   Board.player.header
   Board.player.detect_movement
-  Board.player.tutorial_screen
   Board.player.suggest_tutorial
-  levels.each { |piece| piece.activate }
+  Board.player.tutorial_screen
+  levels.each { |gamepiece| gamepiece.activate }
   Board.player.load_inventory
   Board.player.no_target
   Board.player.game_over

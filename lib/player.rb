@@ -77,6 +77,9 @@ class Player
   def player_accuracy
     rand(@focus..4)
   end
+  def weapon_equipped?
+    weapon != nil
+  end
   def reset_sight
     @sight.clear
   end

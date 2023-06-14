@@ -30,26 +30,20 @@ module Inventory
     end
     def print_equipped_items
         equipped = armor, weapon
-            print Rainbow("	     WEAPON: ").orange
-            print @weapon.targets[0].split.map(&:capitalize).join(' ') if @weapon
-            print "\n"
-            print Rainbow("	      ARMOR: ").orange
-            print @armor.targets[0].split.map(&:capitalize).join(' ') if @armor
+        print Rainbow("	     WEAPON: ").orange
+        print @weapon.targets[0].split.map(&:capitalize).join(' ') if @weapon
+        print "\n"
+        print Rainbow("	      ARMOR: ").orange
+        print @armor.targets[0].split.map(&:capitalize).join(' ') if @armor
     end
-      def open_inventory
+    def open_inventory
         print Rainbow("	   - You reach in your rucksack.\n\n").red
-
         if @items.empty?
             print "	   - It's empty.\n\n"
             print Rainbow("           - You tie your rucksack shut.\n\n").red
         else
-
             print_equipped_items
             print "\n\n"
-
-
-
-
             show_contents
             manage_inventory
 		end

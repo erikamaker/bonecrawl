@@ -19,7 +19,6 @@ class Tiles < Fixture
     end
     def special_properties
         @@map |= @location
-        @@player.sight.include?("vein") and moveset | MOVES[12]
     end
 	def parse_action
 		case @@player.target
@@ -334,47 +333,6 @@ class BerryTree < Tree
 		puts "	     great on its own.\n\n"
     end
 end
-
-
-##############################################################################################################################################################################################################################################################
-#####    APPLE SPAWNER    ####################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-
-
-
-class BerrySpawner < Fruit
-    def initialize
-        super
-        @group = []
-        @type = Berry
-    end
-    def harvest_cycle
-        if (@@page % 40 == 0)
-            grow_fruit
-        end
-    end
-    def subtype
-        ["berry","berries"]
-    end
-    def draw_backdrop
-		if any_fruit?
-            print "	   - #{@group.count} little "
-            one_left ? print("berry ") : print("berries ")
-            one_left ? print("grows ") : print("grow ")
-            print "on its\n	     thin branches.\n\n"
-        else
-            puts "	   - Its branches bear no fruit.\n\n"
-        end
-    end
-    def description
-		puts "	   - This dark and bitter fruit"
-        puts "	     matures every 40 pages.\n\n"
-	end
-end
-
-
 
 
 ##############################################################################################################################################################################################################################################################
