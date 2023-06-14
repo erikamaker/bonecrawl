@@ -74,8 +74,14 @@ class Player
   def gain_health(magnitude)
     @health += (magnitude)
   end
-  def player_accuracy
+  def accuracy_level
     rand(@focus..4)
+  end
+  def clear_weapon
+    @weapon = nil
+  end
+  def clear_armor
+    @armor = nil
   end
   def weapon_equipped?
     weapon != nil

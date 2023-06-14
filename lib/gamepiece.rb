@@ -272,7 +272,6 @@ class Drink < Edible
 end
 
 
-
 ##############################################################################################################################################################################################################################################################
 #####    TOOLS     ###########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
@@ -286,11 +285,16 @@ class Tool < Portable
     def targets
         subtype | ["tool"]
     end
+    def equip
+        puts "	   - This item will automatically"
+        puts "	     apply in its time of need.\n\n"
+    end
     def break_item
         if profile[:lifespan] == 0
             puts Rainbow("	   - Your #{targets[0]} snaps in two.").red
             puts Rainbow("	     You toss away the pieces.\n").red
             remove_from_inventory
+            @@player.clear_weapon
         end
     end
 	def draw_backdrop
@@ -439,12 +443,7 @@ class Character < Gamepiece
     def damage_player_weapon
         if @@player.weapon_equipped?
             @@player.weapon.profile[:lifespan] -= 1
-            if @@player.weapon.profile[:lifespan] < 1
-                puts Rainbow("	   - Your weapon breaks in half.").red
-                puts Rainbow("	     You toss away the pieces.\n").red
-                @@player.items.delete(@@player.weapon)
-                @@player.weapon = nil
-            end
+            @@player.weapon.break_item
         end
     end
     def player_damage
@@ -480,7 +479,7 @@ class Character < Gamepiece
         special_properties
     end
     def player_attack_result
-        if player_chance
+        if @@player.accuracy_level == 4
             player_hits_demon
             become_hostile if demon_is_alive
             demon_death_scene if demon_is_slain

@@ -350,7 +350,7 @@ class Lockpick < Weapon
   end
   def description
   	puts "	   - Maybe it belonged to another"
-  	print "	     prisoner like you?\n\n"
+  	print "	     prisoner? It's quite sharp.\n\n"
   end
 end
 
@@ -368,34 +368,28 @@ class Pickaxe < Weapon
     end
 end
 
-class Key < Portable
+class Key < Tool
 	def initialize
         super
         @profile = {:build => "brass", :lifespan => 1}
 	end
-    def targets
+    def subtype
         ["key"]
     end
-    def draw_backdrop
-		puts "	   - A brass key lays here.\n\n"
-	end
 	def description
 		puts "	   - It's brittle and tarnished."
 		puts "	     It can be used just once.\n\n"
 	end
 end
 
-class Lighter < Portable
+class Lighter < Tool
     def initialize
         super
         @profile = {:build => "silver"}
 	end
-    def targets
-        ["lighter"]
+    def subtype
+        ["silver lighter", "lighter"]
     end
-    def draw_backdrop
-		puts "	   - A silver lighter lays here.\n\n"
-	end
     def description
 		puts "	   - It's handy when there isn't"
         puts "	     any fire. It burns most all"
