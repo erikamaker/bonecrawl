@@ -58,7 +58,7 @@ module Interface
   	else
       print Rainbow("♥ ").red.blink
   	end
-  	  (4 - @health).times { print Rainbow("♥ ").cyan }
+  	(4 - @health).times { print Rainbow("♥ ").cyan }
   end
   def not_a_move?
     MOVES.flatten.none?(@action)
@@ -67,10 +67,10 @@ module Interface
     @target == @action
   end
   def nontraditional_move
-      not_a_move? || input_stutter?
+    not_a_move? || input_stutter?
   end
   def tutorial_selected?
-      MOVES[15].include?(@target)
+    MOVES[15].include?(@target)
   end
   def suggest_tutorial
   	if nontraditional_move
@@ -133,13 +133,13 @@ module Interface
   	end
   end
   def draw_page_count
-      (37 - Board.page_count.to_s.length).times { print(" ") }
+    (37 - Board.page_count.to_s.length).times { print(" ") }
   	print Rainbow("- Pg. #{Board.page_count} -\n\n").purple
   end
   def page_bottom
   	puts "\n\n\n"
-      draw_map
-      draw_page_count
+    draw_map
+    draw_page_count
   end
   def game_over
     if @health < 1

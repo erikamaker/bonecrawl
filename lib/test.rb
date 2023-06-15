@@ -72,15 +72,15 @@ torch_1.location = [[0,2,2]]
 room_2 = Dungeon.new
 room_2.location = [[0,1,-3],[0,2,-3],[0,3,-3],[0,1,-4],[0,2,-4],[0,3,-4],[0,1,-5],[0,2,-5],[0,3,-5]]
 def room_2.draw_backdrop
-    puts "	   - You're in a homely guardroom."
-    puts "	     It's warm, well-lit, and dry.\n\n"
+  puts "	   - You're in a homely guardroom."
+  puts "	     It's warm, well-lit, and dry.\n\n"
 end
 def room_2.overview
-    puts "	   - It's a cozy supply room where"
-    puts "	     goblin guards eat and prepare"
-    puts "	     to hunt. A warm fire roars in"
-    puts "	     the western wall. A big table"
-    puts "	     is set in the center.\n\n"
+  puts "	   - It's a cozy supply room where"
+  puts "	     goblin guards eat and prepare"
+  puts "	     to hunt. A warm fire roars in"
+  puts "	     the western wall. A big table"
+  puts "	     is set in the center.\n\n"
 end
 
 hellion_1 = Hellion.new
@@ -101,15 +101,15 @@ pull_1 = Lever.new
 pull_1.location = [[0,3,-3]]
 pull_1.content = chest_1
 def pull_1.reveal_secret
-    puts Rainbow("	   - Something heavy crashes east").cyan
-    print Rainbow("	     of the warm supply room.").cyan
-    print " For\n"
-    puts "	     a moment, your ears ring and"
-    puts "	     your heart races.\n\n"
-    puts "	   - But, if it really had been a"
-    puts "	     goblin, you would already be"
-    puts "	     hung on that rusty hook back"
-    puts "	     outside your cell door.\n\n"
+  puts Rainbow("	   - Something heavy crashes east").cyan
+  print Rainbow("	     of the warm supply room.").cyan
+  print " For\n"
+  puts "	     a moment, your ears ring and"
+  puts "	     your heart races.\n\n"
+  puts "	   - But, if it really had been a"
+  puts "	     goblin, you would already be"
+  puts "	     hung on that rusty hook back"
+  puts "	     outside your cell door.\n\n"
 end
 
 
@@ -130,9 +130,9 @@ bread_1.location =  [[0,2,-4]]
 hall_2 = Corridor.new
 hall_2.location = [[0,4,-4],[0,5,-4],[0,6,-4]]
 def hall_2.overview
-    puts "	   - It's a narrow hallway east of"
-    puts "	     of the goblin supply chamber."
-    puts "	     The clanging grows louder.\n\n"
+  puts "	   - It's a narrow hallway east of"
+  puts "	     of the goblin supply chamber."
+  puts "	     The clanging grows louder.\n\n"
 end
 
 door_3 = Door.new
