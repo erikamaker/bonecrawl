@@ -23,7 +23,7 @@ class Board
   def self.decrement_page(count)
     @@page -= count
   end
-  def self.page_count
-    @@page
-  end
 end
+
+
+# TODO: make sure items delete the same when they're burned.

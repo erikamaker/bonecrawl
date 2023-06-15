@@ -45,8 +45,8 @@ module Navigation
     end
   end
   def reposition_player
-      directed_movement
-      if Board.world_map.include?(@position)
+    directed_movement
+    if Board.world_map.include?(@position)
       animate_movement
     else
       activated_barrier
