@@ -1,42 +1,5 @@
 require_relative 'gamepiece'
 
-##############################################################################################################################################################################################################################################################
-#####    TILES    ############################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Tiles < Fixture
-  attr_accessor  :subtype, :built_of, :terrain, :borders, :general, :targets
-  def initialize
-    super
-  	@general = ["around","room","area","surroundings"] | subtype
-  	@borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
-  	@terrain = ["terrain","medium","material"] | built_of
-  	@targets = (general + terrain + borders).flatten
-  end
-  def view
-    overview
-  end
-  def special_properties
-    @@map |= @location
-  end
-  def parse_action
-  	case @@player.target
-  	when *general
-      @@player.toggle_idle
-  	  overview
-  	when *terrain
-  	  view_type
-  	when *borders[0]
-  	  view_wall
-  	when *borders[1]
-  	  view_down
-  	when *borders[2]
-  	  view_above
-  	end
-  end
-end
-
 
 ##############################################################################################################################################################################################################################################################
 #####    BRICKS    ###########################################################################################################################################################################################################################################
@@ -389,9 +352,8 @@ class Lighter < Tool
     ["silver lighter", "lighter"]
   end
   def description
-  	puts "	   - It's handy when there isn't"
-    puts "	     any fire. It burns most all"
-    puts "	     types of oil, fat, or wax.\n\n"
+  	puts "	   - It's indiscriminately fueled"
+    puts "	     by grease, wax, or sap.\n\n"
   end
 end
 
@@ -888,8 +850,7 @@ class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
   end
   def description
   	puts "	   - It's a hooded sweatshirt. It"
-  	puts "	     was sewn with spider's silk."
-    puts "	     The zipper is copper.\n\n"
+  	puts "	     was sewn with spider's silk.\n\n"
   end
 end
 
@@ -905,7 +866,6 @@ class Jeans < Clothes   # Requires 1 copper ore, and 3 spider spools
   def description
   	puts "	   - Spider silk is so strong, it"
   	puts "	     makes a solid pair of denim."
-    puts "	     The clasp is copper.\n\n"
   end
 end
 
@@ -934,10 +894,8 @@ class Sneakers < Clothes    # Requires 2 spider spools, 1 copper ore, and 4 rat 
   	puts "	     untied on the ground.\n\n"
   end
   def description
-  	puts "	   - Cobbled from rat leather and"
-  	puts "	     laced with spider silk, they"
-    puts "	     are most helpful in crossing"
-    puts "	     dangerous terrain.\n\n"
+  	puts "	   - They're cobbled from leather."
+  	puts "	     Useful for dangerous terrain.\n\n"
   end
 end
 
@@ -1057,8 +1015,8 @@ class Door < Container
     end
   end
   def give_content
-    puts Rainbow("           - A new path is revealed. Your").orange
-    puts Rainbow("             map has been updated.\n ").orange
+    puts Rainbow("           - A new path is revealed. Your").cyan
+    puts Rainbow("             map has been updated.\n ").cyan
     content.activate
     content.overview
     toggle_state_open
@@ -1140,24 +1098,7 @@ class Hellion < Character
     puts "	     rage. It looks rabid.\n\n"
   end
   def description
-    puts "	   - It's a hellion. Goat-like in"
-    puts "	     its appearance, these demons"
-    puts "	     were the bastard children of"
-    puts "	     cherubs and trolls.\n\n"
-  end
-  def reward_animation
-    puts "	   - The hellion lowers its voice."
-    puts "	     It barely whispers a rumor...\n\n"
-    puts Rainbow("	   \" There's a third cell lost to").green
-    puts Rainbow("	     the ages on this floor. \"\n").green
-  end
-  def default_script
-    puts "	   - It leers at you, dark pupils"
-    puts "	     flexing in its yellow eyes."
-    puts "	     It says it lost its lighter.\n\n"
-  end
-  def unlocked_script
-    puts "	   - It says this place isn't all"
-    puts "	     that it seems. Be vigilant.\n\n"
+    puts "	   - It's a hellion. This goatish"
+    puts "	     demon has a quick temper.\n\n"
   end
 end

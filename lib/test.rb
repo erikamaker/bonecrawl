@@ -38,11 +38,9 @@ end
 lighter = Lighter.new
 lighter.location = [[0,1,2]]
 
-
 drain_1 = Toilet.new
 drain_1.location =  [[0,1,1]]
 drain_1.content = Lockpick.new
-
 
 hall_1 = Corridor.new
 hall_1.location = [[0,2,0],[0,2,-1],[0,2,-2]]
@@ -85,17 +83,30 @@ end
 
 hellion_1 = Hellion.new
 hellion_1.location = [[0,2,-1]]
+hellion_1.territory = hall_1.location | room_2.location
 def hellion_1.unique_bartering_script
   puts "	   - It asks if it can have yours,"
   print "	     in exchange for a secret.\n\n"
 end
-hellion_1.territory = hall_1.location | room_2.location
-
+def hellion_1.reward_animation
+  puts "	   - The hellion lowers its voice."
+  puts "	     It barely whispers a rumor...\n\n"
+  puts Rainbow("	   \" There's a third cell lost to").cyan
+  puts Rainbow("	     the ages on this floor. \"\n").cyan
+end
+def hellion_1.default_script
+  puts "	   - It leers at you, dark pupils"
+  puts "	     flexing in its yellow eyes."
+  puts "	     It says it lost its lighter.\n\n"
+end
+def hellion_1.unlocked_script
+  puts "	   - It says this place isn't all"
+  puts "	     that it seems. Be vigilant.\n\n"
+end
 
 chest_1 = Chest.new
 chest_1.location = [[0,5,-4]]
 chest_1.content = Knife.new
-
 
 pull_1 = Lever.new
 pull_1.location = [[0,3,-3]]
@@ -112,20 +123,15 @@ def pull_1.reveal_secret
   puts "	     outside your cell door.\n\n"
 end
 
-
 door_2 = Door.new
 door_2.location = [[0,2,-2]]
 door_2.content = room_2
-
-grease = Fat.new
-grease.location = [[0,1,-4]]
 
 table_1 = Table.new
 table_1.location = [[0,2,-4]]
 
 bread_1 = Bread.new
 bread_1.location =  [[0,2,-4]]
-
 
 hall_2 = Corridor.new
 hall_2.location = [[0,4,-4],[0,5,-4],[0,6,-4]]
@@ -142,21 +148,18 @@ door_3.content = hall_2
 pick_1 = Lockpick.new
 pick_1.location = [[0,4,-4]]
 
-
 fire_1 = Fireplace.new
 fire_1.location = [[0,1,-4]]
 
-
-
+tree = AppleTree.new
+tree.location = [[0,1,2]]
 
 
 ##############################################################################################################################################################################################################################################################
 #####    GAME LOOP     #######################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
-levels = [ room_1, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, torch_1, pull_1, table_1, bread_1, grease, pick_1, fire_1 ]
-
-
+levels = [ room_1, drain_1, tree, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, torch_1, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
 loop do
   Board.player.action_select

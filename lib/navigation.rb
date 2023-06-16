@@ -35,7 +35,7 @@ module Navigation
     if directions.include?(@target)
       reposition_player
     else
-      no_direction_detected           # FIX THIS
+      no_direction_detected
     end
   end
   def detect_movement

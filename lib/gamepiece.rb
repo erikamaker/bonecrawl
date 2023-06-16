@@ -4,21 +4,17 @@ class Gamepiece < Board
   attr_accessor :location, :targets, :moveset, :profile, :player
   def initialize
     super
-    @location = [[-1,0,2]]
   end
   def draw_backdrop
-    # Not all instances have a backdrop.
+    # Namespaced for hidden gamepieces.
   end
   def special_properties
     # Unique behavior at activation.
   end
-  def remove_from_inventory
-    @@player.items.delete(self)
-  end
   def remove_from_board
     @location = [0]
   end
-  def move_piece(new_plot)
+  def teleport(new_plot)
     @location = new_plot
   end
   def reveal_targets
@@ -73,6 +69,44 @@ class Fixture < Gamepiece
     MOVES[1]
   end
 end
+
+
+##############################################################################################################################################################################################################################################################
+#####    TILES    ############################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Tiles < Fixture
+    attr_accessor  :subtype, :built_of, :terrain, :borders, :general, :targets
+    def initialize
+      super
+        @general = ["around","room","area","surroundings"] | subtype
+        @borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
+        @terrain = ["terrain","medium","material"] | built_of
+        @targets = (general + terrain + borders).flatten
+    end
+    def view
+      overview
+    end
+    def special_properties
+      @@map |= @location
+    end
+    def parse_action
+        case @@player.target
+        when *general
+        @@player.toggle_idle
+          overview
+        when *terrain
+          view_type
+        when *borders[0]
+          view_wall
+        when *borders[1]
+          view_down
+        when *borders[2]
+          view_above
+        end
+    end
+  end
 
 
 ##############################################################################################################################################################################################################################################################
@@ -135,14 +169,15 @@ class Container < Gamepiece
       puts "	   - It won't open. It's locked.\n\n"
     else
       puts "	   - You twirl a #{key.targets[0]} in the"
-      puts "	     #{targets[0]}'s latch. Click.\n\n"
+      print "	     #{targets[0]}'s latch. "
+      print Rainbow("Click.\n\n").orange
       use_key
       give_content
     end
   end
   def animate_opening
-    puts Rainbow("           - It swings open and reveals a").orange
-    puts Rainbow("             hidden #{content.targets[0]}.\n").orange
+    puts Rainbow("           - It swings open and reveals a").cyan
+    puts Rainbow("             hidden #{content.targets[0]}.\n").cyan
     toggle_state_open
   end
   def give_content
@@ -188,7 +223,7 @@ class Burnable < Portable
     animate_combustion
     remove_from_board
     fuel = @@player.search_inventory(Fuel)
-    fuel.remove_from_inventory
+    @@player.remove_from_inventory(fuel)
   end
   def burn
     if fire_near?
@@ -241,7 +276,7 @@ class Edible < Portable
     else
       print "You finish it.\n\n"
       remove_from_board
-      remove_from_inventory
+      @@player.remove_from_inventory(self)
     end
   end
   def heal_amount
@@ -295,7 +330,7 @@ class Tool < Portable
     if profile[:lifespan] == 0
       puts Rainbow("	   - Your #{targets[0]} snaps in two.").red
       puts Rainbow("	     You toss away the pieces.\n").red
-      remove_from_inventory
+      @@player.remove_from_inventory(self)
       @@player.clear_weapon
     end
   end
@@ -435,7 +470,7 @@ class Character < Gamepiece
     reward.take
     @rewards.delete(reward)
     @content.push(@desires)
-    player_has_leverage.remove_from_inventory
+    @@player.remove_from_inventory(player_has_leverage)
     become_friends
   end
   def demon_chance

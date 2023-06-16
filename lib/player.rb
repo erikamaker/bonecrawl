@@ -2,7 +2,6 @@ require_relative 'inventory'
 require_relative 'navigation'
 require_relative 'board'
 
-
 class Player
   include Inventory
   include Navigation
@@ -52,6 +51,9 @@ class Player
     sentence = @action.scan(/[\w']+/)
     @action = (MOVES.flatten & (sentence)).join('')
     @target = (sentence - SPEECH).last
+  end
+  def remove_from_inventory(item)
+    @items.delete(item)
   end
   def reset_input
     @action = :reset

@@ -38,11 +38,10 @@ SPEECH =
 
 
 BODY_PARTS =
-  ["Head", "Torso", "Arm", "Leg", "Hand", "Foot", "Eye", "Ear", "Nose",
+  ["Head", "Torso", "Arm", "Leg", "Hand", "Foot", "Eye", "Ear", "Nose", "Throat",
   "Mouth", "Neck", "Shoulder", "Elbow", "Wrist", "Knee", "Ankle", "Hip", "Chest",
   "Back", "Abdomen", "Thigh", "Calf", "Toe", "Finger"]
 
 
 INVENTORY =
   ["rucksack","knapsack","backpack","bag","pack","items","inventory","stuff","things"]
-
