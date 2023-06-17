@@ -253,16 +253,6 @@ class SapTree < Tree
   end
 end
 
-class AppleTree < Tree
-  def draw_backdrop
-  	puts "	   - A pale blue tree with silken"
-  	puts "	     bark grows at this plot.\n\n"
-  end
-  def description
-    puts "	   - It's an apple tree. It grows"
-  	puts "	     uncommonly sweet fruit.\n\n"
-  end
-end
 
 class WillowTree < Tree
   def subtype
@@ -437,6 +427,56 @@ class Apple < Edible
     puts "	     to grow underground.\n\n"
   end
 end
+
+class AppleTree < Apple
+    attr_accessor :type
+    def initialize
+        super
+        @type = type
+        @count = 99
+        @stock = []
+        @fruit = []
+        @count.times do
+            @stock.push(Apple.new)
+        end
+    end
+    def targets
+        ["tree"] | ["apple"]
+    end
+    def grow_fruit
+        if @@page % 30 == 0
+            @fruit.count < 3 && @fruit.push(@stock[0])
+            @fruit.count < 3 && @stock.shift
+        end
+    end
+    def special_properties
+        grow_fruit
+    end
+    def take
+        if @fruit.count > 0
+            @fruit[0].take
+            @fruit.shift
+        else print " NO APPLES BRO"
+        end
+    end
+    def feed
+        puts " Can't eat it if you don't have it bro."
+        @fruit[0].take
+        @fruit.shift
+    end
+    def draw_backdrop
+        puts "	   - A pale blue tree with silken"
+        puts "	     bark grows at this plot. Its"
+        puts "	     branches bear #{@fruit.count} apples.\n\n"
+    end
+    def description
+        puts "	   - It's an apple tree. It grows"
+        puts "	     uncommonly sweet fruit.\n\n"
+    end
+
+end
+
+
 
 class Plum < Edible
   def initialize
@@ -1102,3 +1142,4 @@ class Hellion < Character
     puts "	     demon has a quick temper.\n\n"
   end
 end
+

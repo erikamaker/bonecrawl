@@ -7,6 +7,10 @@ class Board
     @@page = 0
     @@map = []
     @@player = Player.new
+    @@level = []
+  end
+  def self.level
+    @@level
   end
   def self.player
     @@player
