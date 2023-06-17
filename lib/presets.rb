@@ -433,7 +433,7 @@ class AppleTree < Apple
     def initialize
         super
         @type = type
-        @count = 99
+        @count = 666
         @stock = []
         @fruit = []
         @count.times do
@@ -456,24 +456,26 @@ class AppleTree < Apple
         if @fruit.count > 0
             @fruit[0].take
             @fruit.shift
-        else print " NO APPLES BRO"
+        else
+            puts "	   - The apples need time to grow.\n\n"
         end
     end
     def feed
-        puts " Can't eat it if you don't have it bro."
+        puts "	   - You'll need to harvest these"
+        puts "	     before you can eat them.\n\n"
         @fruit[0].take
         @fruit.shift
     end
     def draw_backdrop
-        puts "	   - A pale blue tree with silken"
+        puts "	   - A pale blue tree with gnarly"
         puts "	     bark grows at this plot. Its"
-        puts "	     branches bear #{@fruit.count} apples.\n\n"
+        print "	     branches bear #{@fruit.count} apple"
+        @fruit.count == 1 ? print(".\n\n") : print("s.\n\n")
     end
     def description
         puts "	   - It's an apple tree. It grows"
         puts "	     uncommonly sweet fruit.\n\n"
     end
-
 end
 
 
