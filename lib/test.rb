@@ -6,7 +6,7 @@
 
 require_relative 'vocabulary'
 require_relative 'interface'
-require './board'
+require_relative 'board'
 require_relative 'gamepiece'
 require_relative 'presets'
 require_relative 'player'
@@ -153,8 +153,6 @@ fire_1.location = [[0,1,-4]]
 
 tree = AppleTree.new
 tree.location = [[0,1,2]]
-tree.type = Apple.new
-
 
 
 ##############################################################################################################################################################################################################################################################

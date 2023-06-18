@@ -1,3 +1,8 @@
+##############################################################################################################################################################################################################################################################
+#####    GAMEPIECE    ########################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
 require './board'
 
 class Gamepiece < Board
@@ -77,36 +82,36 @@ end
 
 
 class Tiles < Fixture
-    attr_accessor  :subtype, :built_of, :terrain, :borders, :general, :targets
-    def initialize
-      super
-        @general = ["around","room","area","surroundings"] | subtype
-        @borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
-        @terrain = ["terrain","medium","material"] | built_of
-        @targets = (general + terrain + borders).flatten
-    end
-    def view
+  attr_accessor  :subtype, :built_of, :terrain, :borders, :general, :targets
+  def initialize
+    super
+    @general = ["around","room","area","surroundings"] | subtype
+    @borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
+    @terrain = ["terrain","medium","material"] | built_of
+    @targets = (general + terrain + borders).flatten
+  end
+  def view
+    overview
+  end
+  def special_properties
+    @@map |= @location
+  end
+  def parse_action
+    case @@player.target
+    when *general
+      @@player.toggle_idle
       overview
-    end
-    def special_properties
-      @@map |= @location
-    end
-    def parse_action
-        case @@player.target
-        when *general
-        @@player.toggle_idle
-          overview
-        when *terrain
-          view_type
-        when *borders[0]
-          view_wall
-        when *borders[1]
-          view_down
-        when *borders[2]
-          view_above
-        end
+    when *terrain
+      view_type
+    when *borders[0]
+      view_wall
+    when *borders[1]
+      view_down
+    when *borders[2]
+      view_above
     end
   end
+end
 
 
 ##############################################################################################################################################################################################################################################################
@@ -312,7 +317,6 @@ end
 ##############################################################################################################################################################################################################################################################
 #####    TOOLS     ###########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
-
 
 
 class Tool < Portable

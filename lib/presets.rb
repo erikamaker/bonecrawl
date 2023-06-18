@@ -1,3 +1,8 @@
+##############################################################################################################################################################################################################################################################
+#####    PRESETS    ##########################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
 require_relative 'gamepiece'
 
 
@@ -204,7 +209,7 @@ class Shelf < Surface
   	puts "	     It's just within your reach.\n\n"
   end
   def subtype_view
-      puts "	   - The wood is gnarly and blue."
+    puts "	   - The wood is gnarly and blue."
   	puts "	     It's covered in scars.\n\n"
   end
 end
@@ -218,70 +223,11 @@ class Grave < Surface
   	puts "	     sticking out of the ground.\n\n"
   end
   def display_inscription
-      puts "	     The inscription has eroded.\n\n"
+    puts "	     The inscription has eroded.\n\n"
   end
   def subtype_view
   	puts "	   - It's made of crumbling rock."
-      display_inscription
-  end
-end
-
-
-##############################################################################################################################################################################################################################################################
-#####    TREES    ############################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-class Tree < Fixture
-  def targets
-    ["tree","plant"]
-  end
-  def view
-    description
-  end
-end
-
-class SapTree < Tree
-  def draw_backdrop
-  	puts "	   - A gnarled sap tree clings to"
-  	puts "	     the ceiling with its roots.\n\n"
-  end
-  def description
-    puts "	   - It's a subterranean tree. It"
-  	puts "	     grows upside down, and leaks"
-    puts "	     a dark, bitter sap."
-  end
-end
-
-
-class WillowTree < Tree
-  def subtype
-    ["willow","weaping","magick"]
-  end
-  def draw_backdrop
-  	puts "	   - A massive willow tree mourns"
-  	puts "	     here, weeping shade with its"
-    puts "	     long, dark branches."
-  end
-  def description
-    puts "	   - It's a willow tree. Branches"
-  	puts "	     pulled from it have magickal"
-  	puts "	     properties.\n\n"
-  end
-end
-
-class BerryTree < Tree
-  def subtype
-    ["berry","blackberry"]
-  end
-  def draw_backdrop
-  	puts "	   - A short and bushy blackberry"
-  	puts "	     tree grows here.\n\n"
-  end
-  def description
-    puts "	   - It's a berry tree. Its fruit"
-  	puts "	     is edible, but doesn't taste"
-  	puts "	     great on its own.\n\n"
+    display_inscription
   end
 end
 
@@ -395,6 +341,12 @@ class Sword < Weapon
   end
 end
 
+
+##############################################################################################################################################################################################################################################################
+#####    FOOD    #############################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
 class Bread < Edible
   def initialize
     super
@@ -428,72 +380,20 @@ class Apple < Edible
   end
 end
 
-class AppleTree < Apple
-    attr_accessor :type
-    def initialize
-        super
-        @type = type
-        @count = 666
-        @stock = []
-        @fruit = []
-        @count.times do
-            @stock.push(Apple.new)
-        end
-    end
-    def targets
-        ["tree"] | ["apple"]
-    end
-    def grow_fruit
-        if @@page % 30 == 0
-            @fruit.count < 3 && @fruit.push(@stock[0])
-            @fruit.count < 3 && @stock.shift
-        end
-    end
-    def special_properties
-        grow_fruit
-    end
-    def take
-        if @fruit.count > 0
-            @fruit[0].take
-            @fruit.shift
-        else
-            puts "	   - The apples need time to grow.\n\n"
-        end
-    end
-    def feed
-        puts "	   - You'll need to harvest these"
-        puts "	     before you can eat them.\n\n"
-        @fruit[0].take
-        @fruit.shift
-    end
-    def draw_backdrop
-        puts "	   - A pale blue tree with gnarly"
-        puts "	     bark grows at this plot. Its"
-        print "	     branches bear #{@fruit.count} apple"
-        @fruit.count == 1 ? print(".\n\n") : print("s.\n\n")
-    end
-    def description
-        puts "	   - It's an apple tree. It grows"
-        puts "	     uncommonly sweet fruit.\n\n"
-    end
-end
-
-
-
 class Plum < Edible
   def initialize
     super
-    @profile = { :hearts => 1, :portions => 3 }
+    @profile = { :hearts => 1, :portions => 4 }
   end
   def subtype
-    ["apple"]
+    ["plum"]
   end
   def draw_backdrop
-  	puts "	   - A jet black plum sits here.\n\n"
+    puts "	   - A big black plum sits here.\n\n"
   end
   def description
-  	puts "	   - Black plums like these are"
-    puts "	     sweet and juicy.\n\n"
+    puts "	   - Plums like these work well"
+    puts "	     in elixers. They're edible.\n\n"
   end
 end
 
@@ -506,11 +406,11 @@ class Mushroom < Edible
     ["fungi","fungus","mushroom","shroom","toadstool","stool"]
   end
   def draw_backdrop
-  	puts "	   - A small blue mushroom blooms"
+    puts "	   - A small blue mushroom blooms"
     puts "	     on the wall here.\n\n"
   end
   def description
-  	puts "	   - Toadstools like these induce"
+    puts "	   - Toadstools like these induce"
     puts "	     waking dreams when eaten.\n\n"
   end
   def side_effect
@@ -528,12 +428,126 @@ class Flesh < Edible
     ["jerky","meat"]
   end
   def draw_backdrop
-  	puts "	   - A small strip of smoked meat"
+    puts "	   - A small strip of smoked meat"
     puts "	     lays across the ground here.\n\n"
   end
   def description
-  	puts "	   - It's dry and salty. It might"
+    puts "	   - It's dry and salty. It might"
     puts "	     cook well with some bread.\n\n"
+  end
+end
+
+class Salt < Portable
+  def targets
+    ["salt","seasoning","sodium","cube"]
+  end
+  def draw_backdrop
+    puts "	   - A pink cube of salt as big as"
+    puts "	     your fist sits here.\n\n"
+  end
+  def view
+    puts "	   - Cook it alongside ingredients"
+    puts "	     to increase healing potential.\n\n"
+  end
+  def wrong_move
+    puts "	   - It wouldn't taste right on its"
+    puts "	     own. You decide against it.\n\n"
+  end
+end
+
+
+##############################################################################################################################################################################################################################################################
+#####    FRUIT TREES    ######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class FruitTree < Edible
+  def initialize
+    super
+    @count = 666
+    @stock = []
+    @fruit = []
+    fill_stock
+  end
+  def grow_fruit
+    if @@page % 30 == 0
+      @fruit.push(@stock[0])
+      @stock.shift
+    end
+  end
+  def special_properties
+    @fruit.count < 3 && grow_fruit
+  end
+  def be_patient
+    puts "	   - The fruit needs time to grow.\n\n"
+  end
+  def take
+    if @fruit.count > 0
+      @fruit[0].take
+      @fruit.shift
+    else
+      be_patient
+      @@player.toggle_idle
+    end
+  end
+  def feed
+    puts "	   - You can't eat fruit that you"
+    puts "	     haven't yet harvested.\n\n"
+    take
+  end
+  def view
+    description
+    view_profile
+    print "\n"
+    be_patient if @fruit.count < 1
+  end
+end
+
+class AppleTree < FruitTree
+  def initialize
+    super
+    @profile = Apple.new.profile
+  end
+  def targets
+    ["tree","apple","apples","fruit"]
+  end
+  def draw_backdrop
+    puts "	   - An apple tree stands here. It"
+    print "	     bears #{@fruit.count} apple"
+    @fruit.count == 1 ? print(".\n\n") : print("s.\n\n")
+  end
+  def description
+    puts "	   - This tree produces uncommonly"
+    puts "	     sweet fruit with a blue hue.\n\n"
+  end
+  def fill_stock
+    @count.times do
+      @stock.push(Apple.new)
+    end
+  end
+end
+
+class PlumTree < FruitTree
+  def initialize
+    super
+    @profile = Plum.new.profile
+  end
+  def targets
+    ["tree","apple","apples","fruit"]
+  end
+  def draw_backdrop
+    puts "	   - A plum tree stands here. It"
+    print "	     bears #{@fruit.count} plum"
+    @fruit.count == 1 ? print(".\n\n") : print("s.\n\n")
+  end
+  def description
+    puts "	   - This tree produces delicious"
+    puts "	     plums that are good in brews.\n\n"
+  end
+  def fill_stock
+    @count.times do
+      @stock.push(Plum.new)
+    end
   end
 end
 
@@ -842,24 +856,6 @@ class Gland < Portable
   end
 end
 
-class Salt < Portable
-  def targets
-    ["salt","seasoning","sodium","cube"]
-  end
-  def draw_backdrop
-    puts "	   - A pink cube of salt as big as"
-  	puts "	     your fist sits here.\n\n"
-  end
-  def view
-    puts "	   - Cook it alongside ingredients"
-  	puts "	     to increase healing potential.\n\n"
-  end
-  def wrong_move
-    puts "	   - It wouldn't taste right on its"
-  	puts "	     own. You decide against it.\n\n"
-  end
-end
-
 
 ##############################################################################################################################################################################################################################################################
 #####    CLOTHES     #########################################################################################################################################################################################################################################
@@ -1144,4 +1140,3 @@ class Hellion < Character
     puts "	     demon has a quick temper.\n\n"
   end
 end
-
