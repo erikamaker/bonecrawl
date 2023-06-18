@@ -3,6 +3,8 @@
 You wake up in a dim dungeon, dead. A prisoner of the sprawling underworld, your eternal fate is demonic judgment. Except, you don't belong here.
 Fight through the nine labyrinthian levels of perdition. Face treacherous demons, reclaim your bones, and save your soul.
 
+[Screencast from 06-18-2023 08:15:08 AM.webm](https://github.com/erikamaker/bonecrawl/assets/118931925/4c4ef68f-be61-4cf3-a4b7-dfcb37f035f6)
+
 # ABOUT THE ENGINE 
 
 In 2003, my mom linked me to a .zip file of some text adventures. That's all it took. I spent a lot of my youth on solo adventures that unfolded before me in terminal-green characters across a curved black screen. For 20 years, I've dreamt of building my own adventure and, in 2019, I broke ground on the rogue-like realization of its engine. Here it is, warts and all.
@@ -11,6 +13,7 @@ The idea was to create a text-based RPG that felt action-oriented. It needed to 
 
 
 # PROGRESS UPDATE
+
 
 > The last 18 days have been all about battle methods, equipping items, refactoring, and polishing. There's only one class left to build before the level can be written. Following that, hosting a live demo on www.bonecrawl.com. We're in the final stretch! Woo! 
 
