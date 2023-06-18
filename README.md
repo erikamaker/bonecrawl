@@ -4,6 +4,9 @@ You wake up in a dim dungeon, dead. A prisoner of the sprawling underworld, your
 Fight through the nine labyrinthian levels of perdition. Face treacherous demons, reclaim your bones, and save your soul.
 
 
+
+
+
 # ABOUT THE ENGINE 
 
 In 2003, my mom linked me to a .zip file of some text adventures. That's all it took. I spent a lot of my youth on solo adventures that unfolded before me in terminal-green characters across a curved black screen. For 20 years, I've dreamt of building my own adventure and, in 2019, I broke ground on the rogue-like realization of its engine. Here it is, warts and all.
@@ -36,7 +39,6 @@ The idea was to create a text-based RPG that felt action-oriented. It needed to 
 > The terminal-based engine is nearing completion, but there's still work to do. Following its completion, I will be building a website at www.bonecrawl.com, where players may can a demo and download the game. Each level will be released in installments. I would love to one day add MMORPG functionality, so that friends can meet up in their own levels to map out adventures. More than anything, I have big mobile app aspirations for this project. 
 
 3/14/23
-
 
 
 Copyright Erika Maker  / 'Bone Crawl' © 2019 (www.bonecrawl.com). All rights reserved.
