@@ -3,7 +3,6 @@
 You wake up in a dim dungeon, dead. A prisoner of the sprawling underworld, your eternal fate is demonic judgment. Except, you don't belong here.
 Fight through the nine labyrinthian levels of perdition. Face treacherous demons, reclaim your bones, and save your soul.
 
-[Screencast from 06-18-2023 08:15:08 AM.webm](https://github.com/erikamaker/bonecrawl/assets/118931925/4c4ef68f-be61-4cf3-a4b7-dfcb37f035f6)
 
 # ABOUT THE ENGINE 
 
