@@ -3,11 +3,6 @@
 You wake up in a dim dungeon, dead. A prisoner of the sprawling underworld, your eternal fate is demonic judgment. Except, you don't belong here.
 Fight through the nine labyrinthian levels of perdition. Face treacherous demons, reclaim your bones, and save your soul.
 
-
-file:///home/erikamaker/Screencasts/Screencast%20from%2006-18-2023%2008:15:08%20AM.webm
-
-
-
 # ABOUT THE ENGINE 
 
 In 2003, my mom linked me to a .zip file of some text adventures. That's all it took. I spent a lot of my youth on solo adventures that unfolded before me in terminal-green characters across a curved black screen. For 20 years, I've dreamt of building my own adventure and, in 2019, I broke ground on the rogue-like realization of its engine. Here it is, warts and all.
