@@ -480,6 +480,7 @@ class FruitTree < Edible
   end
   def be_patient
     puts "	   - The fruit needs time to grow.\n\n"
+    @@player.toggle_idle
   end
   def take
     if @fruit.count > 0
@@ -487,7 +488,6 @@ class FruitTree < Edible
       @fruit.shift
     else
       be_patient
-      @@player.toggle_idle
     end
   end
   def feed

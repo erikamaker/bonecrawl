@@ -454,13 +454,14 @@ class Character < Gamepiece
   end
   def barter
     unique_bartering_script
-    print Rainbow("	     Yes / No  >>  ").purple
+    print Rainbow("	   - Yes / No  ").cyan
+    print Rainbow(">>  ").purple
     choice = gets.chomp
     print "\n"
     bartering_outcome(choice)
   end
   def bartering_outcome(choice)
-    if choice == "yes"
+    if ["yes","yeah","sure","yep","aye"].include?(choice)
       exchange_gifts
     else
       become_hostile
@@ -469,8 +470,8 @@ class Character < Gamepiece
   def exchange_gifts
     reward_animation
     reward = @rewards.sample
-    puts Rainbow("	   - To help you on your journey,").orange
-    puts Rainbow("	     you're given 1 #{reward.targets[0]}.\n").orange
+    puts "	   - To help you on your journey,"
+    puts "	     you're given 1 #{reward.targets[0]}.\n\n"
     reward.take
     @rewards.delete(reward)
     @content.push(@desires)
@@ -518,7 +519,7 @@ class Character < Gamepiece
     special_properties
   end
   def player_attack_result
-    if @@player.accuracy_level == 4
+    if @@player.accuracy_level > 2
       player_hits_demon
       become_hostile if demon_is_alive
       demon_death_scene if demon_is_slain
@@ -592,3 +593,39 @@ class Character < Gamepiece
     @content.each { |item| item.push_to_inventory }
   end
 end
+
+
+
+
+##############################################################################################################################################################################################################################################################
+#####     ALTAR     ##########################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+
+class Altar < Gamepiece
+    attr_accessor :desires
+    def initialize
+      super
+      @moveset = MOVES[1] | MOVES[6..7].flatten
+      @desires = desires
+    end
+    def talk
+        view
+    end
+    def targets
+      ["altar","slab","shrine"]
+    end
+    def draw_backdrop
+        puts "	   - You stand before an imposing"
+        puts "	     altar cut from solid rock.\n\n"
+    end
+    def view
+        puts "	   - You feel compelled to kneel.\n"
+        puts "	     Will you pray or craft?\n"
+        print Rainbow("\n	   - Pray / Craft").cyan
+        print Rainbow("  >>  ").purple
+    end
+end
+
+
