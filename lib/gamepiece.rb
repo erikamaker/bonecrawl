@@ -602,7 +602,6 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-
 class Altar < Gamepiece
     attr_accessor :desires, :gate
     def initialize
@@ -620,13 +619,17 @@ class Altar < Gamepiece
         puts "	   - You stand before an imposing"
         puts "	     altar cut from solid rock.\n\n"
     end
+    def crafting_menu
+        if @@player.all_item_types.count(Key) == 2
+        print("	   - A new lockpick.")
+        else
+            print("	   - Nothing, unfortunately.")
+        end
+    end
     def craft_new_inventory
         print Rainbow("	   - With your current inventory,\n").red
         print Rainbow("	     the altar can grant you:\n\n").red
-        if (@@player.all_item_types & [Lighter, Key]).size == 2
-            print("	   - A weird like... LIGHTER-KEY thing?")
-        else print("	   - Nothing, unfortunately.")
-        end
+        crafting_menu
         print "\n"
     end
     def pray_to_ascend

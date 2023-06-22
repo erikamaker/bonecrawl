@@ -892,40 +892,13 @@ class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
   end
 end
 
-class Jeans < Clothes   # Requires 1 copper ore, and 3 spider spools
-  def initialize
-    @targets = ["jeans","denim","pants","trousers"]
-    @profile = {:defense => 3, :lifespan => 20}
-  end
-  def draw_backdrop
-    puts "	   - A pair of denim jeans lay on"
-  	puts "	     the ground here.\n\n"
-  end
-  def description
-  	puts "	   - Spider silk is so strong, it"
-  	puts "	     makes a solid pair of denim."
-  end
-end
-
-class Tee < Clothes     # Requires 2 spider spools
-  def initialize
-    @targets = ["tee","shirt","t-shirt"]
-    @profile = {:defense => 5, :lifespan => 15}
-  end
-  def draw_backdrop
-    puts "	   - A t-shirt lays on the ground"
-  	puts "	     where you stand.\n\n"
-  end
-  def description
-  	puts "	   - It was sewn with spider silk."
-  	puts "	     It's a strong base layer. \n\n"
-  end
-end
-
 class Sneakers < Clothes    # Requires 2 spider spools, 1 copper ore, and 4 rat leather
   def initialize
-    @targets = ["shoes","sneakers"]
+    super
     @profile = {:defense => 5, :lifespan => 50}
+  end
+  def subtype
+    ["shoes","sneakers"]
   end
   def draw_backdrop
     puts "	   - A pair of hide sneakers sits"

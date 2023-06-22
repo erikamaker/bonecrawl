@@ -40,7 +40,7 @@ lighter.location = [[0,1,2]]
 
 drain_1 = Toilet.new
 drain_1.location =  [[0,1,1]]
-drain_1.content = Lockpick.new
+drain_1.content = Key.new
 
 hall_1 = Corridor.new
 hall_1.location = [[0,2,0],[0,2,-1],[0,2,-2]]
