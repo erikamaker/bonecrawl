@@ -17,6 +17,9 @@ module Inventory
       types.any? { |type| item.is_a?(type) }
     end || false
   end
+  def all_item_types
+    items.map { |item| item.class }
+  end
   def remove_from_inventory
     items.delete(self)
   end

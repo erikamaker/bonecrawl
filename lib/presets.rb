@@ -271,7 +271,7 @@ class Key < Tool
     @profile = {:build => "brass", :lifespan => 1}
   end
   def subtype
-    ["key"]
+    ["brass key", "key"]
   end
   def description
   	puts "	   - It's brittle and tarnished."

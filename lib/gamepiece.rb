@@ -604,7 +604,7 @@ end
 
 
 class Altar < Gamepiece
-    attr_accessor :desires
+    attr_accessor :desires, :gate
     def initialize
       super
       @moveset = MOVES[1] | MOVES[6..7].flatten
@@ -614,17 +614,47 @@ class Altar < Gamepiece
         view
     end
     def targets
-      ["altar","slab","shrine"]
+      ["altar","shrine"]
     end
     def draw_backdrop
         puts "	   - You stand before an imposing"
         puts "	     altar cut from solid rock.\n\n"
     end
+    def craft_new_inventory
+        print Rainbow("	   - With your current inventory,\n").red
+        print Rainbow("	     the altar can grant you:\n\n").red
+        if (@@player.all_item_types & [Lighter, Key]).size == 2
+            print("	   - A weird like... LIGHTER-KEY thing?")
+        else print("	   - Nothing, unfortunately.")
+        end
+        print "\n"
+    end
+    def pray_to_ascend
+        if @@player.search_inventory(@desires.class)
+            puts "	   - The altar accepts the #{@desires.targets[0]}.\n"
+        else
+            puts "	   - The altar requires a #{@desires.targets[0]}.\n"
+        end
+    end
+    def perform_transaction
+        choice = gets.chomp.downcase
+        print "\n"
+        if ["pray","sacrifice"].include?(choice)
+            pray_to_ascend
+        elsif ["craft","build","make"].include?(choice)
+            craft_new_inventory
+        end
+        print "\n"
+        puts "	   - The altar releases you from"
+        puts "	     its grip. You stand back up.\n\n"
+
+    end
     def view
         puts "	   - You feel compelled to kneel.\n"
-        puts "	     Will you pray or craft?\n"
+        puts "	     Will you pray, or craft?\n"
         print Rainbow("\n	   - Pray / Craft").cyan
         print Rainbow("  >>  ").purple
+        perform_transaction
     end
 end
 
