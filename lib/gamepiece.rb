@@ -620,10 +620,29 @@ class Altar < Gamepiece
         puts "	     altar cut from solid rock.\n\n"
     end
     def crafting_menu
-        if @@player.all_item_types.count(Key) == 2
-        print("	   - A new lockpick.")
-        else
-            print("	   - Nothing, unfortunately.")
+        if @@player.all_item_types.count(Key) > 1
+            print("	   - A new Lockpick.")
+        end
+        if (@@player.all_item_types & [Silver, Gem]).size == 2
+            print("	   - Silver Ring.")
+        end
+        if (@@player.all_item_types & [Gold, Gem]).size == 2
+            print("	   - Golden Ring.")
+        end
+        if (@@player.all_item_types & [Rubber, Leather, Silk]).size == 3
+            print("	   - Durable Sneakers.")
+        end
+        if (@@player.all_item_types & [Silver, Leather, Silk]).size == 3
+            print("	   - Durable Hoodie.")
+        end
+        if (@@player.all_item_types & [Branch, Feather, Gem]).size == 3
+            print("	   - Magick Staff.")
+        end
+        if (@@player.all_item_types & [Water, Ash, PurpleFlower]).size == 3
+            print("	   - Demon Tonic.")
+        end
+        if (@@player.all_item_types & [Water, Apple, RedFlower]).size == 3
+            print("	   - Health Elixer.")
         end
     end
     def craft_new_inventory
