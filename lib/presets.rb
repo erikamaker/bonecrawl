@@ -461,48 +461,6 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-class FruitTree < Edible
-  def initialize
-    super
-    @count = 666
-    @stock = []
-    @fruit = []
-    fill_stock
-  end
-  def grow_fruit
-    if @@page % 30 == 0
-      @fruit.push(@stock[0])
-      @stock.shift
-    end
-  end
-  def special_properties
-    @fruit.count < 3 && grow_fruit
-  end
-  def be_patient
-    puts "	   - The fruit needs time to grow.\n\n"
-    @@player.toggle_idle
-  end
-  def take
-    if @fruit.count > 0
-      @fruit[0].take
-      @fruit.shift
-    else
-      be_patient
-    end
-  end
-  def feed
-    puts "	   - You can't eat fruit that you"
-    puts "	     haven't yet harvested.\n\n"
-    take
-  end
-  def view
-    description
-    view_profile
-    print "\n"
-    be_patient if @fruit.count < 1
-  end
-end
-
 class AppleTree < FruitTree
   def initialize
     super
