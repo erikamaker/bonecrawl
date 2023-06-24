@@ -441,8 +441,9 @@ class Character < Gamepiece
   end
   def talk
     if @hostile
-      puts "	   - It's in no mood to socialize.\n\n"
-    else conversation
+      puts "	   - You cannot reason with it.\n\n"
+    else
+        conversation
     end
   end
   def conversation
@@ -616,40 +617,45 @@ class Altar < Gamepiece
       ["altar","shrine"]
     end
     def draw_backdrop
-        puts "	   - You stand before an imposing"
-        puts "	     altar cut from solid rock.\n\n"
+        puts "	   - You stand before a sinister"
+        puts "	     altar cut from black marble.\n\n"
     end
     def crafting_menu
-        if @@player.all_item_types.count(Key) > 1
-            print("	   - A new Lockpick.")
-        end
-        if (@@player.all_item_types & [Silver, Gem]).size == 2
-            print("	   - Silver Ring.")
-        end
-        if (@@player.all_item_types & [Gold, Gem]).size == 2
-            print("	   - Golden Ring.")
-        end
-        if (@@player.all_item_types & [Rubber, Leather, Silk]).size == 3
-            print("	   - Durable Sneakers.")
-        end
-        if (@@player.all_item_types & [Silver, Leather, Silk]).size == 3
-            print("	   - Durable Hoodie.")
-        end
-        if (@@player.all_item_types & [Branch, Feather, Gem]).size == 3
-            print("	   - Magick Staff.")
-        end
-        if (@@player.all_item_types & [Water, Ash, PurpleFlower]).size == 3
-            print("	   - Demon Tonic.")
-        end
-        if (@@player.all_item_types & [Water, Apple, RedFlower]).size == 3
-            print("	   - Health Elixer.")
+        case
+        when @@player.all_item_types.count(Key) > 1
+          print Rainbow("	   - A single lockpick.\n").orange
+        when (@@player.all_item_types & [Silver, Gem]).size == 2
+          print("	   - Silver Ring.")
+        when (@@player.all_item_types & [Gold, Gem]).size == 2
+          print("	   - Golden Ring.")
+        when (@@player.all_item_types & [Rubber, Leather, Silk]).size == 3
+          print("	   - Durable Sneakers.")
+        when (@@player.all_item_types & [Silver, Leather, Silk]).size == 3
+          print("	   - Durable Hoodie.")
+        when (@@player.all_item_types & [Branch, Feather, Gem]).size == 3
+          print("	   - Magick Staff.")
+        when (@@player.all_item_types & [Water, Ash, PurpleFlower]).size == 3
+          print("	   - Demon Tonic.")
+        when (@@player.all_item_types & [Water, Apple, RedFlower]).size == 3
+          print("	   - Health Elixir.")
+        else
+          print Rainbow("	     nothing. wretched beggar. \"\n").red
         end
     end
     def craft_new_inventory
-        print Rainbow("	   - With your current inventory,\n").red
-        print Rainbow("	     the altar can grant you:\n\n").red
-        crafting_menu
-        print "\n"
+        print Rainbow("	   \" What does the sinner want?\n").red
+        print Rainbow("	     Speak the thing you seek. \"\n").red
+        print Rainbow("\n	   - Choose / Options").cyan
+
+        print Rainbow("  >>  ").purple
+
+        choice = gets.chomp.downcase
+        if ["help","assist","menu","options"].include?(choice)
+            print Rainbow("\n	   \" You own materials to make:\n\n").red
+            crafting_menu
+        else
+           # start_building
+        end
     end
     def pray_to_ascend
         if @@player.search_inventory(@desires.class)
@@ -668,7 +674,7 @@ class Altar < Gamepiece
         end
         print "\n"
         puts "	   - The altar releases you from"
-        puts "	     its grip. You stand back up.\n\n"
+        puts "	     its grip. You stand up.\n\n"
 
     end
     def view
