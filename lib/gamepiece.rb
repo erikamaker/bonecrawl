@@ -4,6 +4,7 @@
 
 
 require './board'
+require './gamepiece'
 
 class Gamepiece < Board
   attr_accessor :location, :targets, :moveset, :profile, :player
@@ -644,8 +645,6 @@ class Character < Gamepiece
 end
 
 
-
-
 ##############################################################################################################################################################################################################################################################
 #####     ALTAR     ##########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
@@ -657,6 +656,13 @@ class Altar < Gamepiece
       super
       @moveset = MOVES[1] | MOVES[6..7].flatten
       @desires = desires
+      @lockpick_stock = []
+      fill_lockpick_stock
+    end
+    def fill_lockpick_stock
+        666.times do
+          @lockpick_stock.push(Lockpick.new)
+        end
     end
     def talk
         view
@@ -668,26 +674,47 @@ class Altar < Gamepiece
         puts "	   - You stand before a sinister"
         puts "	     altar cut from black marble.\n\n"
     end
+    def lockpick_materials?
+        @@player.all_item_types.count(Key) > 1
+    end
+    def silver_ring_materials?
+        (@@player.all_item_types & [Silver, Gem]).size == 2
+    end
+    def golden_ring_materials?
+        (@@player.all_item_types & [Gold, Gem]).size == 2
+    end
+    def sneaker_materials?
+        (@@player.all_item_types & [Rubber, Leather, Silk]).size == 3
+    end
+    def hoodie_materials?
+        (@@player.all_item_types & [Silver, Leather, Silk]).size == 3
+    end
+    def staff_materials?
+        (@@player.all_item_types & [Branch, Feather, Gem]).size == 3
+    end
+    def tonic_materials?
+        (@@player.all_item_types & [Water, Ash, PurpleFlower]).size == 3
+    end
+    def elixer_materials?
+        (@@player.all_item_types & [Water, Apple, RedFlower]).size == 3
+    end
     def crafting_menu
-        case
-        when @@player.all_item_types.count(Key) > 1
-          print Rainbow("	   - A single lockpick.\n").orange
-        when (@@player.all_item_types & [Silver, Gem]).size == 2
-          print("	   - Silver Ring.")
-        when (@@player.all_item_types & [Gold, Gem]).size == 2
-          print("	   - Golden Ring.")
-        when (@@player.all_item_types & [Rubber, Leather, Silk]).size == 3
-          print("	   - Durable Sneakers.")
-        when (@@player.all_item_types & [Silver, Leather, Silk]).size == 3
-          print("	   - Durable Hoodie.")
-        when (@@player.all_item_types & [Branch, Feather, Gem]).size == 3
-          print("	   - Magick Staff.")
-        when (@@player.all_item_types & [Water, Ash, PurpleFlower]).size == 3
-          print("	   - Demon Tonic.")
-        when (@@player.all_item_types & [Water, Apple, RedFlower]).size == 3
-          print("	   - Health Elixir.")
-        else
-          print Rainbow("	     nothing. wretched beggar. \"\n").red
+        lockpick_materials? && print(Rainbow("	   - A single lockpick.\n").orange)
+        silver_ring_materials? && print(Rainbow("	   - Silver Ring").orange)
+        golden_ring_materials? && print(Rainbow("	   - Golden Ring").orange)
+        sneaker_materials? && print(Rainbow("	   - Rubber Sneakers").orange)
+        hoodie_materials? && print(Rainbow("	   - Black Hoodie").orange)
+        staff_materials? && print(Rainbow("	   - Magick Staff").orange)
+        tonic_materials? && print(Rainbow("	   - Exorcist Tonic").orange)
+        elixer_materials? && print(Rainbow("	   - Health Elixer").orange)
+    end
+    def start_building(choice)
+        if ["pick", "lockpick"].include?(choice)
+            if lockpick_materials?
+                print "\n"
+                @lockpick_stock[0].take
+                @lockpick_stock.shift
+            end
         end
     end
     def craft_new_inventory
@@ -699,10 +726,10 @@ class Altar < Gamepiece
 
         choice = gets.chomp.downcase
         if ["help","assist","menu","options"].include?(choice)
-            print Rainbow("\n	   \" You own materials to make:\n\n").red
+            print Rainbow("\n	   \" You own materials to make:\n").red
             crafting_menu
         else
-           # start_building
+           start_building(choice)
         end
     end
     def pray_to_ascend

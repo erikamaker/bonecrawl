@@ -91,8 +91,8 @@ end
 def hellion_1.reward_animation
   puts "	   - The hellion lowers its voice."
   puts "	     It barely whispers a rumor...\n\n"
-  puts Rainbow("	   \" There's a third cell lost to").cyan
-  puts Rainbow("	     the ages on this floor. \"\n").cyan
+  puts Rainbow("	   \" There's a third cell lost to").green
+  puts Rainbow("	     the ages on this floor. \"\n").green
 end
 def hellion_1.default_script
   puts "	   - It leers at you, dark pupils"
