@@ -936,12 +936,14 @@ class Ring < Jewelry
   end
   def description
   	puts "	   - It fits. It doesn't do much,"
-  	puts "	     but it sure is pretty."
+  	puts "	     but it sure is pretty.\n\n"
   end
 end
 
 class SilverRing < Ring  # Requires 1 silver
   def initialize
+    @targets = ["ring","band"]
+
     @profile = {:build => "silver", :rune => "none"}
   end
   def draw_backdrop

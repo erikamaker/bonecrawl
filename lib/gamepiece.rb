@@ -321,46 +321,46 @@ end
 
 
 class FruitTree < Edible
-    def initialize
-      super
-      @count = 666
-      @stock = []
-      @fruit = []
-      fill_stock
-    end
-    def grow_fruit
-      if @@page % 30 == 0
-        @fruit.push(@stock[0])
-        @stock.shift
-      end
-    end
-    def special_properties
-      @fruit.count < 3 && grow_fruit
-    end
-    def be_patient
-      puts "	   - The fruit needs time to grow.\n\n"
-      @@player.toggle_idle
-    end
-    def take
-      if @fruit.count > 0
-        @fruit[0].take
-        @fruit.shift
-      else
-        be_patient
-      end
-    end
-    def feed
-      puts "	   - You can't eat fruit that you"
-      puts "	     haven't yet harvested.\n\n"
-      take
-    end
-    def view
-      description
-      view_profile
-      print "\n"
-      be_patient if @fruit.count < 1
+  def initialize
+    super
+    @count = 666
+    @stock = []
+    @fruit = []
+    fill_stock
+  end
+  def grow_fruit
+    if @@page % 30 == 0
+      @fruit.push(@stock[0])
+      @stock.shift
     end
   end
+  def special_properties
+    @fruit.count < 3 && grow_fruit
+  end
+  def be_patient
+    puts "	   - The fruit needs time to grow.\n\n"
+    @@player.toggle_idle
+  end
+  def take
+    if @fruit.count > 0
+      @fruit[0].take
+      @fruit.shift
+    else
+      be_patient
+    end
+  end
+  def feed
+    puts "	   - You can't eat fruit that you"
+    puts "	     haven't yet harvested.\n\n"
+    take
+  end
+  def view
+    description
+    view_profile
+    print "\n"
+    be_patient if @fruit.count < 1
+  end
+end
 
 
 ##############################################################################################################################################################################################################################################################
@@ -444,6 +444,8 @@ end
 ##############################################################################################################################################################################################################################################################
 #####     CHARACTERS     #####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
+
+
 
 
 class Character < Gamepiece
@@ -658,10 +660,17 @@ class Altar < Gamepiece
       @desires = desires
       @lockpick_stock = []
       fill_lockpick_stock
+      @silver_ring_stock = []
+      fill_silver_ring_stock
     end
     def fill_lockpick_stock
         666.times do
           @lockpick_stock.push(Lockpick.new)
+        end
+    end
+    def fill_silver_ring_stock
+        666.times do
+            @silver_ring_stock.push(SilverRing.new)
         end
     end
     def talk
@@ -678,35 +687,35 @@ class Altar < Gamepiece
         @@player.all_item_types.count(Key) > 1
     end
     def silver_ring_materials?
-        (@@player.all_item_types & [Silver, Gem]).size == 2
+        @@player.all_item_types.count(Silver) > 1
     end
     def golden_ring_materials?
-        (@@player.all_item_types & [Gold, Gem]).size == 2
+        @@player.all_item_types.count(Gold) > 1
     end
     def sneaker_materials?
-        (@@player.all_item_types & [Rubber, Leather, Silk]).size == 3
+        (@@player.all_item_types & [Rubber, Leather]).size == 2
     end
     def hoodie_materials?
-        (@@player.all_item_types & [Silver, Leather, Silk]).size == 3
+        (@@player.all_item_types & [Leather, Silk]).size == 2
     end
     def staff_materials?
-        (@@player.all_item_types & [Branch, Feather, Gem]).size == 3
+        (@@player.all_item_types & [Branch, Feather]).size == 3
     end
     def tonic_materials?
-        (@@player.all_item_types & [Water, Ash, PurpleFlower]).size == 3
+        (@@player.all_item_types & [Water, PurpleFlower]).size == 2
     end
     def elixer_materials?
-        (@@player.all_item_types & [Water, Apple, RedFlower]).size == 3
+        (@@player.all_item_types & [Water, RedFlower]).size == 2
     end
     def crafting_menu
-        lockpick_materials? && print(Rainbow("	   - A single lockpick.\n").orange)
-        silver_ring_materials? && print(Rainbow("	   - Silver Ring").orange)
-        golden_ring_materials? && print(Rainbow("	   - Golden Ring").orange)
-        sneaker_materials? && print(Rainbow("	   - Rubber Sneakers").orange)
-        hoodie_materials? && print(Rainbow("	   - Black Hoodie").orange)
-        staff_materials? && print(Rainbow("	   - Magick Staff").orange)
-        tonic_materials? && print(Rainbow("	   - Exorcist Tonic").orange)
-        elixer_materials? && print(Rainbow("	   - Health Elixer").orange)
+        lockpick_materials? && print("	   - Lock Pick ( 2 Keys )\n\n")
+        silver_ring_materials? && print("	   - Silver Ring ( 2 Silver )\n\n")
+        golden_ring_materials? && print("	   - Golden Ring ( 2 Gold )\n\n")
+        sneaker_materials? && print("	   - Rubber Sneakers ( 1 Rubber, 1 Leather )\n\n")
+        hoodie_materials? && print("	   - Silk Hoodie ( 1 Silk, 1 Leather )\n\n")
+        staff_materials? && print("	   - Magick Staff ( 1 Branch, 1 Feather )\n\n")
+        tonic_materials? && print("	   - Exocrcism Tonic ( Water, 1 Blossom )\n\n")
+        elixer_materials? && print("	   - Health Elixer ( Water, 1 Flower )\n\n")
     end
     def delete_material(material)
         @@player.items.find { |item| item.targets.include?(material) && @@player.items.delete(item) }
@@ -719,11 +728,18 @@ class Altar < Gamepiece
                 @lockpick_stock.shift
                 delete_material("key")
                 delete_material("key")
-            else print "\n"
-                print Rainbow("	   \" Nothing comes from nothing.\n").red
-                print Rainbow("	     Avarice is not becoming. \"\n\n").red
-
             end
+        elsif @silver_ring_stock[0].targets[0].include?(choice)
+            if silver_ring_materials?
+                print "\n"
+                @silver_ring_stock[0].take
+                @silver_ring_stock.shift
+                delete_material("silver")
+                delete_material("silver")
+            end
+        else
+            print Rainbow("\n	   \" Nothing comes from nothing.\n").red
+            print Rainbow("	     Avarice gets you nowhere. \"\n\n").red
         end
     end
     def craft_new_inventory
@@ -735,7 +751,7 @@ class Altar < Gamepiece
 
         choice = gets.chomp.downcase
         if ["help","assist","menu","options"].include?(choice)
-            print Rainbow("\n	   \" You own materials to make:\n").red
+            print Rainbow("\n	   \" You own materials to make:\n\n").red
             crafting_menu
         else
            start_building(choice)
@@ -756,9 +772,8 @@ class Altar < Gamepiece
         elsif ["craft","build","make"].include?(choice)
             craft_new_inventory
         end
-        puts "	   - The altar releases you from"
-        puts "	     its grip. You stand up.\n\n"
-
+        puts Rainbow("	   - The altar releases you from").red
+        puts Rainbow("	     its grip. You stand up.\n\n").red
     end
     def view
         puts "	   - You feel compelled to kneel.\n"
