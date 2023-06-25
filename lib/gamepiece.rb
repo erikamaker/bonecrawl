@@ -671,8 +671,8 @@ class Altar < Gamepiece
       ["altar","shrine"]
     end
     def draw_backdrop
-        puts "	   - You stand before a sinister"
-        puts "	     altar cut from black marble.\n\n"
+        puts Rainbow("	   - You stand before a sinister").red
+        puts Rainbow("	     altar cut from black marble.\n").red
     end
     def lockpick_materials?
         @@player.all_item_types.count(Key) > 1
@@ -708,18 +708,27 @@ class Altar < Gamepiece
         tonic_materials? && print(Rainbow("	   - Exorcist Tonic").orange)
         elixer_materials? && print(Rainbow("	   - Health Elixer").orange)
     end
+    def delete_material(material)
+        @@player.items.find { |item| item.targets.include?(material) && @@player.items.delete(item) }
+    end
     def start_building(choice)
-        if ["pick", "lockpick"].include?(choice)
+        if @lockpick_stock[0].targets[0].include?(choice)
             if lockpick_materials?
                 print "\n"
                 @lockpick_stock[0].take
                 @lockpick_stock.shift
+                delete_material("key")
+                delete_material("key")
+            else print "\n"
+                print Rainbow("	   \" Nothing comes from nothing.\n").red
+                print Rainbow("	     Avarice is not becoming. \"\n\n").red
+
             end
         end
     end
     def craft_new_inventory
-        print Rainbow("	   \" What does the sinner want?\n").red
-        print Rainbow("	     Speak the thing you seek. \"\n").red
+        print Rainbow("	   \" What does the mortal want?\n").red
+        print Rainbow("	     Say the thing you seek. \"\n").red
         print Rainbow("\n	   - Choose / Options").cyan
 
         print Rainbow("  >>  ").purple
@@ -747,7 +756,6 @@ class Altar < Gamepiece
         elsif ["craft","build","make"].include?(choice)
             craft_new_inventory
         end
-        print "\n"
         puts "	   - The altar releases you from"
         puts "	     its grip. You stand up.\n\n"
 
