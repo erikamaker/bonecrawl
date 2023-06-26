@@ -35,7 +35,7 @@ class Player
       push: MOVES[4],
       pull: MOVES[5],
       talk: MOVES[6],
-      give: MOVES[7],
+     craft: MOVES[7],
       harm: MOVES[8],
       burn: MOVES[9],
       feed: MOVES[10],

@@ -446,8 +446,6 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-
-
 class Character < Gamepiece
   attr_accessor :hostile, :desires, :content, :friends, :subtype, :territory
   def initialize
@@ -662,6 +660,21 @@ class Altar < Gamepiece
       fill_lockpick_stock
       @silver_ring_stock = []
       fill_silver_ring_stock
+      @gold_ring_stock = []
+      fill_gold_ring_stock
+      @sneaker_stock = []
+      fill_sneaker_stock
+      @hoodie_stock = []
+      fill_hoodie_stock
+    end
+    def talk
+        craft
+    end
+    def view
+        craft
+    end
+    def targets
+      ["altar","shrine"]
     end
     def fill_lockpick_stock
         666.times do
@@ -673,15 +686,43 @@ class Altar < Gamepiece
             @silver_ring_stock.push(SilverRing.new)
         end
     end
-    def talk
-        view
+    def fill_gold_ring_stock
+        666.times do
+            @gold_ring_stock.push(GoldRing.new)
+        end
     end
-    def targets
-      ["altar","shrine"]
+    def fill_sneaker_stock
+        666.times do
+            @sneaker_stock.push(Sneakers.new)
+        end
+    end
+    def fill_hoodie_stock
+        666.times do
+            @hoodie_stock.push(Hoodie.new)
+        end
     end
     def draw_backdrop
         puts Rainbow("	   - You stand before a sinister").red
         puts Rainbow("	     altar cut from black marble.\n").red
+    end
+    def craft
+        print Rainbow("	   - You feel compelled to kneel.\n").red
+        print Rainbow("	     The altar offers many deals.\n\n").red
+        crafting_menu
+        print Rainbow("	   - Choose your worldly blessing\n").cyan
+        print Rainbow("	     >> ").purple
+        choice = gets.chomp.downcase
+        start_building(choice)
+        print Rainbow("	   - The altar releases you from\n").red
+        print Rainbow("	     its grip. You stand up.\n\n").red
+    end
+    def greedy_mortal_message
+        print Rainbow("\n	   - Nothing comes from nothing.\n").red
+        print Rainbow("	     You lack the materials.\n\n").red
+    end
+    def not_an_option
+        print Rainbow("\n	   - This altar cannot grant you\n").red
+        print Rainbow("	     the thing you've requested.\n\n").red
     end
     def lockpick_materials?
         @@player.all_item_types.count(Key) > 1
@@ -689,14 +730,14 @@ class Altar < Gamepiece
     def silver_ring_materials?
         @@player.all_item_types.count(Silver) > 1
     end
-    def golden_ring_materials?
+    def gold_ring_materials?
         @@player.all_item_types.count(Gold) > 1
     end
     def sneaker_materials?
         (@@player.all_item_types & [Rubber, Leather]).size == 2
     end
     def hoodie_materials?
-        (@@player.all_item_types & [Leather, Silk]).size == 2
+        (@@player.all_item_types & [Silver, Silk]).size == 2
     end
     def staff_materials?
         (@@player.all_item_types & [Branch, Feather]).size == 3
@@ -708,79 +749,106 @@ class Altar < Gamepiece
         (@@player.all_item_types & [Water, RedFlower]).size == 2
     end
     def crafting_menu
-        lockpick_materials? && print("	   - Lock Pick ( 2 Keys )\n\n")
-        silver_ring_materials? && print("	   - Silver Ring ( 2 Silver )\n\n")
-        golden_ring_materials? && print("	   - Golden Ring ( 2 Gold )\n\n")
-        sneaker_materials? && print("	   - Rubber Sneakers ( 1 Rubber, 1 Leather )\n\n")
-        hoodie_materials? && print("	   - Silk Hoodie ( 1 Silk, 1 Leather )\n\n")
-        staff_materials? && print("	   - Magick Staff ( 1 Branch, 1 Feather )\n\n")
-        tonic_materials? && print("	   - Exocrcism Tonic ( Water, 1 Blossom )\n\n")
-        elixer_materials? && print("	   - Health Elixer ( Water, 1 Flower )\n\n")
+        if lockpick_materials?
+            print(Rainbow("	     + 1 Lock Pick\n").green)
+            print("	        - 2 Keys\n\n")
+        end
+        if silver_ring_materials?
+            print(Rainbow("	     + 1 Silver Ring\n").green)
+            print("	        - 2 Silver\n\n")
+        end
+        if gold_ring_materials?
+            print(Rainbow("	     + 1 Gold Ring\n").green)
+            print("	        - 2 Gold\n\n")
+        end
+        if sneaker_materials?
+            print(Rainbow("	     + 1 Rubber Sneakers\n").green)
+            print("	        - 1 Rubber\n")
+            print("	        - 1 Leather\n")
+        end
+        if hoodie_materials?
+            print(Rainbow("	     + 1 Spider Silk Hoodie\n").green)
+            print("	        - 1 Silk\n")
+            print("	        - 1 Silver\n")
+        end
+        if staff_materials?
+            print(Rainbow("	     + 1 Magick Staff\n").green)
+            print("	        - 1 Branch\n")
+            print("	        - 1 Feather\n")
+        end
+        if tonic_materials?
+            print(Rainbow("	     + 1 Exorcist Tonic\n").green)
+            print("	        - 1 Holy Water\n")
+            print("	        - 1 Purple Flower\n")
+        end
+        if elixer_materials?
+            print(Rainbow("	     + 1 Heart Elixer\n").green)
+            print("	        - 1 Holy Water\n")
+            print("	        - 1 Red Flower\n")
+        end
+    end
+    def build_lock_pick
+        if lockpick_materials?
+            print "\n"
+            @lockpick_stock[0].take
+            @lockpick_stock.shift
+            delete_material("key")
+            delete_material("key")
+        end
+    end
+    def build_silver_ring
+        if silver_ring_materials?
+            print "\n"
+            @silver_ring_stock[0].take
+            @silver_ring_stock.shift
+            delete_material("silver")
+            delete_material("silver")
+        end
+    end
+    def build_gold_ring
+        if gold_ring_materials?
+            print "\n"
+            @gold_ring_stock[0].take
+            @gold_ring_stock.shift
+            delete_material("gold")
+            delete_material("gold")
+        end
+    end
+    def build_sneakers
+        if sneaker_materials?
+            print "\n"
+            @gold_ring_stock[0].take
+            @gold_ring_stock.shift
+            delete_material("rubber")
+            delete_material("leather")
+        end
+    end
+    def build_hoodie
+        if hoodie_materials?
+            print "\n"
+            @gold_ring_stock[0].take
+            @gold_ring_stock.shift
+            delete_material("silk")
+            delete_material("silver")
+        end
     end
     def delete_material(material)
-        @@player.items.find { |item| item.targets.include?(material) && @@player.items.delete(item) }
+        @@player.items.find { |item| item.targets.include?(material) && @@player.remove_from_inventory(item) }
     end
     def start_building(choice)
-        if @lockpick_stock[0].targets[0].include?(choice)
-            if lockpick_materials?
-                print "\n"
-                @lockpick_stock[0].take
-                @lockpick_stock.shift
-                delete_material("key")
-                delete_material("key")
-            end
-        elsif @silver_ring_stock[0].targets[0].include?(choice)
-            if silver_ring_materials?
-                print "\n"
-                @silver_ring_stock[0].take
-                @silver_ring_stock.shift
-                delete_material("silver")
-                delete_material("silver")
-            end
+        if @lockpick_stock[0].targets.include?(choice)
+            build_lock_pick | greedy_mortal_message
+        elsif @silver_ring_stock[0].targets.include?(choice)
+            build_silver_ring | greedy_mortal_message
+        elsif @gold_ring_stock[0].targets.include?(choice)
+            build_gold_ring | greedy_mortal_message
+        elsif @sneaker_stock[0].targets.include?(choice)
+            build_sneakers | greedy_mortal_message
+        elsif @hoodie_stock[0].targets.include?(choice)
+            build_hoodie | greedy_mortal_message
         else
-            print Rainbow("\n	   \" Nothing comes from nothing.\n").red
-            print Rainbow("	     Avarice gets you nowhere. \"\n\n").red
+            not_an_option
         end
-    end
-    def craft_new_inventory
-        print Rainbow("	   \" What does the mortal want?\n").red
-        print Rainbow("	     Say the thing you seek. \"\n").red
-        print Rainbow("\n	   - Choose / Options").cyan
-
-        print Rainbow("  >>  ").purple
-
-        choice = gets.chomp.downcase
-        if ["help","assist","menu","options"].include?(choice)
-            print Rainbow("\n	   \" You own materials to make:\n\n").red
-            crafting_menu
-        else
-           start_building(choice)
-        end
-    end
-    def pray_to_ascend
-        if @@player.search_inventory(@desires.class)
-            puts "	   - The altar accepts the #{@desires.targets[0]}.\n"
-        else
-            puts "	   - The altar requires a #{@desires.targets[0]}.\n"
-        end
-    end
-    def perform_transaction
-        choice = gets.chomp.downcase
-        print "\n"
-        if ["pray","sacrifice"].include?(choice)
-            pray_to_ascend
-        elsif ["craft","build","make"].include?(choice)
-            craft_new_inventory
-        end
-        puts Rainbow("	   - The altar releases you from").red
-        puts Rainbow("	     its grip. You stand up.\n\n").red
-    end
-    def view
-        puts "	   - You feel compelled to kneel.\n"
-        puts "	     Will you pray, or craft?\n"
-        print Rainbow("\n	   - Pray / Craft").cyan
-        print Rainbow("  >>  ").purple
-        perform_transaction
     end
 end
 
