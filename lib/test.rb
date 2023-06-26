@@ -195,3 +195,10 @@ loop do
   Board.player.page_top
   Board.player.turn_page
 end
+
+
+
+
+# TODO: apple in bag at end of test run showed zero portions, was edible. investigate. might have been the apple given by hellion or one of 3 apples on tree.
+
+# first took an apple from tree, then took another, then tried to eat what wasn't there, then viewed what wasn't there. ate apple during battle throughout.
