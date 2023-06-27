@@ -1115,7 +1115,7 @@ class Hellion < Character
   def initialize
     super
     @weapons = [Cleaver.new]
-    @rewards = [Apple.new,Bread.new]
+    @rewards = [Apple.new]
     @content = @weapons | @rewards
     @desires = Lighter.new
     @profile = {:hearts => 10, :focus => 1}

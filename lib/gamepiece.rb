@@ -447,7 +447,7 @@ end
 
 
 class Character < Gamepiece
-  attr_accessor :hostile, :desires, :content, :friends, :subtype, :territory
+  attr_accessor :hostile, :desires, :content, :friends, :subtype, :territory, :rewards
   def initialize
     super
     @moveset = MOVES[1] | MOVES[6..8].flatten
@@ -455,6 +455,7 @@ class Character < Gamepiece
     @friends = false
     @territory = territory
     @desires = desires
+    @rewards = rewards
   end
   def targets
     subtype | ["character","person"]
@@ -523,7 +524,7 @@ class Character < Gamepiece
     puts "	   - To help you on your journey,"
     puts "	     you're given 1 #{reward.targets[0]}.\n\n"
     reward.take
-    @rewards.delete(reward)
+    @content = @weapons
     @content.push(@desires)
     @@player.remove_from_inventory(player_has_leverage)
     become_friends
@@ -651,9 +652,11 @@ end
 
 
 class Altar < Gamepiece
-  attr_accessor :desires, :gate
+  attr_accessor :desires, :gate, :bone, :warp
   def initialize
     super
+    @warp = warp
+    @bone = bone
     @moveset = MOVES[1] | MOVES[6..7].flatten
     @desires = desires
     @lock_pick_stock = []
@@ -673,6 +676,17 @@ class Altar < Gamepiece
     @elixer_stock = []
     fill_elixer_stock
   end
+  def special_properties
+   # if @@player.search_inventory(@bone.class)
+     # sleep 2
+     # puts Rainbow("           - The altar trembles. You feel").cyan
+     ## puts Rainbow("             compelled to place the found").cyan
+      #print Rainbow("             #{bone.targets[0]} ").gold
+      #puts Rainbow("across its surface.\n\n").cyan
+      #@warp.open
+    #end
+  end
+
   def talk
     craft
   end

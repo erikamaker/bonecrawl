@@ -57,6 +57,9 @@ class Player
     @action = (MOVES.flatten & (sentence)).join('')
     @target = (sentence - SPEECH).last
   end
+  def teleport(location)
+    @@position = location
+  end
   def remove_from_inventory(item)
     @items.delete(item)
   end
