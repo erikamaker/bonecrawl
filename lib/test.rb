@@ -40,7 +40,7 @@ lighter.location = [[0,1,2]]
 
 drain_1 = Toilet.new
 drain_1.location =  [[0,1,1]]
-drain_1.content = Key.new
+drain_1.content = Lockpick.new
 
 hall_1 = Corridor.new
 hall_1.location = [[0,2,0],[0,2,-1],[0,2,-2]]
@@ -158,17 +158,11 @@ altar = Altar.new
 altar.location = [[0,1,2]]
 altar.bone = Lighter.new
 
-key = Key.new
-key.location = [[0,1,2]]
+water_1 = Water.new
+water_1.location = [[0,2,2]]
 
-rubber = Rubber.new
-rubber.location = [[0,1,2]]
-
-silver_1 = Silver.new
-silver_1.location = [[0,1,2]]
-
-silver_2 = Silver.new
-silver_2.location = [[0,1,2]]
+flower_1 = RedFlower.new
+flower_1.location = [[0,2,2]]
 
 
 
@@ -179,7 +173,7 @@ silver_2.location = [[0,1,2]]
 ##############################################################################################################################################################################################################################################################
 
 
-levels = [ room_1, altar, silver_1, silver_2, rubber, key, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, torch_1, pull_1, table_1, bread_1, pick_1, fire_1 ]
+levels = [ room_1, altar, water_1, flower_1, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, torch_1, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
 
 loop do
@@ -192,6 +186,7 @@ loop do
   levels.each { |gamepiece| gamepiece.activate }
   Board.player.load_inventory
   Board.player.no_target
+  Board.player.effects_cooldown
   Board.player.game_over
   Board.player.reset_input
   Board.player.page_bottom

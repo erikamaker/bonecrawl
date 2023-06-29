@@ -10,7 +10,7 @@ require_relative 'board'
 class Player
   include Inventory
   include Navigation
-  attr_accessor :items, :health, :state, :target, :action, :sight, :position, :focus, :weapon, :armor
+  attr_accessor :items, :health, :state, :target, :action, :sight, :position, :focus, :weapon, :armor, :effect, :focus_timer
   def initialize
     super
     @action = :start
@@ -26,6 +26,7 @@ class Player
     @spirit = 0
     @defense = 0
     @focus = 1
+    @focus_timer = 0
   end
   def actions
     {
@@ -36,7 +37,7 @@ class Player
       pull: MOVES[5],
       talk: MOVES[6],
      craft: MOVES[7],
-      harm: MOVES[8],
+    battle: MOVES[8],
       burn: MOVES[9],
       feed: MOVES[10],
      drink: MOVES[11],
@@ -120,6 +121,7 @@ end
   def accuracy_level
     rand(@focus..4)
   end
+
   def clear_weapon
     @weapon = nil
   end
@@ -131,6 +133,17 @@ end
   end
   def reset_sight
     @sight.clear
+  end
+  def effects_cooldown
+    return if @focus_timer == 0
+    if @focus_timer == 1
+        puts Rainbow("	   - Your blessing runs thin. The").purple
+        puts Rainbow("	     elixer's effects wear off.\n\n").purple
+    end
+    @focus_timer > 0 && @focus_timer -= 1
+    if @focus_timer == 0
+        @focus = 0
+    end
   end
   def turn_page
     reset_sight

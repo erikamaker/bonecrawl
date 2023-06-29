@@ -312,6 +312,9 @@ class Drink < Edible
   def moveset
   	[MOVES[1..2],MOVES[10..11]].flatten
   end
+  def drink
+    feed
+  end
 end
 
 
@@ -544,7 +547,7 @@ class Character < Gamepiece
     @@player.remove_from_inventory(player_has_leverage)
     become_friends
   end
-  def harm
+  def battle
     @@player.move_to_attack
     did_player_hit_me?
   end
@@ -779,27 +782,27 @@ class Altar < Gamepiece
     if sneaker_materials?
       print(Rainbow("	     + 1 Rubber Sneakers\n").green)
       print("	        - 1 Rubber\n")
-      print("	        - 1 Leather\n")
+      print("	        - 1 Leather\n\n")
     end
     if hoodie_materials?
       print(Rainbow("	     + 1 Spider Silk Hoodie\n").green)
       print("	        - 1 Silk\n")
-      print("	        - 1 Silver\n")
+      print("	        - 1 Silver\n\n")
     end
     if staff_materials?
       print(Rainbow("	     + 1 Magick Staff\n").green)
       print("	        - 1 Branch\n")
-      print("	        - 1 Feather\n")
+      print("	        - 1 Feather\n\n")
     end
     if tonic_materials?
       print(Rainbow("	     + 1 Exorcist Tonic\n").green)
       print("	        - 1 Holy Water\n")
-      print("	        - 1 Purple Flower\n")
+      print("	        - 1 Purple Flower\n\n")
     end
     if elixer_materials?
       print(Rainbow("	     + 1 Heart Elixer\n").green)
       print("	        - 1 Holy Water\n")
-      print("	        - 1 Red Flower\n")
+      print("	        - 1 Red Flower\n\n")
     end
   end
   def build_lock_pick

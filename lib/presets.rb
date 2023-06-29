@@ -537,9 +537,13 @@ class Elixer < Drink
     ["elixer", "potion", "medicine"]
   end
   def description
-  	puts "	   - It's a hearty health elixer."
-    puts "	     One drink fully restores all"
-    puts "	     heart points.\n\n"
+  	puts "	   - It's a luck elixer brewed by"
+    puts "	     cherbus. Your focus doubles.\n\n"
+  end
+  def side_effects
+    @@player.focus = 4
+    @@player.focus_timer += 20
+
   end
 end
 
@@ -598,7 +602,7 @@ class RedFlower < Blossom
   	@profile = { :effect => :sedation, :defense => 2 , :attack => -1, :duration => '10 pages'}
   end
   def subtype
-  	["blood flower","crimson","red"]
+  	["blood flower","crimson","red flower","red"]
   end
   def description
   	puts "	   - When burned, it's a powerful"
