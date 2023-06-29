@@ -78,6 +78,39 @@ class Player
     return if moves.none?(@action)
     @state = :engaged
   end
+  def damage_weapon
+    if weapon_equipped?
+      weapon.profile[:lifespan] -= 1
+      weapon.break_item
+    end
+  end
+  def damage_power
+    if weapon_equipped?
+      weapon.profile[:damage]
+    else 1
+    end
+  end
+  def move_to_attack
+    puts "	   - You move to strike the demon"
+    print "	     with your "
+    if weapon_equipped?
+      print(Rainbow("#{weapon.targets[0]}.\n\n").purple)
+    else print(Rainbow("bare hands.\n\n").purple)
+    end
+end
+  def armor_word
+    armor.targets[0]
+  end
+  def block_power
+    armor.profile[:defense]
+  end
+  def defense_power
+    if armor
+      puts Rainbow("	     Your #{armor_word} absorbs #{block_power}.").cyan
+      armor.profile[:lifespan] -= armor.profile[:defense]
+    end
+    print "\n"
+  end
   def lose_health(magnitude)
     @health -= (magnitude - @defense)
   end

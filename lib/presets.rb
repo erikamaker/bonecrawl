@@ -553,8 +553,7 @@ class Water < Drink
   end
   def description
   	puts "	   - It's water bottled by a rebel"
-    puts "	     cherub. It blesses one's soul"
-    puts "	     with luck against all odds.\n\n"
+    puts "	     cherub. It increases luck.\n\n"
   end
 end
 
@@ -567,9 +566,8 @@ class Tonic < Drink
     ["antidote","cure","exorcism"]
   end
   def description
-  	puts "	   - Difficult to concoct, it will"
-    puts "	     exorcise demonic curses. It's"
-    puts "	     a painful draught to swallow.\n\n"
+  	puts "	   - Made from rebel cherub spring"
+    puts "	     water, it cures demon hexes."
   end
 end
 

@@ -460,10 +460,21 @@ class Character < Gamepiece
   def targets
     subtype | ["character","person"]
   end
-  def demon_is_alive
+  def special_properties
+    @profile[:hostile] = @hostile
+    if still_alive?
+      demon_attack
+    end
+  end
+  def activate
+    player_near? ? reveal_targets : return
+    @@player.player_idle? ? draw_backdrop : interact
+    special_properties
+  end
+  def still_alive?
     @profile[:hearts] > 0
   end
-  def demon_is_slain
+  def slain
     @profile[:hearts] < 1
   end
   def draw_backdrop
@@ -493,11 +504,15 @@ class Character < Gamepiece
     if @hostile
       puts "	   - You cannot reason with it.\n\n"
     else
-        conversation
+      conversation
     end
   end
   def conversation
-    @friends ? unlocked_script : business_as_usual
+    if @friends
+        unlocked_script
+    else
+        business_as_usual
+    end
   end
   def business_as_usual
     default_script
@@ -529,63 +544,35 @@ class Character < Gamepiece
     @@player.remove_from_inventory(player_has_leverage)
     become_friends
   end
-  def demon_chance
-    rand(@profile[:focus]..2) == 2
+  def harm
+    @@player.move_to_attack
+    did_player_hit_me?
   end
-  def damage_player_weapon
-    if @@player.weapon_equipped?
-      @@player.weapon.profile[:lifespan] -= 1
-      @@player.weapon.break_item
-    end
-  end
-  def player_damage
-    if @@player.weapon_equipped?
-      @@player.weapon.profile[:damage]
-    else 1
-    end
-  end
-  def player_hits_demon
-    @profile[:hearts] -= player_damage
+  def take_damage
+    @profile[:hearts] -= @@player.damage_power
     if @profile[:hearts] > 0
       print Rainbow("	   - You hit it. #{@profile[:hearts]} heart").green
       print Rainbow("s").green if @profile[:hearts] > 1
       print Rainbow(" remain").green
       print Rainbow("s").green if @profile[:hearts] == 1
       print Rainbow(".\n\n").green
-      damage_player_weapon
+      @@player.damage_weapon
     end
   end
-  def player_misses_demon
-    puts Rainbow("	   - The demon dodges your attack.\n").red
-  end
-  def special_properties
-    @profile[:hostile] = @hostile
-    if demon_is_alive
-      demon_attack
-    end
-  end
-  def activate
-    player_near? ? reveal_targets : return
-    @@player.player_idle? ? draw_backdrop : interact
-    special_properties
-  end
-  def player_attack_result
+  def did_player_hit_me?
     if @@player.accuracy_level > 2
-      player_hits_demon
-      become_hostile if demon_is_alive
-      demon_death_scene if demon_is_slain
-    else player_misses_demon
+      take_damage
+      become_hostile if still_alive?
+      play_death_scene if slain
+    else dodge_player_attack
       become_hostile
     end
   end
-  def harm
-    puts "	   - You move to strike the demon"
-    print "	     with your "
-    if @@player.weapon_equipped?
-      print(Rainbow("#{@@player.weapon.targets[0]}.\n\n").purple)
-    else print(Rainbow("bare hands.\n\n").purple)
-    end
-    player_attack_result
+  def demon_chance
+    rand(@profile[:focus]..2) == 2
+  end
+  def dodge_player_attack
+    puts Rainbow("	   - The demon dodges your attack.\n").red
   end
   def demon_attack
     if @hostile
@@ -609,24 +596,17 @@ class Character < Gamepiece
       1
     end
   end
-  def player_defense
-    if @@player.armor
-      puts Rainbow("	     Your #{@@player.armor.targets[0]} absorbs #{@@player.armor.profile[:defense]}.").cyan
-      @@player.armor.profile[:lifespan] -= @@player.armor.profile[:defense]
-    end
-    print "\n"
-  end
   def attack_outcome
     if demon_chance
       total = @@player.health - @@player.lose_health(demon_damage)
       print Rainbow("	   - It costs you #{total} heart point").red
       total > 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
-      player_defense
+      @@player.defense_power
     else
       puts Rainbow("	   - You narrowly avoid its blow.\n").green
     end
   end
-  def demon_death_scene
+  def play_death_scene
     if @profile[:hearts] < 1
       puts Rainbow("	   - The demon is slain. It drops:\n").cyan
       list_rewards
