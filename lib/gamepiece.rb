@@ -676,13 +676,11 @@ end
 
 
 class Altar < Gamepiece
-  attr_accessor :desires, :gate, :bone, :warp
+  attr_accessor :bone
   def initialize
     super
-    @warp = warp
     @bone = bone
     @moveset = MOVES[1] | MOVES[6..7].flatten
-    @desires = desires
     @lock_pick_stock = []
     fill_lock_pick_stock
     @silver_ring_stock = []
@@ -700,22 +698,12 @@ class Altar < Gamepiece
     @elixer_stock = []
     fill_elixer_stock
   end
-  def special_properties
-   # if @@player.search_inventory(@bone.class)
-     # sleep 2
-     # puts Rainbow("           - The altar trembles. You feel").cyan
-     ## puts Rainbow("             compelled to place the found").cyan
-      #print Rainbow("             #{bone.targets[0]} ").gold
-      #puts Rainbow("across its surface.\n\n").cyan
-      #@warp.open
-    #end
-  end
-
   def talk
     craft
   end
-  def view
-    craft
+  def description
+    puts Rainbow("	   - It towers up to your chest.").red
+    puts Rainbow("	     Your ears ring a little.\n").red
   end
   def targets
     ["altar","shrine"]
@@ -767,7 +755,7 @@ class Altar < Gamepiece
   def craft
     print Rainbow("	   - You feel compelled to kneel.\n").red
     if any_materials? == true
-        print Rainbow("	     The spirits desire a trade.\n\n").red
+        print Rainbow("	     The spirits offer a trade...\n\n").red
         crafting_menu
         print Rainbow("	   - Choose your worldly blessing\n").cyan
         print Rainbow("	     >> ").purple
@@ -821,9 +809,7 @@ class Altar < Gamepiece
       sneaker_materials?,
       gold_ring_materials?,
       silver_ring_materials?
-    ]
-
-    materials.any? { |material| material }
+    ].any?
   end
   def crafting_menu
     if lock_pick_materials?
@@ -862,6 +848,10 @@ class Altar < Gamepiece
       print(Rainbow("	     + 1 Heart Elixer\n").green)
       print("	       - 1 Holy Water\n")
       print("	       - 1 Red Flower\n\n")
+    end
+    if @@player.search_inventory(@bone)
+        print(Rainbow("	     + 1 Salvation\n").green)
+        print("	       - 1 Right Femur\n\n")
     end
   end
   def build_lock_pick

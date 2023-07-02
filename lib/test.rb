@@ -156,7 +156,7 @@ tree.location = [[0,6,-4]]
 
 altar = Altar.new
 altar.location = [[0,1,2]]
-altar.bone = Lighter.new
+altar.bone = Femur
 
 water_1 = Water.new
 water_1.location = [[0,2,2]]
@@ -164,7 +164,8 @@ water_1.location = [[0,2,2]]
 flower_1 = RedFlower.new
 flower_1.location = [[0,2,2]]
 
-
+femur = Femur.new
+femur.location = [[0,2,2]]
 
 
 
@@ -173,7 +174,7 @@ flower_1.location = [[0,2,2]]
 ##############################################################################################################################################################################################################################################################
 
 
-levels = [ room_1, altar, water_1, flower_1, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, torch_1, pull_1, table_1, bread_1, pick_1, fire_1 ]
+levels = [ room_1, altar, femur, water_1, flower_1, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, torch_1, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
 
 loop do
