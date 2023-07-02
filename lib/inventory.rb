@@ -79,15 +79,19 @@ module Inventory
     bag_action(item)
     reset_input
   end
+  def interface_hint
+    puts "	   - Interact with your inventory"
+    puts "	     as you would in the dungeon.\n\n"
+  end
   def bag_action(item)
     if MOVES[1..14].flatten.none?(@action)
-      puts "	   - Interact with your inventory"
-      puts "	     as you would in the dungeon.\n\n"
+      interface_hint
       puts Rainbow("           - You tie your rucksack shut.\n").red
     elsif item.nil?
       puts Rainbow("           - You don't have that.\n").red
     elsif MOVES[2].include?(@action)
-      puts Rainbow("           - You already have that.\n").red
+      interface_hint
+      puts Rainbow("           - That's already in your bag.\n").red
     else
       item.interact
       puts Rainbow("           - You tie your rucksack shut.\n").red

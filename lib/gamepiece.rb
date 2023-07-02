@@ -124,8 +124,13 @@ class Portable < Gamepiece
   def moveset
   	MOVES[1..2].flatten
   end
+  def wrong_move
+    print "	   - This portable item can be\n"
+    print Rainbow("	     viewed").cyan + " or "
+    print Rainbow("taken").cyan + ".\n\n"
+  end
   def take
-    view
+    self.view
     puts Rainbow("	   - You take the #{targets[0]}.\n").orange
     push_to_inventory
   end
@@ -190,6 +195,11 @@ class Container < Gamepiece
     animate_opening
     content.take
   end
+  def wrong_move
+    print "	   - This container can only be\n"
+    print Rainbow("	     viewed").cyan + " or "
+    print Rainbow("opened").cyan + ".\n\n"
+  end
 end
 
 
@@ -238,6 +248,11 @@ class Burnable < Portable
       animate_combustion
       remove_from_board
     end
+  end
+  def wrong_move
+    print "	   - This burnable object can be\n"
+    print Rainbow("	     viewed").cyan + " or "
+    print Rainbow("burned").cyan + ".\n\n"
   end
 end
 
@@ -297,6 +312,11 @@ class Edible < Portable
     # that affect player's stats in
     # some way. See presets.
   end
+  def wrong_move
+    print "	   - This food item can only be\n"
+    print Rainbow("	     viewed").cyan + " or "
+    print Rainbow("ingested").cyan + ".\n\n"
+  end
 end
 
 
@@ -314,6 +334,11 @@ class Drink < Edible
   end
   def drink
     feed
+  end
+  def wrong_move
+    print "	   - This drink item can only be\n"
+    print Rainbow("	     viewed").cyan + " or "
+    print Rainbow("ingested").cyan + ".\n\n"
   end
 end
 
@@ -354,7 +379,7 @@ class FruitTree < Edible
   end
   def feed
     puts "	   - You can't eat fruit that you"
-    puts "	     haven't yet harvested.\n\n"
+    puts "	     haven't harvested.\n\n"
     take
   end
   def view
@@ -411,6 +436,12 @@ class Weapon < Tool
     puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
     @@player.weapon = self
   end
+  def wrong_move
+    print "	   - This weapon can be"
+    print Rainbow(" examined").cyan + ",\n"
+    print Rainbow("	     taken").cyan + ", or "
+    print Rainbow("equipped").cyan + ".\n\n"
+  end
 end
 
 
@@ -441,6 +472,11 @@ class Pullable < Gamepiece
   	  puts "	     already pulled this #{targets[0]}.\n\n"
   	end
   end
+  def wrong_move
+    print "	   - This pull switch can only be\n"
+    print Rainbow("	     examined").cyan + ", or "
+    print Rainbow("pulled").cyan + ".\n\n"
+  end
 end
 
 
@@ -453,7 +489,7 @@ class Character < Gamepiece
   attr_accessor :hostile, :desires, :content, :friends, :subtype, :territory, :rewards
   def initialize
     super
-    @moveset = MOVES[1] | MOVES[6..8].flatten
+    @moveset = (MOVES[1] + MOVES[6] + MOVES[8]).flatten
     @hostile = false
     @friends = false
     @territory = territory
@@ -626,6 +662,11 @@ class Character < Gamepiece
   def take_everything
     @content.each { |item| item.push_to_inventory }
   end
+  def wrong_move
+    print "	   - This character is capable of\n"
+    print Rainbow("	     talking").cyan + ", or "
+    print Rainbow("battling").cyan + ".\n\n"
+  end
 end
 
 
@@ -725,12 +766,16 @@ class Altar < Gamepiece
   end
   def craft
     print Rainbow("	   - You feel compelled to kneel.\n").red
-    print Rainbow("	     The altar offers many deals.\n\n").red
-    crafting_menu
-    print Rainbow("	   - Choose your worldly blessing\n").cyan
-    print Rainbow("	     >> ").purple
-    choice = gets.chomp.downcase
-    start_building(choice)
+    if any_materials? == true
+        print Rainbow("	     The spirits desire a trade.\n\n").red
+        crafting_menu
+        print Rainbow("	   - Choose your worldly blessing\n").cyan
+        print Rainbow("	     >> ").purple
+        choice = gets.chomp.downcase
+        start_building(choice)
+    else
+        print Rainbow("	     You have nothing to offer.\n\n").red
+    end
     print "	   - The altar releases you from\n"
     print "	     its grip. You stand up.\n\n"
   end
@@ -740,7 +785,7 @@ class Altar < Gamepiece
   end
   def not_an_option
     print Rainbow("\n	   - The altar can only grant so\n").red
-    print Rainbow("	     much. Know your limits.\n\n").red
+    print Rainbow("	     much. It can't make that.\n\n").red
   end
   def lock_pick_materials?
     @@player.all_item_types.count(Key) > 1
@@ -765,6 +810,20 @@ class Altar < Gamepiece
   end
   def elixer_materials?
     (@@player.all_item_types & [Water, RedFlower]).size == 2
+  end
+  def any_materials?
+    materials = [
+      lock_pick_materials?,
+      staff_materials?,
+      tonic_materials?,
+      elixer_materials?,
+      hoodie_materials?,
+      sneaker_materials?,
+      gold_ring_materials?,
+      silver_ring_materials?
+    ]
+
+    materials.any? { |material| material }
   end
   def crafting_menu
     if lock_pick_materials?
@@ -801,8 +860,8 @@ class Altar < Gamepiece
     end
     if elixer_materials?
       print(Rainbow("	     + 1 Heart Elixer\n").green)
-      print("	        - 1 Holy Water\n")
-      print("	        - 1 Red Flower\n\n")
+      print("	       - 1 Holy Water\n")
+      print("	       - 1 Red Flower\n\n")
     end
   end
   def build_lock_pick
@@ -885,6 +944,9 @@ class Altar < Gamepiece
       not_an_option
     end
   end
+  def wrong_move
+    print "	   - The sacrificial altar can be\n"
+    print Rainbow("	     prayed to").cyan + ", or "
+    print Rainbow("examined").cyan + ".\n\n"
+  end
 end
-
-

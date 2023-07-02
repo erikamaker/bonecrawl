@@ -538,7 +538,7 @@ class Elixer < Drink
   end
   def description
   	puts "	   - It's a luck elixer brewed by"
-    puts "	     cherbus. Your focus doubles.\n\n"
+    puts "	     cherbus. It doubles focus.\n\n"
   end
   def side_effects
     @@player.focus = 4
@@ -1099,7 +1099,7 @@ class Rope < Pullable
     puts "	     where you stand. It's huge.\n\n"
   end
   def view
-  	if @state.eql?("unpulled")
+  	if @state == "unpulled"
   	  puts "	   - It feels tied to something.\n\n"
   	else
       print "	   - It won't move any further.\n\n"

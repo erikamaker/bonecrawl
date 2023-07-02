@@ -71,17 +71,17 @@ module Interface
   def input_stutter?
     @target == @action
   end
-  def nontraditional_move
+  def nontraditional_move?
     not_a_move? || input_stutter?
   end
   def tutorial_selected?
     MOVES[15].include?(@target)
   end
   def suggest_tutorial
-  	if nontraditional_move
-  	  return if  tutorial_selected?
+  	if nontraditional_move?
+  	  return if tutorial_selected?
   	  toggle_idle
-  	  print "	   - A page passes in vain. View\n"
+  	  print "	   - Another page passes. Review\n"
   	  print "	     tutorial with command"
       print Rainbow(" help").cyan + ".\n\n"
   	end
@@ -104,7 +104,7 @@ module Interface
   	  puts Rainbow("	     View my items.").yellow
   	  puts Rainbow("	     Eat some bread.").green
   	  puts Rainbow("	     Go west of here.").blue
-  	  puts Rainbow("	     Read my journal.\n").indigo
+  	  puts Rainbow("	     Burn the flower.\n").indigo
   	  print "	   - Press "
       print Rainbow("return").cyan
   	  puts " for the current"
