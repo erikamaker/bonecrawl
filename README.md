@@ -14,6 +14,9 @@ The idea was to create a text-based RPG that felt action-oriented. It needed to 
 
 # PROGRESS UPDATE
 
+> The last class is all but finished. Its last method will accept the correct bone from the player to ascend them to the next level, and I'm feeling a little emotional about finishing it today, so I'm waiting until Monday when I'm on vacation. Following that, I'm going to take a few weeks to comb through everything and make sure we're all good to release the first level, and then I'm putting the lid on this lovely project for now! 
+
+7/2/23
 
 > The last 18 days have been all about battle methods, equipping items, refactoring, and polishing. There's only one class left to build before the level can be written. Following that, hosting a live demo on www.bonecrawl.com. We're in the final stretch! Woo! 
 
