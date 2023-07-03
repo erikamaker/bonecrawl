@@ -213,23 +213,23 @@ class Burnable < Portable
     MOVES[1..2].flatten + MOVES[9]
   end
   def fire_near?
-    @@player.sight.none?("fire")
+    @@player.sight.include?("fire")
   end
   def out_of_fuel
     puts "	    - You're out of lighter fuel.\n\n"
   end
   def got_fuel?
-    if @@player.search_inventory(Fuel).nil?
-      out_of_fuel
+    if @@player.search_inventory(Fuel)
+        use_lighter
     else
-      use_lighter
+        out_of_fuel
     end
   end
   def got_a_light?
-    if @@player.search_inventory(Lighter).nil?
-      puts "	   - There's isn't any fire here.\n\n"
+    if @@player.search_inventory(Lighter)
+        got_fuel?
     else
-      got_fuel?
+        puts "	   - There's isn't any fire here.\n\n"
     end
   end
   def use_lighter
@@ -238,15 +238,17 @@ class Burnable < Portable
     puts "	     It sparks a warm flame.\n\n"
     animate_combustion
     remove_from_board
-    fuel = @@player.search_inventory(Fuel)
+    fuel = @@player.items.find { |item| item.is_a?(Fuel) }
     @@player.remove_from_inventory(fuel)
   end
   def burn
+    print fire_near?
     if fire_near?
-      got_a_light?
+        animate_combustion
+        remove_from_board
     else
-      animate_combustion
-      remove_from_board
+        got_a_light?
+
     end
   end
   def wrong_move
@@ -561,7 +563,7 @@ class Character < Gamepiece
     unique_bartering_script
     print Rainbow("	   - Yes / No  ").cyan
     print Rainbow(">>  ").purple
-    choice = gets.chomp
+    choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '')
     print "\n"
     bartering_outcome(choice)
   end
@@ -569,7 +571,7 @@ class Character < Gamepiece
     if ["yes","yeah","sure","yep","aye"].include?(choice)
       exchange_gifts
     else
-      become_hostile
+        puts "	   - It looks pretty pissed off.\n\n"
     end
   end
   def exchange_gifts
@@ -759,7 +761,7 @@ class Altar < Gamepiece
         crafting_menu
         print Rainbow("	   - Choose your worldly blessing\n").cyan
         print Rainbow("	     >> ").purple
-        choice = gets.chomp.downcase
+        choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '')
         start_building(choice)
     else
         print Rainbow("	     You have nothing to offer.\n\n").red

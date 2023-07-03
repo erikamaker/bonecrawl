@@ -534,7 +534,7 @@ class Elixer < Drink
   	@profile = { :effect => :health, :portions => 3, :hearts => 3 }
   end
   def subtype
-    ["elixer", "potion", "medicine"]
+    ["elixer", "potion", "medicine","luck"]
   end
   def description
   	puts "	   - It's a luck elixer brewed by"
