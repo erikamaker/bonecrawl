@@ -158,20 +158,20 @@ altar = Altar.new
 altar.location = [[0,1,2]]
 altar.bone = Femur
 def altar.level_complete_screen
-    print "\n"
+    system("clear")  # Clear the screen
+    print "\n\n\n\n\n\n\n\n"
     sleep 2
     print Rainbow("	   - Your vision begins to fade.\n").violet
-    print Rainbow("	     You're gently lifted away.\n\n").orange
+    print Rainbow("	     You're gently lifted away.\n\n").violet
     sleep 2
     print Rainbow("	   - But as your soul ascends, a\n").violet
-    print Rainbow("	     voice in your head whispers:\n\n").violet
+    print Rainbow("	     voice in your head whispers.\n\n").violet
+    sleep 4
+    system("clear")  # Clear the screen
+    print Rainbow("\n\n\n\n\n\n\n\n	   \" I'm not done with you yet. \n " ).red.bright
     sleep 2
-    print Rainbow("	   - I'm not done with you yet.\n\n\n\n").red
-    sleep 2
-    print Rainbow("\n---------------------------------------------------------\n").blue.bright
-    print Rainbow("[             ").blue
-    print Rainbow("-  See You in Level 2  -").purple
-    print Rainbow("                  ]").blue
+    print Rainbow("	     See you in Level 2. \" \n\n\n\n\n\n\n " ).red.bright
+    sleep 5
     print Rainbow("\n---------------------------------------------------------").blue.bright
     exit!
 end
