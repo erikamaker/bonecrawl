@@ -323,11 +323,11 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    DRINK    ############################################################################################################################################################################################################################################
+#####    Liquid    ############################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
-class Drink < Edible
+class Liquid < Edible
   def targets
   	subtype | ["drink"]
   end
@@ -338,8 +338,8 @@ class Drink < Edible
     feed
   end
   def wrong_move
-    print "	   - This drink item can only be\n"
-    print Rainbow("	     viewed").cyan + " or "
+    print "	   - This liquid item can only be\n"
+    print Rainbow("	     taken").cyan + " or "
     print Rainbow("ingested").cyan + ".\n\n"
   end
 end
@@ -697,8 +697,8 @@ class Altar < Gamepiece
     fill_staff_stock
     @tonic_stock = []
     fill_tonic_stock
-    @elixer_stock = []
-    fill_elixer_stock
+    @Juice_stock = []
+    fill_juice_stock
   end
   def talk
     craft
@@ -706,6 +706,7 @@ class Altar < Gamepiece
   def description
     puts Rainbow("	   - It towers up to your chest.").red
     puts Rainbow("	     Your ears ring a little.\n").red
+    wrong_move
   end
   def targets
     ["altar","shrine"]
@@ -745,9 +746,9 @@ class Altar < Gamepiece
       @tonic_stock.push(Tonic.new)
     end
   end
-  def fill_elixer_stock
+  def fill_juice_stock
     666.times do
-      @elixer_stock.push(Elixer.new)
+      @Juice_stock.push(Juice.new)
     end
   end
   def draw_backdrop
@@ -761,7 +762,7 @@ class Altar < Gamepiece
         crafting_menu
         print Rainbow("	   - Choose your worldly blessing\n").cyan
         print Rainbow("	     >> ").purple
-        choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '')
+        choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '').split.last
         start_building(choice)
     else
         print Rainbow("	     You have nothing to offer.\n\n").red
@@ -798,7 +799,7 @@ class Altar < Gamepiece
   def tonic_materials?
     (@@player.all_item_types & [Water, PurpleFlower]).size == 2
   end
-  def elixer_materials?
+  def juice_materials?
     (@@player.all_item_types & [Water, RedFlower]).size == 2
   end
   def any_materials?
@@ -806,11 +807,12 @@ class Altar < Gamepiece
       lock_pick_materials?,
       staff_materials?,
       tonic_materials?,
-      elixer_materials?,
+      juice_materials?,
       hoodie_materials?,
       sneaker_materials?,
       gold_ring_materials?,
-      silver_ring_materials?
+      silver_ring_materials?,
+      @@player.search_inventory(@bone)
     ].any?
   end
   def crafting_menu
@@ -846,14 +848,17 @@ class Altar < Gamepiece
       print("	        - 1 Holy Water\n")
       print("	        - 1 Purple Flower\n\n")
     end
-    if elixer_materials?
-      print(Rainbow("	     + 1 Heart Elixer\n").green)
+    if juice_materials?
+      print(Rainbow("	     + 1 Heart juice\n").green)
       print("	       - 1 Holy Water\n")
       print("	       - 1 Red Flower\n\n")
     end
     if @@player.search_inventory(@bone)
-        print(Rainbow("	     + 1 Salvation\n").green)
-        print("	       - 1 Right Femur\n\n")
+        print Rainbow("	   - You conquered your demon. To\n").pink
+        print Rainbow("	     leave this level, simply ask\n").pink
+        print Rainbow("	     for ").pink
+        print Rainbow("salvation").blue
+        print Rainbow(".\n\n").pink
     end
   end
   def build_lock_pick
@@ -905,10 +910,10 @@ class Altar < Gamepiece
     delete_material("water")
     delete_material("purple flower")
   end
-  def build_elixer
+  def build_juice
     print "\n"
-    @elixer_stock[0].take
-    @elixer_stock.shift
+    @Juice_stock[0].take
+    @Juice_stock.shift
     delete_material("water")
     delete_material("red flower")
   end
@@ -930,15 +935,17 @@ class Altar < Gamepiece
         staff_materials? ? build_staff : greedy_mortal_message
     elsif @tonic_stock[0].targets.include?(choice)
         tonic_materials? ? build_tonic : greedy_mortal_message
-    elsif @elixer_stock[0].targets.include?(choice)
-        elixer_materials? ? build_elixer : greedy_mortal_message
+    elsif @Juice_stock[0].targets.include?(choice)
+        juice_materials? ? build_juice : greedy_mortal_message
+    elsif ["salvation","ascension","freedom","transcend"].include?(choice)
+        level_complete_screen
     else
       not_an_option
     end
   end
   def wrong_move
-    print "	   - The sacrificial altar can be\n"
-    print Rainbow("	     prayed to").cyan + ", or "
+    print "	   - A sacrificial altar may be\n"
+    print Rainbow("	     prayed to" ).cyan + ", or "
     print Rainbow("examined").cyan + ".\n\n"
   end
 end

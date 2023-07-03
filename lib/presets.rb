@@ -524,33 +524,32 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    DRINKS    ###########################################################################################################################################################################################################################################
+#####    LIQUIDS    ##########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
-class Elixer < Drink
+class Juice < Liquid
   def initialize
     super
-  	@profile = { :effect => :health, :portions => 3, :hearts => 3 }
+  	@profile = { :effect => :focus, :portions => 3, :hearts => 3 }
   end
   def subtype
-    ["elixer", "potion", "medicine","luck"]
+    ["juice", "potion", "medicine","luck","elixer"]
   end
   def description
-  	puts "	   - It's a luck elixer brewed by"
-    puts "	     cherbus. It doubles focus.\n\n"
+  	puts "	   - It's cherub juice. It builds"
+    puts "	     accuracy, and heals hearts.\n\n"
   end
   def side_effects
     @@player.focus = 4
     @@player.focus_timer += 20
-
   end
 end
 
-class Water < Drink
+class Water < Liquid
   def initialize
     super
-    @profile = { :effect => :blessing, :duration => 3, :magnitude => 3, :portions => 3 }
+    @profile = { :effect => :luck, :magnitude => 3, :portions => 3 }
   end
   def subtype
     ["water","holy water"]
@@ -561,7 +560,7 @@ class Water < Drink
   end
 end
 
-class Tonic < Drink
+class Tonic < Liquid
   def initialize
     super
     @profile = { :effect => :exorcism, :portions => 1 }
@@ -776,7 +775,7 @@ end
 
 class Bone < Portable
   def targets
-    ["bone","fragment","scrap"]
+    subtype | ["bone","fragment","scrap"]
   end
   def draw_backdrop
     puts "	   - A dirty bone fragment lays at"
@@ -888,8 +887,8 @@ end
 
 
 class Femur < Bone
-    def targets
-      ["bone","femur"]
+    def subtype
+      ["femur"]
     end
     def draw_backdrop
         puts "	   - A thick, white femur lays at"

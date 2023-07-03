@@ -157,6 +157,24 @@ tree.location = [[0,6,-4]]
 altar = Altar.new
 altar.location = [[0,1,2]]
 altar.bone = Femur
+def altar.level_complete_screen
+    print "\n"
+    sleep 2
+    print Rainbow("	   - Your vision begins to fade.\n").violet
+    print Rainbow("	     You're gently lifted away.\n\n").orange
+    sleep 2
+    print Rainbow("	   - But as your soul ascends, a\n").violet
+    print Rainbow("	     voice in your head whispers:\n\n").violet
+    sleep 2
+    print Rainbow("	   - I'm not done with you yet.\n\n\n\n").red
+    sleep 2
+    print Rainbow("\n---------------------------------------------------------\n").blue.bright
+    print Rainbow("[             ").blue
+    print Rainbow("-  See You in Level 2  -").purple
+    print Rainbow("                  ]").blue
+    print Rainbow("\n---------------------------------------------------------").blue.bright
+    exit!
+end
 
 water_1 = Water.new
 water_1.location = [[0,2,2]]
