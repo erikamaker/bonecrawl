@@ -81,7 +81,7 @@ module Interface
   	if nontraditional_move?
   	  return if tutorial_selected?
   	  toggle_idle
-  	  print "	   - Another page passes. Review\n"
+  	  print "	   - A single page passes. View\n"
   	  print "	     tutorial with command"
       print Rainbow(" help").cyan + ".\n\n"
   	end

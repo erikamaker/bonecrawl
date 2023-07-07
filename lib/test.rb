@@ -158,32 +158,26 @@ altar = Altar.new
 altar.location = [[0,1,2]]
 altar.bone = Femur
 def altar.level_complete_screen
+    print "\e[?25l"
     system("clear")  # Clear the screen
     print "\n\n\n\n\n\n\n\n"
     sleep 2
     print Rainbow("	   - Your vision begins to fade.\n").violet
     print Rainbow("	     You're gently lifted away.\n\n").violet
-    sleep 2
-    print Rainbow("	   - But as your soul ascends, a\n").violet
-    print Rainbow("	     voice in your head whispers.\n\n").violet
-    sleep 4
+    sleep 3
+    print Rainbow("	   - But as you go, a whisper in\n").violet
+    print Rainbow("	     your ear begin to grow.\n\n").violet
+    sleep 3
     system("clear")  # Clear the screen
-    print Rainbow("\n\n\n\n\n\n\n\n	   \" I'm not done with you yet. \n " ).red.bright
-    sleep 2
-    print Rainbow("	     See you in Level 2. \" \n\n\n\n\n\n\n " ).red.bright
-    sleep 5
+    sleep 3
+    print Rainbow("\n\n\n\n\n\n\n\n	   \" You cannot outpace my abyss.\n" ).red.bright
+    sleep 3
+    print Rainbow("	     See you in Level 2, lamby. \" \n\n\n\n\n\n\n " ).red.bright
+    sleep 3
     print Rainbow("\n---------------------------------------------------------").blue.bright
     exit!
 end
 
-water_1 = Water.new
-water_1.location = [[0,2,2]]
-
-flower_1 = RedFlower.new
-flower_1.location = [[0,2,2]]
-
-fat = Fat.new
-fat.location = [[0,2,2]]
 
 femur = Femur.new
 femur.location = [[0,2,2]]
@@ -195,10 +189,35 @@ femur.location = [[0,2,2]]
 ##############################################################################################################################################################################################################################################################
 
 
-levels = [ room_1, torch_1, fat, altar, femur, water_1, flower_1, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
+levels = [ room_1, torch_1, altar, femur, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
+
+    system("clear")  # Clear the screen
+    print "\e[?25l"
+    print "\n\n\n\n\n\n\n\n"
+    sleep 2
+    print Rainbow("	   - You wake up with a headache\n").violet
+    print Rainbow("	     on the cold, hard floor.\n\n").violet
+    sleep 3
+    print Rainbow("	   - It smells like sulfur. You\n").violet
+    print Rainbow("	     wonder aloud where you are.\n\n").violet
+    sleep 3
+    print Rainbow("	   - A voice in your ear answers,\n").violet
+    print Rainbow("	     startling you in the dark.\n\n").violet
+    sleep 3
+    system("clear")  # Clear the screen
+    sleep 3
+    print Rainbow("\n\n\n\n\n\n\n\n	   \" You are part of my flock now. \n" ).red.bright
+    sleep 3
+    print Rainbow("	     It's always shearing season. \" \n\n " ).red.bright
+    sleep 3
+    Board.player.reset_input
+    Board.player.page_bottom
+    Board.player.page_top
+    Board.player.turn_page
 
 loop do
+  print "\e[?25h"
   Board.player.action_select
   system("clear")  # Clear the screen
   Board.player.header
