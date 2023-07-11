@@ -118,20 +118,6 @@ class Fire < Fixture
   end
 end
 
-class Torch < Fire
-  def subtype
-  	["torch", "iron torch", "black torch", "metal torch"]
-  end
-  def draw_backdrop
-  	puts "	   - A black torch is bolted into"
-  	puts "	     the wall. Its flame dances.\n\n"
-  end
-  def view
-  	puts "	   - The red fire dances, casting"
-  	puts "	     wild shadows on the walls.\n\n"
-  end
-end
-
 class Fireplace < Fire
   def subtype
   	["fireplace", "grate", "coals", "coal", "hearth"]
@@ -578,6 +564,54 @@ end
 ##############################################################################################################################################################################################################################################################
 #####    SUBSTANCES     ######################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
+
+
+class Torch < Burnable
+    attr_accessor :content
+    def initialize
+        super
+        @lit = true
+    end
+    def moveset
+        MOVES[1] | MOVES[9]
+    end
+    def special_properties
+        content.activate if @lit
+    end
+    def light_torch
+        @lit = true
+    end
+    def douse_torch
+        @lit = false
+    end
+    def targets
+        ["torch", "iron torch", "black torch", "metal torch"]
+    end
+    def animate_combustion
+
+            puts Rainbow("	   - The fuel-soaked base of the").orange
+            puts Rainbow("	     torch catches fire.\n\n").orange
+            light_torch
+      end
+    def draw_backdrop
+        puts "	   - A black torch is bolted into"
+        print "	     the wall. "
+        if @lit
+            print "Its flame dances.\n\n"
+        else
+            print "It's gone cold.\n\n"
+        end
+    end
+    def view
+        puts "	   - It's an iron torch rivted to"
+        print "	     the wall. "
+        if @lit
+            print "Its flame dances.\n\n"
+        else
+            print "It's gone cold.\n\n"
+        end
+    end
+  end
 
 
 class Blossom < Burnable

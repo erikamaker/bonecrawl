@@ -232,23 +232,38 @@ class Burnable < Portable
         puts "	   - There's isn't any fire here.\n\n"
     end
   end
-  def use_lighter
+  def fuel
+    fuel = @@player.items.find { |item| item.is_a?(Fuel) }
+  end
+  def use_fuel
     puts "	   - You thumb a little fuel into"
     puts "	     your lighter's fuel canister."
     puts "	     It sparks a warm flame.\n\n"
-    animate_combustion
-    remove_from_board
-    fuel = @@player.items.find { |item| item.is_a?(Fuel) }
     @@player.remove_from_inventory(fuel)
   end
+  def light_fixture
+    if !@lit
+        use_fuel
+        animate_combustion
+    else
+        puts "	   - This #{self.targets[0]} is already lit.\n\n"
+    end
+  end
+  def use_lighter
+    if !self.is_a?(Torch)
+        use_fuel
+        animate_combustion
+        remove_from_board
+    else
+        light_fixture
+    end
+  end
   def burn
-    print fire_near?
     if fire_near?
         animate_combustion
         remove_from_board
     else
         got_a_light?
-
     end
   end
   def wrong_move

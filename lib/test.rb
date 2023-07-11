@@ -64,8 +64,7 @@ def hoodie_1.draw_backdrop
     puts "	   - A black hoodie hangs from it.\n\n"
 end
 
-torch_1 = Torch.new
-torch_1.location = [[0,2,2]]
+
 
 room_2 = Dungeon.new
 room_2.location = [[0,1,-3],[0,2,-3],[0,3,-3],[0,1,-4],[0,2,-4],[0,3,-4],[0,1,-5],[0,2,-5],[0,3,-5]]
@@ -180,8 +179,27 @@ end
 
 
 femur = Femur.new
-femur.location = [[0,2,2]]
 
+lighter = Lighter.new
+lighter.location = [[0,2,2]]
+
+fat = Fat.new
+fat.location = [[0,2,2]]
+
+fat_2 = Fat.new
+fat_2.location = [[0,2,2]]
+
+
+
+chest_2 = Chest.new
+chest_2.content = femur
+chest_2.location = [[0,2,2]]
+
+
+torch_1 = Torch.new
+torch_1.location = [[0,2,2]]
+torch_1.douse_torch
+torch_1.content = chest_2
 
 
 ##############################################################################################################################################################################################################################################################
@@ -189,9 +207,9 @@ femur.location = [[0,2,2]]
 ##############################################################################################################################################################################################################################################################
 
 
-levels = [ room_1, torch_1, altar, femur, drain_1, lighter, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
+levels = [ room_1, torch_1, lighter, fat, fat_2, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
-
+=begin
     system("clear")  # Clear the screen
     print "\e[?25l"
     print "\n\n\n\n\n\n\n\n"
@@ -215,6 +233,7 @@ levels = [ room_1, torch_1, altar, femur, drain_1, lighter, door_1, hook_1, hood
     Board.player.page_bottom
     Board.player.page_top
     Board.player.turn_page
+=end
 
 loop do
   print "\e[?25h"
