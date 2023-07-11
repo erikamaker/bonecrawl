@@ -191,15 +191,20 @@ fat_2.location = [[0,2,2]]
 
 
 
-chest_2 = Chest.new
-chest_2.content = femur
-chest_2.location = [[0,2,2]]
+secret_room = Corridor.new
+secret_room.location = [[0,3,2],[0,4,2],[0,5,2]]
 
 
 torch_1 = Torch.new
 torch_1.location = [[0,2,2]]
 torch_1.douse_torch
-torch_1.content = chest_2
+torch_1.content = secret_room
+def torch_1.reveal_secret
+    puts Rainbow("	   - The eastern wall rumbles and").cyan
+    puts Rainbow("	     quakes as it opens to reveal").cyan
+    puts Rainbow("	     a secret passage.\n\n").cyan
+    content.activate
+end
 
 
 ##############################################################################################################################################################################################################################################################

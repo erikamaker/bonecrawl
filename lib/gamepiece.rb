@@ -245,6 +245,7 @@ class Burnable < Portable
     if !@lit
         use_fuel
         animate_combustion
+        reveal_secret
     else
         puts "	   - This #{self.targets[0]} is already lit.\n\n"
     end

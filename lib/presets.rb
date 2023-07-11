@@ -590,7 +590,7 @@ class Torch < Burnable
     def animate_combustion
 
             puts Rainbow("	   - The fuel-soaked base of the").orange
-            puts Rainbow("	     torch catches fire.\n\n").orange
+            puts Rainbow("	     torch catches fire.\n").orange
             light_torch
       end
     def draw_backdrop
