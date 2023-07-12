@@ -4,6 +4,7 @@
 
 
 require './board'
+require './sound'
 require './gamepiece'
 
 class Gamepiece < Board
@@ -133,6 +134,7 @@ class Portable < Gamepiece
     self.view
     puts Rainbow("	   - You take the #{targets[0]}.\n").orange
     push_to_inventory
+    SoundBoard.found_item
   end
   def push_to_inventory
     remove_from_board
@@ -192,7 +194,6 @@ class Container < Gamepiece
     toggle_state_open
   end
   def give_content
-    Board.found_item
     animate_opening
     content.take
   end
@@ -619,6 +620,7 @@ class Character < Gamepiece
   end
   def did_player_hit_me?
     if @@player.accuracy_level > 2
+      SoundBoard.hit_enemy
       take_damage
       become_hostile if still_alive?
       play_death_scene if slain

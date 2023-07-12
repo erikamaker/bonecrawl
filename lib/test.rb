@@ -6,6 +6,7 @@
 require_relative 'vocabulary'
 require_relative 'interface'
 require_relative 'board'
+require_relative 'sound'
 require_relative 'gamepiece'
 require_relative 'presets'
 require_relative 'player'
@@ -186,11 +187,6 @@ lighter.location = [[0,2,2]]
 fat = Fat.new
 fat.location = [[0,2,2]]
 
-fat_2 = Fat.new
-fat_2.location = [[0,2,2]]
-
-
-
 secret_room = Corridor.new
 secret_room.location = [[0,3,2],[0,4,2],[0,5,2]]
 
@@ -200,10 +196,11 @@ torch_1.location = [[0,2,2]]
 torch_1.douse_torch
 torch_1.content = secret_room
 def torch_1.reveal_secret
-    Board.secret_music
+    SoundBoard.secret_music
+    SoundBoard.wall_reveal
     puts Rainbow("	   - The eastern wall rumbles and").cyan
-    puts Rainbow("	     quakes as it opens to reveal").cyan
-    puts Rainbow("	     a secret passage.\n\n").cyan
+    puts Rainbow("	     recedes to reveal a new path.").cyan
+    puts Rainbow("	     Your map has been updated.\n").cyan
     content.activate
 end
 
@@ -213,7 +210,8 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-levels = [ room_1, torch_1, lighter, fat, fat_2, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
+levels = [ room_1, torch_1, lighter, fat, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
+
 
 =begin
     system("clear")  # Clear the screen
@@ -228,6 +226,7 @@ levels = [ room_1, torch_1, lighter, fat, fat_2, altar, drain_1, door_1, hook_1,
     sleep 3
     print Rainbow("	   - A voice in your ear answers,\n").violet
     print Rainbow("	     startling you in the dark.\n\n").violet
+    Board.evil_laugh
     sleep 3
     system("clear")  # Clear the screen
     sleep 3

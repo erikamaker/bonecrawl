@@ -116,6 +116,7 @@ end
     @health -= (magnitude - @defense)
   end
   def gain_health(magnitude)
+    Board.heal_heart
     @health += (magnitude)
   end
   def accuracy_level

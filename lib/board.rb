@@ -13,9 +13,6 @@ class Board
     @@map = []
     @@player = Player.new
   end
-  def self.level
-    @@level
-  end
   def self.player
     @@player
   end
@@ -31,17 +28,4 @@ class Board
   def self.decrement_page(count)
     @@page -= count
   end
-  def self.secret_music
-    fork do
-      exec('aplay ./sounds/secret.wav > /dev/null 2>&1')
-    end
-  end
-  def self.found_item
-    fork do
-        exec('aplay ./sounds/found_item.wav > /dev/null 2>&1')
-      end
-    end
 end
-
-
-# TODO: make sure items delete the same when they're burned.

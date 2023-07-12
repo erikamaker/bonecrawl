@@ -950,6 +950,12 @@ class Clothes < Tool
     puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
     @@player.armor = self
   end
+  def wrong_move
+    print "	   - This weapon can be"
+    print Rainbow(" examined").cyan + ",\n"
+    print Rainbow("	     taken").cyan + ", or "
+    print Rainbow("equipped").cyan + ".\n\n"
+  end
 end
 
 class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
@@ -1111,6 +1117,7 @@ class Door < Container
     content.activate
     content.overview
     toggle_state_open
+    SoundBoard.open_door
   end
   def targets
   	["door","exit"]
