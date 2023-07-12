@@ -3,7 +3,6 @@
 #####    DEPENDENCIES    #####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
-
 require_relative 'vocabulary'
 require_relative 'interface'
 require_relative 'board'
@@ -111,6 +110,7 @@ pull_1 = Lever.new
 pull_1.location = [[0,3,-3]]
 pull_1.content = chest_1
 def pull_1.reveal_secret
+  Board.secret_music
   puts Rainbow("	   - Something heavy crashes east").cyan
   print Rainbow("	     of the warm supply room.").cyan
   print " For\n"
@@ -200,6 +200,7 @@ torch_1.location = [[0,2,2]]
 torch_1.douse_torch
 torch_1.content = secret_room
 def torch_1.reveal_secret
+    Board.secret_music
     puts Rainbow("	   - The eastern wall rumbles and").cyan
     puts Rainbow("	     quakes as it opens to reveal").cyan
     puts Rainbow("	     a secret passage.\n\n").cyan

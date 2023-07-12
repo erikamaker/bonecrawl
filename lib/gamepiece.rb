@@ -192,6 +192,7 @@ class Container < Gamepiece
     toggle_state_open
   end
   def give_content
+    Board.found_item
     animate_opening
     content.take
   end
