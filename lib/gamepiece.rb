@@ -101,7 +101,7 @@ class Tiles < Fixture
   def parse_action
     case @@player.target
     when *general
-      @@player.toggle_idle
+      @@player.toggle_player_state_idle
       overview
     when *terrain
       view_type
@@ -168,7 +168,7 @@ class Container < Gamepiece
   end
   def open
     if @state == "closed shut"
-      !needkey ? give_content : is_locked
+      !@needkey ? give_content : is_locked
     else
       puts "	   - This #{targets[0]}'s already open.\n\n"
     end
@@ -244,7 +244,7 @@ class Burnable < Portable
     @@player.remove_from_inventory(fuel)
   end
   def light_fixture
-    if !@lit
+    unless @lit
         use_fuel
         animate_combustion
         reveal_secret
@@ -253,7 +253,7 @@ class Burnable < Portable
     end
   end
   def use_lighter
-    if !self.is_a?(Torch)
+    unless self.is_a?(Torch)
         use_fuel
         animate_combustion
         remove_from_board
@@ -387,7 +387,7 @@ class FruitTree < Edible
   end
   def be_patient
     puts "	   - The fruit needs time to grow.\n\n"
-    @@player.toggle_idle
+    @@player.toggle_player_state_idle
   end
   def take
     if @fruit.count > 0
@@ -478,7 +478,7 @@ class Pullable < Gamepiece
     @unpulled = true
   end
   def special_properties
-    content.activate if !@unpulled
+    content.activate unless @unpulled
   end
   def toggle_state_pulled
     @unpulled = false
@@ -544,7 +544,7 @@ class Character < Gamepiece
     end
   end
   def become_hostile
-    if !@hostile
+    unless @hostile
       @hostile = true
       hostile_script
       @location = @territory
@@ -963,7 +963,7 @@ class Altar < Gamepiece
     end
   end
   def wrong_move
-    print "	   - A sacrificial altar may be\n"
+    print "	   - A sacrificial altar can be\n"
     print Rainbow("	     prayed to" ).cyan + ", or "
     print Rainbow("examined").cyan + ".\n\n"
   end

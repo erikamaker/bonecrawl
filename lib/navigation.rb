@@ -39,8 +39,7 @@ module Navigation
   def detect_direction
     if directions.include?(@target)
       reposition_player
-    else
-      no_direction_detected
+    else no_direction_detected
     end
   end
   def detect_movement
@@ -53,8 +52,7 @@ module Navigation
     directed_movement
     if Board.world_map.include?(@position)
       animate_movement
-    else
-      activated_barrier
+    else activated_barrier
       the_way_is_blocked
     end
   end

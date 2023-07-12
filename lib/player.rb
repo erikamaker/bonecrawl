@@ -16,7 +16,7 @@ class Player
     @action = :start
     @target = :start
     @state = :idle
-    @effect = :norm
+    @effect = nil
     @weapon = nil
     @armor = nil
     @position = [0,1,2]
@@ -71,7 +71,7 @@ class Player
   def player_idle?
     @state == :idle
   end
-  def toggle_idle
+  def toggle_player_state_idle
     @state = :idle
   end
   def toggle_engaged
@@ -99,15 +99,15 @@ class Player
     else print(Rainbow("bare hands.\n\n").purple)
     end
 end
-  def armor_word
+  def armor_name
     armor.targets[0]
   end
-  def block_power
+  def block_points
     armor.profile[:defense]
   end
   def defense_power
     if armor
-      puts Rainbow("	     Your #{armor_word} absorbs #{block_power}.").cyan
+      puts Rainbow("	     Your #{armor_name} absorbs #{block_points}.").cyan
       armor.profile[:lifespan] -= armor.profile[:defense]
     end
     print "\n"
@@ -116,13 +116,12 @@ end
     @health -= (magnitude - @defense)
   end
   def gain_health(magnitude)
-    Board.heal_heart
+    SoundBoard.heal_heart
     @health += (magnitude)
   end
   def accuracy_level
     rand(@focus..4)
   end
-
   def clear_weapon
     @weapon = nil
   end
@@ -132,24 +131,30 @@ end
   def weapon_equipped?
     weapon != nil
   end
-  def reset_sight
+  def reset_player_sight
     @sight.clear
   end
-  def effects_cooldown
-    return if @focus_timer == 0
+  def focus_cooldown
     if @focus_timer == 1
-        puts Rainbow("	   - Your blessing runs thin. The").purple
-        puts Rainbow("	     elixer's effects wear off.\n\n").purple
+        puts Rainbow("	   - Your increased focus begins").purple
+        puts Rainbow("	     to run thin.\n\n").purple
     end
-    @focus_timer > 0 && @focus_timer -= 1
+    if @focus_timer > 0
+        @focus_timer -= 1
+    end
     if @focus_timer == 0
         @focus = 0
     end
   end
+  def effects_cooldown
+    return if @focus_timer == 0
+    focus_cooldown
+  end
   def turn_page
-    reset_sight
+    reset_player_sight
     Board.increment_page(1)
-    toggle_idle
+    toggle_player_state_idle
+    effects_cooldown
     reset_input
   end
 end

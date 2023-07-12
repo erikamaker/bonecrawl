@@ -111,7 +111,7 @@ pull_1 = Lever.new
 pull_1.location = [[0,3,-3]]
 pull_1.content = chest_1
 def pull_1.reveal_secret
-  Board.secret_music
+  SoundBoard.secret_music
   puts Rainbow("	   - Something heavy crashes east").cyan
   print Rainbow("	     of the warm supply room.").cyan
   print " For\n"
@@ -213,7 +213,6 @@ end
 levels = [ room_1, torch_1, lighter, fat, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
 
-=begin
     system("clear")  # Clear the screen
     print "\e[?25l"
     print "\n\n\n\n\n\n\n\n"
@@ -226,19 +225,18 @@ levels = [ room_1, torch_1, lighter, fat, altar, drain_1, door_1, hook_1, hoodie
     sleep 3
     print Rainbow("	   - A voice in your ear answers,\n").violet
     print Rainbow("	     startling you in the dark.\n\n").violet
-    Board.evil_laugh
+    SoundBoard.evil_laugh
     sleep 3
     system("clear")  # Clear the screen
     sleep 3
-    print Rainbow("\n\n\n\n\n\n\n\n	   \" You are part of my flock now. \n" ).red.bright
+    print Rainbow("\n\n\n\n\n\n\n\n	   \" You're part of my flock now. \n" ).red.bright
     sleep 3
-    print Rainbow("	     It's always shearing season. \" \n\n " ).red.bright
+    print Rainbow("	     It's shearing season, lamby. \" \n\n " ).red.bright
     sleep 3
     Board.player.reset_input
     Board.player.page_bottom
     Board.player.page_top
     Board.player.turn_page
-=end
 
 loop do
   print "\e[?25h"
@@ -250,8 +248,7 @@ loop do
   Board.player.tutorial_screen
   levels.each { |gamepiece| gamepiece.activate }
   Board.player.load_inventory
-  Board.player.no_target
-  Board.player.effects_cooldown
+  Board.player.target_does_not_exist
   Board.player.game_over
   Board.player.reset_input
   Board.player.page_bottom

@@ -17,10 +17,8 @@ module Interface
   def animate_ingestion
     puts "	   - You drink the #{subtype[0]}, healing"
   	print "	     #{heal_amount} heart"
-    if heal_amount == 1
-      print(". ")
-    else print("s. ")
-    end
+    print (heal_amount == 1 ? ". " : "s. ")
+    print(". ")
   end
   def header
     print Rainbow("\n---------------------------------------------------------\n").blue.bright
@@ -50,7 +48,7 @@ module Interface
   end
   def print_defense_meter
     print "DEFENSE "
-    @defense = @armor.profile[:defense] if !@armor.nil?
+    @defense = @armor.profile[:defense] unless @armor.nil?
   	@defense = [@defense, 4].min
   	@defense.times { print Rainbow("■ ").orange }
   	(4 - @defense).times { print Rainbow("■ ").cyan }
@@ -68,11 +66,11 @@ module Interface
   def not_a_move?
     MOVES.flatten.none?(@action)
   end
-  def input_stutter?
+  def target_equal_to_action?
     @target == @action
   end
   def nontraditional_move?
-    not_a_move? || input_stutter?
+    not_a_move? || target_equal_to_action?
   end
   def tutorial_selected?
     MOVES[15].include?(@target)
@@ -80,13 +78,13 @@ module Interface
   def suggest_tutorial
   	if nontraditional_move?
   	  return if tutorial_selected?
-  	  toggle_idle
+  	  toggle_player_state_idle
   	  print "	   - A single page passes. View\n"
   	  print "	     tutorial with command"
       print Rainbow(" help").cyan + ".\n\n"
   	end
   end
-  def no_target
+  def target_does_not_exist
     return if @target == @action
     return if @state == :idle
     if @sight.none?(@target)
@@ -103,8 +101,8 @@ module Interface
   	  puts Rainbow("	     Slay the troll.").red
   	  puts Rainbow("	     View my items.").yellow
   	  puts Rainbow("	     Eat some bread.").green
-  	  puts Rainbow("	     Go west of here.").blue
-  	  puts Rainbow("	     Burn the flower.\n").indigo
+  	  puts Rainbow("	     Go to the west.").blue
+  	  puts Rainbow("	     Light the torch.\n").indigo
   	  print "	   - Press "
       print Rainbow("return").cyan
   	  puts " for the current"
@@ -112,7 +110,7 @@ module Interface
       puts "	     or to quickly pass time.\n\n"
   	end
   end
-  def bigmap
+  def game_map
     z = @position[0]
   	x = @position[1]
   	y = @position[2]
@@ -122,20 +120,19 @@ module Interface
   	  [[z, x - 1, y - 1], [z, x, y - 1], [z, x + 1, y - 1]]
   	]
   end
+  def map_character(pos)
+    return Rainbow("■ ").red.blink if pos == @position
+    return Rainbow("■ ").green if Board.world_map.include?(pos)
+    "⬚ "
+  end
   def draw_map
-    bigmap.each do |row|
-  	  print "   "
-  	  row.each do |pos|
-  	  	if pos == @position
-  	  	  print Rainbow("■ ").red.blink
-  	  	elsif Board.world_map.include?(pos)
-  	      print Rainbow("■ ").green
-  	    else
-          print "⬚ "
-  	  	end
-  	  end
-  	  print "\n" if row != bigmap.last
-  	end
+    game_map.each do |row|
+      print "   "
+      row.each do |pos|
+        print map_character(pos)
+      end
+      print "\n" unless row == game_map.last
+    end
   end
   def draw_page_count
     (37 - Board.page_count.to_s.length).times { print(" ") }
@@ -153,7 +150,7 @@ module Interface
       print Rainbow("	     where you stand.\n\n").purple
       sleep 2
       puts "	   - A clamor of demons drag your"
-      puts "	     soul to its assigned cell.\n\n"
+      puts "	     spirit to its assigned cell.\n\n"
       sleep 2
       page_bottom
       print Rainbow("\n---------------------------------------------------------\n").red.bright

@@ -151,7 +151,7 @@ class Hook < Fixture
     puts "	     tells you the goblins use it"
     puts "	     to hang more than just coats"
     puts "	     and keys.\n\n"
-    @@player.toggle_idle
+    @@player.toggle_player_state_idle
   end
 end
 
@@ -168,7 +168,7 @@ class Surface < Fixture
   end
   def view
     subtype_view
-    @@player.toggle_idle
+    @@player.toggle_player_state_idle
   end
 end
 
