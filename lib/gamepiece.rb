@@ -8,15 +8,17 @@ require './sound'
 require './gamepiece'
 
 class Gamepiece < Board
-  attr_accessor :location, :targets, :moveset, :profile, :player
+  attr_accessor :location, :targets, :moveset, :profile
   def initialize
     super
   end
-  def draw_backdrop
-    # Namespaced for hidden gamepieces.
+  def display_backdrop
+    # Some pieces have unique backdrops.
+    # Others may have none and return nil.
   end
-  def special_properties
-    # Unique behavior at activation.
+  def execute_special_behavior
+    # Unique behavior during activation.
+    # E.G. Fruit trees can grow new fruit.
   end
   def remove_from_board
     @location = [0]
@@ -24,41 +26,41 @@ class Gamepiece < Board
   def teleport(new_plot)
     @location = new_plot
   end
-  def reveal_targets
+  def reveal_targets_to_player
     @@player.sight |= targets
   end
   def player_near?
     @location.include?(@@player.position)
   end
   def view
-    description
-    view_profile
+    display_description
+    display_profile
     print "\n"
   end
-  def view_profile
-    return if @profile == nil
+  def display_profile
+    return if @profile.nil?
     @profile.each do |key, value|
-      total = 25 - (key.to_s.length + value.to_s.length)
-      dots = Rainbow(".").purple * total
+      length = 25 - (key.to_s.length + value.to_s.length)
+      dots = Rainbow(".").purple * length
       space = " " * 13
       value = value.to_s.capitalize
       puts space + "#{key.capitalize} #{dots} #{value}"
     end
   end
-  def parse_action
+  def interpret_action
     @@player.actions.each do |action, moves|
       send(action) if moves.include?(@@player.action)
     end
   end
   def activate
-    special_properties
-    player_near?  ? reveal_targets : return
-    @@player.player_idle?  ? draw_backdrop : interact
+    execute_special_behavior
+    player_near? ? reveal_targets_to_player : return
+    @@player.state_idle? ? display_backdrop : interact
   end
   def interact
     return if targets.none?(@@player.target)
     if moveset.include?(@@player.action)
-      parse_action
+      interpret_action
     else
       wrong_move
     end
@@ -84,24 +86,24 @@ end
 
 
 class Tiles < Fixture
-  attr_accessor  :subtype, :built_of, :terrain, :borders, :general, :targets
+  attr_accessor  :subtype, :composition, :terrain, :borders, :general, :targets
   def initialize
     super
     @general = ["around","room","area","surroundings"] | subtype
     @borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
-    @terrain = ["terrain","medium","material"] | built_of
+    @terrain = ["terrain","medium","material"] | composition
     @targets = (general + terrain + borders).flatten
   end
   def view
     overview
   end
-  def special_properties
+  def execute_special_behavior
     @@map |= @location
   end
-  def parse_action
+  def interpret_action
     case @@player.target
     when *general
-      @@player.toggle_player_state_idle
+      @@player.toggle_state_idle
       overview
     when *terrain
       view_type
@@ -126,17 +128,17 @@ class Portable < Gamepiece
   	MOVES[1..2].flatten
   end
   def wrong_move
-    print "	   - This portable item can be\n"
+    print "	   - This portable object can be\n"
     print Rainbow("	     viewed").cyan + " or "
     print Rainbow("taken").cyan + ".\n\n"
   end
   def take
     self.view
     puts Rainbow("	   - You take the #{targets[0]}.\n").orange
-    push_to_inventory
+    push_to_player_inventory
     SoundBoard.found_item
   end
-  def push_to_inventory
+  def push_to_player_inventory
     remove_from_board
     @@player.items.push(self)
   end
@@ -152,13 +154,14 @@ class Container < Gamepiece
   attr_accessor :content, :needkey, :state
   def initialize
     super
-    @state = "closed shut"
+    @state = :"closed shut"
+    @needkey = false
   end
   def moveset
     @moveset = MOVES[1] | MOVES[3]
   end
   def toggle_state_open
-    @state = "jammed open"
+    @state = :"jammed open"
   end
   def view
   	puts "	   - This #{targets[0]} is #{state}.\n\n"
@@ -167,8 +170,8 @@ class Container < Gamepiece
     @@player.items.find {|i| i.is_a?(Lockpick) or i.is_a?(Key)}
   end
   def open
-    if @state == "closed shut"
-      !@needkey ? give_content : is_locked
+    if @state == :"closed shut"
+      @needkey ? is_locked : give_content
     else
       puts "	   - This #{targets[0]}'s already open.\n\n"
     end
@@ -220,22 +223,22 @@ class Burnable < Portable
   def out_of_fuel
     puts "	    - You're out of lighter fuel.\n\n"
   end
-  def got_fuel?
+  def check_for_fuel
     if @@player.search_inventory(Fuel)
         use_lighter
     else
         out_of_fuel
     end
   end
-  def got_a_light?
+  def check_for_lighter
     if @@player.search_inventory(Lighter)
-        got_fuel?
+        check_for_fuel
     else
         puts "	   - There's isn't any fire here.\n\n"
     end
   end
   def fuel
-    fuel = @@player.items.find { |item| item.is_a?(Fuel) }
+    @@player.items.find { |item| item.is_a?(Fuel) }
   end
   def use_fuel
     puts "	   - You thumb a little fuel into"
@@ -243,7 +246,7 @@ class Burnable < Portable
     puts "	     It sparks a warm flame.\n\n"
     @@player.remove_from_inventory(fuel)
   end
-  def light_fixture
+  def light_torch
     unless @lit
         use_fuel
         animate_combustion
@@ -258,7 +261,7 @@ class Burnable < Portable
         animate_combustion
         remove_from_board
     else
-        light_fixture
+        light_torch
     end
   end
   def burn
@@ -266,7 +269,7 @@ class Burnable < Portable
         animate_combustion
         remove_from_board
     else
-        got_a_light?
+        check_for_lighter
     end
   end
   def wrong_move
@@ -382,12 +385,12 @@ class FruitTree < Edible
       @stock.shift
     end
   end
-  def special_properties
+  def execute_special_behavior
     @fruit.count < 3 && grow_fruit
   end
   def be_patient
     puts "	   - The fruit needs time to grow.\n\n"
-    @@player.toggle_player_state_idle
+    @@player.toggle_state_idle
   end
   def take
     if @fruit.count > 0
@@ -403,8 +406,8 @@ class FruitTree < Edible
     take
   end
   def view
-    description
-    view_profile
+    display_description
+    display_profile
     print "\n"
     be_patient if @fruit.count < 1
   end
@@ -435,7 +438,7 @@ class Tool < Portable
       @@player.clear_weapon
     end
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - A #{targets[0]} lays here.\n\n"
   end
 end
@@ -451,7 +454,7 @@ class Weapon < Tool
     subtype | ["weapon"]
   end
   def equip
-    self.push_to_inventory if @@player.items.none?(self)
+    self.push_to_player_inventory if @@player.items.none?(self)
     view
     puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
     @@player.weapon = self
@@ -477,7 +480,7 @@ class Pullable < Gamepiece
     @moveset = MOVES[1] | MOVES[5]
     @unpulled = true
   end
-  def special_properties
+  def execute_special_behavior
     content.activate unless @unpulled
   end
   def toggle_state_pulled
@@ -519,16 +522,16 @@ class Character < Gamepiece
   def targets
     subtype | ["character","person"]
   end
-  def special_properties
+  def execute_special_behavior
     @profile[:hostile] = @hostile
     if still_alive?
       demon_attack
     end
   end
   def activate
-    player_near? ? reveal_targets : return
-    @@player.player_idle? ? draw_backdrop : interact
-    special_properties
+    player_near? ? reveal_targets_to_player : return
+    @@player.state_idle? ? display_backdrop : interact
+    execute_special_behavior
   end
   def still_alive?
     @profile[:hearts] > 0
@@ -536,7 +539,7 @@ class Character < Gamepiece
   def slain
     @profile[:hearts] < 1
   end
-  def draw_backdrop
+  def display_backdrop
     if @hostile
       puts "	   - A violent #{subtype[0]} stalks you.\n\n"
     else
@@ -658,10 +661,10 @@ class Character < Gamepiece
   end
   def attack_outcome
     if demon_chance
-      total = @@player.health - @@player.lose_health(demon_damage)
-      print Rainbow("	   - It costs you #{total} heart point").red
-      total > 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
-      @@player.defense_power
+      damage_done = @@player.health - @@player.lose_health(demon_damage)
+      print Rainbow("	   - It costs you #{damage_done} heart point").red
+      damage_done > 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
+      @@player.display_armor_result
     else
       puts Rainbow("	   - You narrowly avoid its blow.\n").green
     end
@@ -681,7 +684,7 @@ class Character < Gamepiece
     puts "\n"
   end
   def take_everything
-    @content.each { |item| item.push_to_inventory }
+    @content.each { |item| item.push_to_player_inventory }
   end
   def wrong_move
     print "	   - This character is capable of\n"
@@ -722,7 +725,7 @@ class Altar < Gamepiece
   def talk
     craft
   end
-  def description
+  def display_description
     puts Rainbow("	   - It towers up to your chest.").red
     puts Rainbow("	     Your ears ring a little.\n").red
     wrong_move
@@ -770,7 +773,7 @@ class Altar < Gamepiece
       @Juice_stock.push(Juice.new)
     end
   end
-  def draw_backdrop
+  def display_backdrop
     puts Rainbow("	   - You stand before a sinister").red
     puts Rainbow("	     altar cut from black marble.\n").red
   end

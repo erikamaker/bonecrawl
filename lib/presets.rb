@@ -12,7 +12,7 @@ require_relative 'gamepiece'
 
 
 class Bricks < Tiles
-  def built_of
+  def composition
   	["brick","bricks","block","blocks"]
   end
   def view_type
@@ -37,7 +37,7 @@ class Dungeon < Bricks
   def subtype
   	subtype = ["jail","dungeon","cell"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - You're in a cold prison cell."
   	puts "	     It's dark and mostly empty.\n\n"
   end
@@ -47,7 +47,7 @@ class Corridor < Bricks
   def subtype
   	subtype = ["tunnel","corridor","hall"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - You're in a cramped corridor"
   	puts "	     made of dark cobbled bricks.\n\n"
   end
@@ -60,8 +60,8 @@ end
 
 
 class WarmRocks < Tiles
-  def built_of
-  	built_of = ["rock","rocks","geodes","earth","stone","stones"]
+  def composition
+  	composition = ["rock","rocks","geodes","earth","stone","stones"]
   end
   def view_type
   	puts "	   - The cavern walls radiate with"
@@ -85,7 +85,7 @@ class WarmCave < WarmRocks
   def subtype
   	subtype = ["cavern","cave","underground"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - You're in an ancient cavern."
   	puts "	     It's pleasantly warm.\n\n"
   end
@@ -95,7 +95,7 @@ class Grotto < WarmCave
   def subtype
   	subtype = ["cave","cavern","spring","pool","sauna","grotto"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - You're in a gleaming grotto"
   	puts "	     with a simmering spring.\n\n"
   end
@@ -122,7 +122,7 @@ class Fireplace < Fire
   def subtype
   	["fireplace", "grate", "coals", "coal", "hearth"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - Hot coals smolder in an iron"
   	puts "	     grate built into of the wall.\n\n"
   end
@@ -142,7 +142,7 @@ class Hook < Fixture
     super
     @targets = ["hook","rusty hook","metal hook"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A rusty hook juts out of the"
     puts "	     masonry where you stand.\n\n"
   end
@@ -151,7 +151,7 @@ class Hook < Fixture
     puts "	     tells you the goblins use it"
     puts "	     to hang more than just coats"
     puts "	     and keys.\n\n"
-    @@player.toggle_player_state_idle
+    @@player.toggle_state_idle
   end
 end
 
@@ -168,7 +168,7 @@ class Surface < Fixture
   end
   def view
     subtype_view
-    @@player.toggle_player_state_idle
+    @@player.toggle_state_idle
   end
 end
 
@@ -176,7 +176,7 @@ class Table < Surface
   def subtype
   	["table","stone table","tabletop"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - You stand before a humungous"
   	puts "	     table cut from solid rock.\n\n"
   end
@@ -190,7 +190,7 @@ class Shelf < Surface
   def subtype
   	["shelf","wooden shelf"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - You stand at a wooden shelf."
   	puts "	     It's just within your reach.\n\n"
   end
@@ -204,7 +204,7 @@ class Grave < Surface
   def subtype
   	["grave","slab","gravestone","headstone"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - You stand a square headstone"
   	puts "	     sticking out of the ground.\n\n"
   end
@@ -231,7 +231,7 @@ class Lockpick < Weapon
   def subtype
     ["lock pick", "metal lock pick", "metal pick", "pick", "tool"]
   end
-  def description
+  def display_description
   	puts "	   - Maybe it belonged to another"
   	print "	     prisoner? It's quite sharp.\n\n"
   end
@@ -245,7 +245,7 @@ class Pickaxe < Weapon
   def subtype
     ["pickaxe","iron pickaxe"]
   end
-  def description
+  def display_description
     puts "	   - Trolls mine for precious ore"
   	puts "	     under the dungeon with these.\n\n"
   end
@@ -259,7 +259,7 @@ class Key < Tool
   def subtype
     ["brass key", "key"]
   end
-  def description
+  def display_description
   	puts "	   - It's brittle and tarnished."
   	puts "	     It can be used just once.\n\n"
   end
@@ -273,7 +273,7 @@ class Lighter < Tool
   def subtype
     ["silver lighter", "lighter"]
   end
-  def description
+  def display_description
   	puts "	   - It's indiscriminately fueled"
     puts "	     by grease, wax, or sap.\n\n"
   end
@@ -293,7 +293,7 @@ class Knife < Weapon
   def subtype
     ["knife","dagger"]
   end
-  def description
+  def display_description
     puts "	   - It's a weak dagger made from"
   	puts "	     scrapped skeleton parts.\n\n"
   end
@@ -307,7 +307,7 @@ class Cleaver < Weapon
   def subtype
     ["cleaver", "axe","blade"]
   end
-  def description
+  def display_description
     puts "	   - It's a butcher's cleaver. It"
   	puts "	     feels heavy in your hand.\n\n"
   end
@@ -321,7 +321,7 @@ class Sword < Weapon
   def subtype
     ["sword"]
   end
-  def description
+  def display_description
     puts "	   - It's a sturdy skeleton sword"
   	puts "	     infused with sacred silver.\n\n"
   end
@@ -335,7 +335,7 @@ class Staff < Weapon
   def subtype
     ["staff"]
   end
-  def description
+  def display_description
     puts "	   - It's a magick staff. It can"
     puts "	     blind enemies in battle.\n\n"
   end
@@ -354,10 +354,10 @@ class Bread < Edible
   def subtype
     ["bread"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - Some goblin bread sits here.\n\n"
   end
-  def description
+  def display_description
   	puts "	   - It's stale and burnt.\n\n"
   end
 end
@@ -370,10 +370,10 @@ class Apple < Edible
   def subtype
     ["apple"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - An indigo apple sits here.\n\n"
   end
-  def description
+  def display_description
   	puts "	   - Blue apples like these tend"
     puts "	     to grow underground.\n\n"
   end
@@ -387,10 +387,10 @@ class Plum < Edible
   def subtype
     ["plum"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A big black plum sits here.\n\n"
   end
-  def description
+  def display_description
     puts "	   - Plums like these work well"
     puts "	     in elixers. They're edible.\n\n"
   end
@@ -404,11 +404,11 @@ class Mushroom < Edible
   def subtype
     ["fungi","fungus","mushroom","shroom","toadstool","stool"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A small blue mushroom blooms"
     puts "	     on the wall here.\n\n"
   end
-  def description
+  def display_description
     puts "	   - Toadstools like these induce"
     puts "	     waking dreams when eaten.\n\n"
   end
@@ -426,11 +426,11 @@ class Flesh < Edible
   def subtype
     ["jerky","meat"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A small strip of smoked meat"
     puts "	     lays across the ground here.\n\n"
   end
-  def description
+  def display_description
     puts "	   - It's dry and salty. It might"
     puts "	     cook well with some bread.\n\n"
   end
@@ -440,7 +440,7 @@ class Salt < Portable
   def targets
     ["salt","seasoning","sodium","cube"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A pink cube of salt as big as"
     puts "	     your fist sits here.\n\n"
   end
@@ -468,12 +468,12 @@ class AppleTree < FruitTree
   def targets
     ["tree","apple","apples","fruit"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - An apple tree stands here. It"
     print "	     bears #{@fruit.count} apple"
     @fruit.count == 1 ? print(".\n\n") : print("s.\n\n")
   end
-  def description
+  def display_description
     puts "	   - This tree produces uncommonly"
     puts "	     sweet fruit with a blue hue.\n\n"
   end
@@ -492,12 +492,12 @@ class PlumTree < FruitTree
   def targets
     ["tree","apple","apples","fruit"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A plum tree stands here. It"
     print "	     bears #{@fruit.count} plum"
     @fruit.count == 1 ? print(".\n\n") : print("s.\n\n")
   end
-  def description
+  def display_description
     puts "	   - This tree produces delicious"
     puts "	     plums that are good in brews.\n\n"
   end
@@ -522,7 +522,7 @@ class Juice < Liquid
   def subtype
     ["juice", "potion", "medicine","luck","elixer"]
   end
-  def description
+  def display_description
   	puts "	   - It's cherub juice. It builds"
     puts "	     accuracy, and heals hearts.\n\n"
   end
@@ -540,7 +540,7 @@ class Water < Liquid
   def subtype
     ["water","holy water"]
   end
-  def description
+  def display_description
   	puts "	   - It's water bottled by a rebel"
     puts "	     cherub. It increases luck.\n\n"
   end
@@ -554,7 +554,7 @@ class Tonic < Liquid
   def subtype
     ["antidote","cure","exorcism"]
   end
-  def description
+  def display_description
   	puts "	   - Made from rebel cherub spring"
     puts "	     water, it cures demon hexes."
   end
@@ -575,7 +575,7 @@ class Torch < Burnable
     def moveset
         MOVES[1] | MOVES[9]
     end
-    def special_properties
+    def execute_special_behavior
         content.activate if @lit
     end
     def light_torch
@@ -593,7 +593,7 @@ class Torch < Burnable
             puts Rainbow("	     torch catches fire.\n").orange
             light_torch
       end
-    def draw_backdrop
+    def display_backdrop
         puts "	   - A black torch is bolted into"
         print "	     the wall. "
         if @lit
@@ -624,7 +624,7 @@ class Blossom < Burnable
     burn_effect
     print "\n"
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - A #{subtype[1]} flower blooms here.\n\n"
   end
 end
@@ -637,14 +637,14 @@ class RedFlower < Blossom
   def subtype
   	["blood flower","crimson","red flower","red"]
   end
-  def description
+  def display_description
   	puts "	   - When burned, it's a powerful"
   	puts "	     pain reliever and sedative.\n\n"
   end
   def burn_effect
     puts Rainbow("	     A flushed and dreamy feeling").orange
     print Rainbow("	     tickles through your body.\n\n").orange
-    view_profile
+    display_profile
   end
 end
 
@@ -656,7 +656,7 @@ class PurpleFlower < Blossom
   def subtype
   	["purple flower","purple","violet","indigo"]
   end
-  def description
+  def display_description
   	puts Rainbow("	   - It's an aggressive stimulant.")
   	puts Rainbow("	     Its combusted form is smoke.\n\n")
   end
@@ -687,7 +687,7 @@ class Silver < Ore
     def subtype
       ["silver"]
     end
-    def draw_backdrop
+    def display_backdrop
       puts "	   - A hunk of raw silver lays on"
       puts "	     the ground at your feet.\n\n"
     end
@@ -697,7 +697,7 @@ class Gold < Ore
     def subtype
       ["gold"]
     end
-    def draw_backdrop
+    def display_backdrop
       puts "	   - A chunk of raw gold lays on"
       puts "	     the ground at your feet.\n\n"
     end
@@ -720,7 +720,7 @@ class Fat < Fuel
   def subtype
     ["worm fat","stinkworm fat", "fat"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A wad of stinkworm fat sulks"
   	puts "	     on the ground at your feet.\n\n"
   end
@@ -734,7 +734,7 @@ class Wax < Fuel
   def subtype
     ["wax","cave wax","cavern wax"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A wad of orange wax grows out"
   	puts "	     of the cave wall here.\n\n"
   end
@@ -748,7 +748,7 @@ class Sap < Fuel
   def subtype
     ["sap","tree sap", "resin"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A drop of nearly-solid resin"
   	puts "	     hangs thick from the tree.\n\n"
   end
@@ -769,7 +769,7 @@ class Leather < Portable
   def targets
     ["leather","hide","skin"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - The thick hide of a sewer rat"
   	puts "	     lays on the ground.\n\n"
   end
@@ -783,7 +783,7 @@ class Silk < Portable
   def targets
     ["silk","thread","web","webbing","webs"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A tangled mess of spider silk"
   	puts "	     webs the corner here.\n\n"
   end
@@ -797,7 +797,7 @@ class Rubber < Portable
   def targets
     ["rubber","silicone"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A durable chunk of raw rubber"
     puts "	     sulks on the ground here.\n\n"
   end
@@ -811,7 +811,7 @@ class Bone < Portable
   def targets
     subtype | ["bone","fragment","scrap"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A dirty bone fragment lays at"
   	puts "	     your feet.\n\n"
   end
@@ -825,7 +825,7 @@ class Tusk < Bone
   def targets
     ["tusk","horn"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A heavy tusk fragment lays on"
   	puts "	     the ground here.\n\n"
   end
@@ -835,7 +835,7 @@ class Shell < Portable
   def targets
     ["shell"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A large spiral shell was shed"
   	puts "	     here. The snail's long gone.\n\n"
   end
@@ -849,7 +849,7 @@ class Feather < Portable
   def targets
     ["feather","quill"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A dark, crooked raven's quill"
   	puts "	     lays on the floor here.\n\n"
   end
@@ -863,7 +863,7 @@ class Ash < Portable
   def targets
     ["ash","ashes","charcoal","soot"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A small pile of ashes sits on"
   	puts "	     the ground here.\n\n"
   end
@@ -877,7 +877,7 @@ class Branch < Burnable
   def targets
     ["branch","stick","skin"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A fallen branch leans against"
   	puts "	     the tree's gnarled roots.\n\n"
   end
@@ -903,7 +903,7 @@ class Gland < Portable
   def targets
     ["gland","ink"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A dark and spongy squid pouch"
   	puts "	     drips ink on the floor here.\n\n"
   end
@@ -924,7 +924,7 @@ class Femur < Bone
     def subtype
       ["femur"]
     end
-    def draw_backdrop
+    def display_backdrop
         puts "	   - A thick, white femur lays at"
         puts "	     your feet on the ground.\n\n"
     end
@@ -945,7 +945,7 @@ class Clothes < Tool
     subtype | ["clothing","clothes","garb","armor"]
   end
   def equip
-    self.push_to_inventory if @@player.items.none?(self)
+    self.push_to_player_inventory if @@player.items.none?(self)
     view
     puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
     @@player.armor = self
@@ -966,11 +966,11 @@ class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
   def subtype
     ["hoodie","sweater","sweatshirt"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A dark hoodie lays in a pile"
   	puts "	     on the ground here.\n\n"
   end
-  def description
+  def display_description
   	puts "	   - It's a hooded sweatshirt. It"
   	puts "	     was sewn with spider's silk.\n\n"
   end
@@ -984,11 +984,11 @@ class Sneakers < Clothes    # Requires 2 spider spools, 1 copper ore, and 4 rat 
   def subtype
     ["shoes","sneakers"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A pair of hide sneakers sits"
   	puts "	     untied on the ground.\n\n"
   end
-  def description
+  def display_description
   	puts "	   - They're cobbled from leather."
   	puts "	     Useful for dangerous terrain.\n\n"
   end
@@ -1010,7 +1010,7 @@ class Ring < Jewelry
   def subtype
     ["ring","band"]
   end
-  def description
+  def display_description
   	puts "	   - It fits. It doesn't do much,"
   	puts "	     but it sure is pretty.\n\n"
   end
@@ -1022,7 +1022,7 @@ class SilverRing < Ring  # Requires 1 silver
 
     @profile = {:build => "silver", :rune => "none"}
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A simple ring of silver sits"
   	puts "	     on the dirty ground.\n\n"
   end
@@ -1033,7 +1033,7 @@ class GoldRing < Ring  # Requires 1 silver
     @targets = ["ring","band"]
     @profile = {:build => "gold", :rune => "none"}
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A simple golden ring lays on"
   	puts "	     the dirty ground.\n\n"
   end
@@ -1052,7 +1052,7 @@ class Toilet < Container
   def targets
     ["drain","toilet","bowl","lid"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - A dirty lidded toilet sticks"
   	puts "	     out of the wall here.\n\n"
   end
@@ -1065,7 +1065,7 @@ class Chest < Container
   def targets
     ["chest","strongbox","lootbox","box"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - A wooden chest rests against"
   	puts "	     the dungeon wall.\n\n"
   end
@@ -1078,7 +1078,7 @@ class Urn < Container
   def targets
     ["urn","jar","bottle","remains"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - An ornate clay urn sits here.\n\n"
   end
 end
@@ -1090,7 +1090,7 @@ class Barrel < Container
   def targets
     ["barrel","keg","drum","vat"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - A wooden barrel sits against"
   	puts "	     the wall here.\n\n"
   end
@@ -1103,11 +1103,12 @@ end
 
 
 class Door < Container
-  def needkey
-    true
+  def initialize
+    super
+    @needkey = true
   end
-  def special_properties
-    if state == "jammed open"
+  def execute_special_behavior
+    if state == :"jammed open"
       content.activate
     end
   end
@@ -1122,7 +1123,7 @@ class Door < Container
   def targets
   	["door","exit"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - You stand near the threshold"
   	puts "	     of a heavy iron door.\n\n"
   end
@@ -1143,7 +1144,7 @@ class Lever < Pullable
   def targets
     ["lever","handle","switch"]
   end
-  def draw_backdrop
+  def display_backdrop
   	puts "	   - An iron lever juts out from"
   	puts "	     the wall where you stand.\n\n"
   end
@@ -1161,7 +1162,7 @@ class Rope < Pullable
   def targets
     ["rope","twine","switch"]
   end
-  def draw_backdrop
+  def display_backdrop
     puts "	   - A frayed rope dangles above"
     puts "	     where you stand. It's huge.\n\n"
   end
@@ -1200,7 +1201,7 @@ class Hellion < Character
     puts "	   - Its black pupils quiver with"
     puts "	     rage. It looks rabid.\n\n"
   end
-  def description
+  def display_description
     puts "	   - It's a hellion. This goatish"
     puts "	     demon has a quick temper.\n\n"
   end

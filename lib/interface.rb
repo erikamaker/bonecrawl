@@ -78,7 +78,7 @@ module Interface
   def suggest_tutorial
   	if nontraditional_move?
   	  return if tutorial_selected?
-  	  toggle_player_state_idle
+  	  toggle_state_idle
   	  print "	   - A single page passes. View\n"
   	  print "	     tutorial with command"
       print Rainbow(" help").cyan + ".\n\n"

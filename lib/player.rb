@@ -68,10 +68,10 @@ class Player
     @action = :reset
     @target = :reset
   end
-  def player_idle?
+  def state_idle?
     @state == :idle
   end
-  def toggle_player_state_idle
+  def toggle_state_idle
     @state = :idle
   end
   def toggle_engaged
@@ -105,7 +105,7 @@ end
   def block_points
     armor.profile[:defense]
   end
-  def defense_power
+  def display_armor_result
     if armor
       puts Rainbow("	     Your #{armor_name} absorbs #{block_points}.").cyan
       armor.profile[:lifespan] -= armor.profile[:defense]
@@ -153,7 +153,7 @@ end
   def turn_page
     reset_player_sight
     Board.increment_page(1)
-    toggle_player_state_idle
+    toggle_state_idle
     effects_cooldown
     reset_input
   end

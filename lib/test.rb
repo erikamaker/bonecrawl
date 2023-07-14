@@ -212,31 +212,32 @@ end
 
 levels = [ room_1, torch_1, lighter, fat, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
-
-    system("clear")  # Clear the screen
-    print "\e[?25l"
-    print "\n\n\n\n\n\n\n\n"
-    sleep 2
-    print Rainbow("	   - You wake up with a headache\n").violet
-    print Rainbow("	     on the cold, hard floor.\n\n").violet
-    sleep 3
-    print Rainbow("	   - It smells like sulfur. You\n").violet
-    print Rainbow("	     wonder aloud where you are.\n\n").violet
-    sleep 3
-    print Rainbow("	   - A voice in your ear answers,\n").violet
-    print Rainbow("	     startling you in the dark.\n\n").violet
-    SoundBoard.evil_laugh
-    sleep 3
-    system("clear")  # Clear the screen
-    sleep 3
-    print Rainbow("\n\n\n\n\n\n\n\n	   \" You're part of my flock now. \n" ).red.bright
-    sleep 3
-    print Rainbow("	     It's shearing season, lamby. \" \n\n " ).red.bright
-    sleep 3
-    Board.player.reset_input
-    Board.player.page_bottom
-    Board.player.page_top
-    Board.player.turn_page
+=begin
+system("clear")  # Clear the screen
+print "\e[?25l"
+print "\n\n\n\n\n\n\n\n"
+sleep 2
+print Rainbow("	   - You wake up with a headache\n").violet
+print Rainbow("	     on the cold, hard floor.\n\n").violet
+sleep 3
+print Rainbow("	   - It smells like sulfur. You\n").violet
+print Rainbow("	     wonder aloud where you are.\n\n").violet
+sleep 3
+print Rainbow("	   - A voice in your ear answers,\n").violet
+print Rainbow("	     startling you in the dark.\n\n").violet
+SoundBoard.evil_laugh
+sleep 3
+system("clear")  # Clear the screen
+sleep 3
+print Rainbow("\n\n\n\n\n\n\n\n	   \" You're part of my flock now. \n" ).red
+sleep 3
+print Rainbow("	     It's shearing season, lamby. \" \n\n " ).red
+sleep 3
+Board.player.reset_input
+Board.player.page_bottom
+Board.player.page_top
+Board.player.turn_page
+=end
 
 loop do
   print "\e[?25h"
