@@ -526,7 +526,7 @@ class Juice < Liquid
   	puts "	   - It's cherub juice. It builds"
     puts "	     accuracy, and heals hearts.\n\n"
   end
-  def side_effects
+  def activate_side_effects
     @@player.focus = 4
     @@player.focus_timer += 20
   end
@@ -569,8 +569,20 @@ end
 class Torch < Burnable
     attr_accessor :content
     def initialize
-        super
-        @lit = true
+      super
+      @lit = true
+    end
+    def light_fixture
+      if @lit
+        puts "	   - This #{self.targets[0]} is already lit.\n\n"
+      else
+        use_fuel
+        animate_combustion
+        reveal_secret
+      end
+    end
+    def use_lighter
+      light_fixture
     end
     def moveset
         MOVES[1] | MOVES[9]
@@ -588,11 +600,10 @@ class Torch < Burnable
         ["torch", "iron torch", "black torch", "metal torch"]
     end
     def animate_combustion
-
-            puts Rainbow("	   - The fuel-soaked base of the").orange
-            puts Rainbow("	     torch catches fire.\n").orange
-            light_torch
-      end
+      puts Rainbow("	   - The fuel-soaked base of the").orange
+      puts Rainbow("	     torch catches fire.\n").orange
+      light_torch
+    end
     def display_backdrop
         puts "	   - A black torch is bolted into"
         print "	     the wall. "

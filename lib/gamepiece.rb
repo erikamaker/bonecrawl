@@ -214,70 +214,57 @@ end
 
 
 class Burnable < Portable
-  def moveset
-    MOVES[1..2].flatten + MOVES[9]
-  end
-  def fire_near?
-    @@player.sight.include?("fire")
-  end
-  def out_of_fuel
-    puts "	    - You're out of lighter fuel.\n\n"
-  end
-  def check_for_fuel
-    if @@player.search_inventory(Fuel)
-        use_lighter
-    else
-        out_of_fuel
+    def moveset
+      MOVES[1..2].flatten + MOVES[9]
     end
-  end
-  def check_for_lighter
-    if @@player.search_inventory(Lighter)
-        check_for_fuel
-    else
-        puts "	   - There's isn't any fire here.\n\n"
+    def fire_near?
+      @@player.sight.include?("fire")
     end
-  end
-  def fuel
-    @@player.items.find { |item| item.is_a?(Fuel) }
-  end
-  def use_fuel
-    puts "	   - You thumb a little fuel into"
-    puts "	     your lighter's fuel canister."
-    puts "	     It sparks a warm flame.\n\n"
-    @@player.remove_from_inventory(fuel)
-  end
-  def light_torch
-    unless @lit
-        use_fuel
-        animate_combustion
-        reveal_secret
-    else
-        puts "	   - This #{self.targets[0]} is already lit.\n\n"
+    def out_of_fuel
+      puts "	    - You're out of lighter fuel.\n\n"
     end
-  end
-  def use_lighter
-    unless self.is_a?(Torch)
-        use_fuel
+    def got_fuel?
+      if @@player.search_inventory(Fuel)
+          use_lighter
+      else
+          out_of_fuel
+      end
+    end
+    def got_a_light?
+      if @@player.search_inventory(Lighter)
+          got_fuel?
+      else
+          puts "	   - There's isn't any fire here.\n\n"
+      end
+    end
+    def fuel
+      @@player.items.find { |item| item.is_a?(Fuel) }
+    end
+    def use_fuel
+      puts "	   - You thumb a little fuel into"
+      puts "	     your lighter's fuel canister."
+      puts "	     It sparks a warm flame.\n\n"
+      @@player.remove_from_inventory(fuel)
+    end
+    def use_lighter
+      use_fuel
+      animate_combustion
+      remove_from_board
+    end
+    def burn
+      if fire_near?
         animate_combustion
         remove_from_board
-    else
-        light_torch
+      else
+        got_a_light?
+      end
+    end
+    def wrong_move
+      print "	   - This burnable object can be\n"
+      print Rainbow("	     viewed").cyan + " or "
+      print Rainbow("burned").cyan + ".\n\n"
     end
   end
-  def burn
-    if fire_near?
-        animate_combustion
-        remove_from_board
-    else
-        check_for_lighter
-    end
-  end
-  def wrong_move
-    print "	   - This burnable object can be\n"
-    print Rainbow("	     viewed").cyan + " or "
-    print Rainbow("burned").cyan + ".\n\n"
-  end
-end
 
 
 ##############################################################################################################################################################################################################################################################
@@ -295,23 +282,19 @@ class Edible < Portable
   def feed
     animate_ingestion
     remove_portion
-    portions_left
+    display_remaining_portions
     @@player.gain_health(heal_amount)
-    side_effects
+    activate_side_effects
   end
   def animate_ingestion
     puts Rainbow("	   - You eat the #{subtype[0]}, healing").orange
   	print Rainbow("	     #{heal_amount} heart").orange
-    if heal_amount == 1
-      print Rainbow(". ").orange
-    else
-      print Rainbow("s. ").orange
-    end
+    print Rainbow("#{heal_amount == 1 ? '.' : 's.'} ").orange
   end
   def remove_portion
     profile[:portions] -= 1
   end
-  def portions_left
+  def display_remaining_portions
     case profile[:portions]
     when 1
       print "#{profile[:portions]} portion left.\n\n"
@@ -330,7 +313,7 @@ class Edible < Portable
       profile[:hearts]
     end
   end
-  def side_effects
+  def activate_side_effects
     # Reserved for foods or potions
     # that affect player's stats in
     # some way. See presets.
@@ -344,7 +327,7 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    Liquid    ############################################################################################################################################################################################################################################
+#####    Liquid    ###########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
@@ -357,6 +340,11 @@ class Liquid < Edible
   end
   def drink
     feed
+  end
+  def animate_ingestion
+    puts Rainbow("	   - You drink the #{subtype[0]}, healing").orange
+  	print Rainbow("	     #{heal_amount} heart").orange
+    print Rainbow("#{heal_amount == 1 ? '.' : 's.'} ").orange
   end
   def wrong_move
     print "	   - This liquid item can only be\n"
@@ -374,7 +362,7 @@ end
 class FruitTree < Edible
   def initialize
     super
-    @count = 666
+    @count = 999
     @stock = []
     @fruit = []
     fill_stock
@@ -404,6 +392,8 @@ class FruitTree < Edible
     puts "	   - You can't eat fruit that you"
     puts "	     haven't harvested.\n\n"
     take
+    fruit = @@player.items.find(self)
+    fruit.eat
   end
   def view
     display_description
@@ -734,42 +724,42 @@ class Altar < Gamepiece
     ["altar","shrine"]
   end
   def fill_lock_pick_stock
-    666.times do
+    999.times do
       @lock_pick_stock.push(Lockpick.new)
     end
   end
   def fill_silver_ring_stock
-    666.times do
+    999.times do
       @silver_ring_stock.push(SilverRing.new)
     end
   end
   def fill_gold_ring_stock
-    666.times do
+    999.times do
       @gold_ring_stock.push(GoldRing.new)
     end
   end
   def fill_sneaker_stock
-    666.times do
+    999.times do
       @sneaker_stock.push(Sneakers.new)
     end
   end
   def fill_hoodie_stock
-    666.times do
+    999.times do
       @hoodie_stock.push(Hoodie.new)
     end
   end
   def fill_staff_stock
-    666.times do
+    999.times do
       @staff_stock.push(Staff.new)
     end
   end
   def fill_tonic_stock
-    666.times do
+    999.times do
       @tonic_stock.push(Tonic.new)
     end
   end
   def fill_juice_stock
-    666.times do
+    999.times do
       @Juice_stock.push(Juice.new)
     end
   end
