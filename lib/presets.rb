@@ -569,23 +569,17 @@ end
 class Torch < Burnable
     attr_accessor :content
     def initialize
-      super
-      @lit = true
+        super
+        @lit = true
     end
-    def light_fixture
-      if @lit
-        puts "	   - This #{self.targets[0]} is already lit.\n\n"
-      else
-        use_fuel
-        animate_combustion
-        reveal_secret
-      end
-    end
-    def use_lighter
-      light_fixture
+    def targets
+        ["torch", "iron torch", "black torch", "metal torch"]
     end
     def moveset
         MOVES[1] | MOVES[9]
+    end
+    def remove_from_board
+        light_torch
     end
     def execute_special_behavior
         content.activate if @lit
@@ -596,31 +590,32 @@ class Torch < Burnable
     def douse_torch
         @lit = false
     end
-    def targets
-        ["torch", "iron torch", "black torch", "metal torch"]
+    def unique_burn_screen
+      if @lit
+        puts "	   - It's already lit.\n\n"
+      else
+        use_fuel
+        puts Rainbow("	   - The fuel-soaked base of the").orange
+        puts Rainbow("	     torch catches fire.\n").orange
+        reveal_secret
+      end
     end
-    def animate_combustion
-      puts Rainbow("	   - The fuel-soaked base of the").orange
-      puts Rainbow("	     torch catches fire.\n").orange
-      light_torch
+    def describe_flame
+        if @lit
+            print "Its flame dances.\n\n"
+        else
+            print "It's gone cold.\n\n"
+        end
     end
     def display_backdrop
         puts "	   - A black torch is bolted into"
         print "	     the wall. "
-        if @lit
-            print "Its flame dances.\n\n"
-        else
-            print "It's gone cold.\n\n"
-        end
+        describe_flame
     end
     def view
         puts "	   - It's an iron torch rivted to"
         print "	     the wall. "
-        if @lit
-            print "Its flame dances.\n\n"
-        else
-            print "It's gone cold.\n\n"
-        end
+        describe_flame
     end
   end
 
@@ -629,7 +624,7 @@ class Blossom < Burnable
   def targets
     subtype | ["flower","blossom","plant","drug"]
   end
-  def animate_combustion
+  def unique_burn_screen
     puts "	   - You hold the blossom against"
     puts "	     the fire, inhaling its smoke."
     burn_effect
@@ -898,7 +893,7 @@ class Branch < Burnable
     @@inventory.delete(self)
     @@inventory.push(Ash.new)
   end
-  def animate_combustion
+  def unique_burn_screen
     puts "	   - You hold the branch over the"
     puts "	     fire. It burns quickly.\n\n"
     burn_effect

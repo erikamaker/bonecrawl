@@ -217,46 +217,37 @@ class Burnable < Portable
     def moveset
       MOVES[1..2].flatten + MOVES[9]
     end
+    def fuel
+        @@player.items.find { |item| item.is_a?(Fuel) }
+      end
     def fire_near?
       @@player.sight.include?("fire")
     end
-    def out_of_fuel
-      puts "	    - You're out of lighter fuel.\n\n"
-    end
-    def got_fuel?
-      if @@player.search_inventory(Fuel)
-          use_lighter
-      else
-          out_of_fuel
-      end
-    end
-    def got_a_light?
-      if @@player.search_inventory(Lighter)
-          got_fuel?
-      else
-          puts "	   - There's isn't any fire here.\n\n"
-      end
-    end
-    def fuel
-      @@player.items.find { |item| item.is_a?(Fuel) }
-    end
-    def use_fuel
-      puts "	   - You thumb a little fuel into"
-      puts "	     your lighter's fuel canister."
-      puts "	     It sparks a warm flame.\n\n"
-      @@player.remove_from_inventory(fuel)
-    end
-    def use_lighter
-      use_fuel
-      animate_combustion
-      remove_from_board
-    end
     def burn
       if fire_near?
-        animate_combustion
+        unique_burn_screen
+        remove_from_board
+      elsif @@player.search_inventory(Lighter)
+        use_lighter
+      else
+        puts "	   - There's isn't any fire here.\n\n"
+      end
+    end
+    def use_fuel
+        puts "	   - You thumb a little fuel into"
+        puts "	     your lighter's fuel canister."
+        puts "	     It sparks a warm flame.\n\n"
+        @@player.remove_from_inventory(fuel)
+    end
+
+
+
+    def use_lighter
+      if @@player.search_inventory(Fuel)
+        unique_burn_screen
         remove_from_board
       else
-        got_a_light?
+        puts "	    - You're out of lighter fuel.\n\n"
       end
     end
     def wrong_move

@@ -187,6 +187,9 @@ lighter.location = [[0,2,2]]
 fat = Fat.new
 fat.location = [[0,2,2]]
 
+fat1 = Fat.new
+fat1.location = [[0,2,2]]
+
 secret_room = Corridor.new
 secret_room.location = [[0,3,2],[0,4,2],[0,5,2]]
 
@@ -210,7 +213,7 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-levels = [ room_1, torch_1, lighter, fat, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
+levels = [ room_1, torch_1, lighter, fat, fat1, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
 =begin
 system("clear")  # Clear the screen
