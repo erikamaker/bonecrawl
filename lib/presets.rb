@@ -562,62 +562,62 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    SUBSTANCES     ######################################################################################################################################################################################################################################
+#####    BURNABLES     #######################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
 class Torch < Burnable
-    attr_accessor :content
-    def initialize
-        super
-        @lit = true
-    end
-    def targets
-        ["torch", "iron torch", "black torch", "metal torch"]
-    end
-    def moveset
-        MOVES[1] | MOVES[9]
-    end
-    def remove_from_board
-        light_torch
-    end
-    def execute_special_behavior
-        content.activate if @lit
-    end
-    def light_torch
-        @lit = true
-    end
-    def douse_torch
-        @lit = false
-    end
-    def unique_burn_screen
-      if @lit
-        puts "	   - It's already lit.\n\n"
-      else
-        use_fuel
-        puts Rainbow("	   - The fuel-soaked base of the").orange
-        puts Rainbow("	     torch catches fire.\n").orange
-        reveal_secret
-      end
-    end
-    def describe_flame
-        if @lit
-            print "Its flame dances.\n\n"
-        else
-            print "It's gone cold.\n\n"
-        end
-    end
-    def display_backdrop
-        puts "	   - A black torch is bolted into"
-        print "	     the wall. "
-        describe_flame
-    end
-    def view
-        puts "	   - It's an iron torch rivted to"
-        print "	     the wall. "
-        describe_flame
+  attr_accessor :content
+  def initialize
+      super
+      @lit = true
+  end
+  def targets
+      ["torch", "iron torch", "black torch", "metal torch"]
+  end
+  def moveset
+      MOVES[1] | MOVES[9]
+  end
+  def remove_from_board
+      light_torch
+  end
+  def execute_special_behavior
+      content.activate if @lit
+  end
+  def light_torch
+      @lit = true
+  end
+  def douse_torch
+      @lit = false
+  end
+  def unique_burn_screen
+    if @lit
+      puts "	   - It's already lit.\n\n"
+    else
+      use_fuel
+      puts Rainbow("	   - The cold base of the torch").orange
+      puts Rainbow("	     lights and catches fire.\n").orange
+      reveal_secret
     end
   end
+  def describe_flame
+      if @lit
+          print "Its flame dances.\n\n"
+      else
+          print "It's gone cold.\n\n"
+      end
+  end
+  def display_backdrop
+      puts "	   - A black torch is bolted into"
+      print "	     the wall. "
+      describe_flame
+  end
+  def view
+      puts "	   - It's an iron torch rivted to"
+      print "	     the wall. "
+      describe_flame
+  end
+end
 
 
 class Blossom < Burnable
@@ -1155,7 +1155,7 @@ class Lever < Pullable
   	puts "	     the wall where you stand.\n\n"
   end
   def view
-  	if @unpulled
+    unless @pulled
   	  puts "	   - This lever isn't pulled yet."
   	  puts "	     It could do anything.\n\n"
   	else
@@ -1173,7 +1173,7 @@ class Rope < Pullable
     puts "	     where you stand. It's huge.\n\n"
   end
   def view
-  	if @state == "unpulled"
+  	unless @pulled
   	  puts "	   - It feels tied to something.\n\n"
   	else
       print "	   - It won't move any further.\n\n"

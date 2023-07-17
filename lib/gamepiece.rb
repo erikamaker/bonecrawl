@@ -214,48 +214,45 @@ end
 
 
 class Burnable < Portable
-    def moveset
-      MOVES[1..2].flatten + MOVES[9]
+  def moveset
+    MOVES[1..2].flatten + MOVES[9]
+  end
+  def fuel
+      @@player.items.find { |item| item.is_a?(Fuel) }
     end
-    def fuel
-        @@player.items.find { |item| item.is_a?(Fuel) }
-      end
-    def fire_near?
-      @@player.sight.include?("fire")
-    end
-    def burn
-      if fire_near?
-        unique_burn_screen
-        remove_from_board
-      elsif @@player.search_inventory(Lighter)
-        use_lighter
-      else
-        puts "	   - There's isn't any fire here.\n\n"
-      end
-    end
-    def use_fuel
-        puts "	   - You thumb a little fuel into"
-        puts "	     your lighter's fuel canister."
-        puts "	     It sparks a warm flame.\n\n"
-        @@player.remove_from_inventory(fuel)
-    end
-
-
-
-    def use_lighter
-      if @@player.search_inventory(Fuel)
-        unique_burn_screen
-        remove_from_board
-      else
-        puts "	    - You're out of lighter fuel.\n\n"
-      end
-    end
-    def wrong_move
-      print "	   - This burnable object can be\n"
-      print Rainbow("	     viewed").cyan + " or "
-      print Rainbow("burned").cyan + ".\n\n"
+  def fire_near?
+    @@player.sight.include?("fire")
+  end
+  def burn
+    if fire_near?
+      unique_burn_screen
+      remove_from_board
+    elsif @@player.search_inventory(Lighter)
+      use_lighter
+    else
+      puts "	   - There's isn't any fire here.\n\n"
     end
   end
+  def use_fuel
+      puts "	   - You thumb a little fuel into"
+      puts "	     your lighter's fuel canister."
+      puts "	     It sparks a warm flame.\n\n"
+      @@player.remove_from_inventory(fuel)
+  end
+  def use_lighter
+    if @@player.search_inventory(Fuel)
+      unique_burn_screen
+      remove_from_board
+    else
+      puts "	    - You're out of lighter fuel.\n\n"
+    end
+  end
+  def wrong_move
+    print "	   - This burnable object can be\n"
+    print Rainbow("	     viewed").cyan + " or "
+    print Rainbow("burned").cyan + ".\n\n"
+  end
+end
 
 
 ##############################################################################################################################################################################################################################################################
@@ -305,9 +302,8 @@ class Edible < Portable
     end
   end
   def activate_side_effects
-    # Reserved for foods or potions
-    # that affect player's stats in
-    # some way. See presets.
+    # Reserved for foods or drinks that affect
+    # player's stats in some way. See presets.
   end
   def wrong_move
     print "	   - This food item can only be\n"
@@ -318,13 +314,13 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    Liquid    ###########################################################################################################################################################################################################################################
+#####    LIQUID    ###########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
 class Liquid < Edible
   def targets
-  	subtype | ["drink"]
+  	subtype | ["drink","liquid","fluid"]
   end
   def moveset
   	[MOVES[1..2],MOVES[10..11]].flatten
@@ -383,8 +379,6 @@ class FruitTree < Edible
     puts "	   - You can't eat fruit that you"
     puts "	     haven't harvested.\n\n"
     take
-    fruit = @@player.items.find(self)
-    fruit.eat
   end
   def view
     display_description
@@ -459,16 +453,16 @@ class Pullable < Gamepiece
   def initialize
     super
     @moveset = MOVES[1] | MOVES[5]
-    @unpulled = true
+    @pulled = false
   end
   def execute_special_behavior
-    content.activate unless @unpulled
+    content.activate if @pulled == true
   end
   def toggle_state_pulled
-    @unpulled = false
+    @pulled = true
   end
   def pull
-  	if @unpulled
+  	unless @pulled
   	  reveal_secret
       toggle_state_pulled
   	else
