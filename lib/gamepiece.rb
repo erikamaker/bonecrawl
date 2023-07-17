@@ -484,35 +484,29 @@ end
 
 
 class Character < Gamepiece
-  attr_accessor :hostile, :desires, :content, :friends, :subtype, :territory, :rewards
+  attr_accessor :hostile, :desires, :content, :passive, :subtype, :regions, :rewards
   def initialize
     super
     @moveset = (MOVES[1] + MOVES[6] + MOVES[8]).flatten
     @hostile = false
-    @friends = false
-    @territory = territory
+    @passive = false
+    @regions = regions
     @desires = desires
     @rewards = rewards
   end
   def targets
-    subtype | ["character","person"]
+    subtype | ["character","person","npc"]
   end
-  def execute_special_behavior
-    @profile[:hostile] = @hostile
-    if still_alive?
-      demon_attack
-    end
-  end
-  def activate
-    player_near? ? reveal_targets_to_player : return
-    @@player.state_idle? ? display_backdrop : interact
-    execute_special_behavior
-  end
-  def still_alive?
+  def alive?
     @profile[:hearts] > 0
   end
-  def slain
+  def slain?
     @profile[:hearts] < 1
+  end
+  def player_leverage
+    @@player.items.find do |item|
+      item.targets == desires.targets
+    end
   end
   def display_backdrop
     if @hostile
@@ -525,17 +519,26 @@ class Character < Gamepiece
     unless @hostile
       @hostile = true
       hostile_script
-      @location = @territory
+      @location = @regions
     end
   end
-  def become_friends
+  def become_passive
     @hostile = false
-    @friends = true
+    @passive = true
   end
-  def player_has_leverage
-    @@player.items.find do |item|
-      item.targets == desires.targets
+  def update_profile
+    @profile[:hostile] = @hostile
+  end
+  def execute_special_behavior
+    update_profile
+    if @hostile && alive?
+      attack_player
     end
+  end
+  def activate
+    player_near? ? reveal_targets_to_player : return
+    @@player.state_idle? ? display_backdrop : interact
+    execute_special_behavior
   end
   def talk
     if @hostile
@@ -545,7 +548,7 @@ class Character < Gamepiece
     end
   end
   def conversation
-    if @friends
+    if @passive
         unlocked_script
     else
         business_as_usual
@@ -553,7 +556,7 @@ class Character < Gamepiece
   end
   def business_as_usual
     default_script
-    barter if player_has_leverage
+    barter if player_leverage
   end
   def barter
     unique_bartering_script
@@ -567,7 +570,7 @@ class Character < Gamepiece
     if ["yes","yeah","sure","yep","aye"].include?(choice)
       exchange_gifts
     else
-        puts "	   - It looks pretty pissed off.\n\n"
+        puts "	   - It's a little pissed off.\n\n"
     end
   end
   def exchange_gifts
@@ -578,8 +581,8 @@ class Character < Gamepiece
     reward.take
     @content = @weapons
     @content.push(@desires)
-    @@player.remove_from_inventory(player_has_leverage)
-    become_friends
+    @@player.remove_from_inventory(player_leverage)
+    become_passive
   end
   def battle
     @@player.move_to_attack
@@ -600,43 +603,41 @@ class Character < Gamepiece
     if @@player.accuracy_level > 2
       SoundBoard.hit_enemy
       take_damage
-      become_hostile if still_alive?
-      play_death_scene if slain
-    else dodge_player_attack
+      become_hostile if alive?
+      play_death_scene if slain?
+    else
+      dodge_player_attack
       become_hostile
     end
   end
-  def demon_chance
+  def accuracy_level
     rand(@profile[:focus]..2) == 2
   end
   def dodge_player_attack
     puts Rainbow("	   - The demon dodges your attack.\n").red
   end
-  def demon_attack
-    if @hostile
-      puts "	   - The #{subtype[0]} strikes to attack"
-      print "	     with its "
-      print Rainbow("#{demon_weapon_equipped?.targets[0]}.\n\n").purple
-      attack_outcome
-    end
+  def attack_player
+    puts "	   - The #{subtype[0]} strikes to attack"
+    print "	     with its "
+    print Rainbow("#{weapon_equipped?.targets[0]}.\n\n").purple
+    attack_outcome
   end
-  def demon_weapon_equipped?
+  def weapon_equipped?
     if @weapons[0]
       @weapons[0]
     else
       "bare hands.\n\n"
     end
   end
-  def demon_damage
+  def attack_power
     if @weapons[0]
       @weapons[0].profile[:damage]
-    else
-      1
+    else 1
     end
   end
   def attack_outcome
-    if demon_chance
-      damage_done = @@player.health - @@player.lose_health(demon_damage)
+    if accuracy_level
+      damage_done = @@player.health - @@player.lose_health(attack_power)
       print Rainbow("	   - It costs you #{damage_done} heart point").red
       damage_done > 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
       @@player.display_armor_result
@@ -648,7 +649,7 @@ class Character < Gamepiece
     if @profile[:hearts] < 1
       puts Rainbow("	   - The demon is slain. It drops:\n").cyan
       list_rewards
-      take_everything
+      lose_all_items
       remove_from_board
       puts Rainbow("	   - You stuff the spoils of this").orange
       puts Rainbow("	     victory in your rucksack.\n").orange
@@ -658,7 +659,7 @@ class Character < Gamepiece
     @content.each {|item| puts "	       - 1 #{item.targets[0]}"}
     puts "\n"
   end
-  def take_everything
+  def lose_all_items
     @content.each { |item| item.push_to_player_inventory }
   end
   def wrong_move
@@ -667,6 +668,7 @@ class Character < Gamepiece
     print Rainbow("battling").cyan + ".\n\n"
   end
 end
+
 
 
 ##############################################################################################################################################################################################################################################################

@@ -82,7 +82,7 @@ end
 
 hellion_1 = Hellion.new
 hellion_1.location = [[0,2,-1]]
-hellion_1.territory = hall_1.location | room_2.location
+hellion_1.regions = hall_1.location | room_2.location
 def hellion_1.unique_bartering_script
   puts "	   - It asks if it can have yours,"
   print "	     in exchange for a secret.\n\n"
