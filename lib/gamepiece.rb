@@ -824,91 +824,64 @@ class Altar < Gamepiece
       print Rainbow(".\n\n").pink
     end
   end
-  def build_lock_pick
+  def build_item(stock, materials)
     print "\n"
-    @lock_pick_stock[0].take
-    @lock_pick_stock.shift
-    delete_material("key")
-    delete_material("key")
+    stock[0].take
+    stock.shift
+    materials.each { |material| delete_material(material) }
+  end
+  def build_lock_pick
+    build_item(@lock_pick_stock, ["key", "key"])
   end
   def build_silver_ring
-    print "\n"
-    @silver_ring_stock[0].take
-    @silver_ring_stock.shift
-    delete_material("silver")
-    delete_material("silver")
+    build_item(@silver_ring_stock, ["silver", "silver"])
   end
   def build_gold_ring
-    print "\n"
-    @gold_ring_stock[0].take
-    @gold_ring_stock.shift
-    delete_material("gold")
-    delete_material("gold")
+    build_item(@gold_ring_stock, ["gold", "gold"])
   end
   def build_sneakers
-    print "\n"
-    @gold_ring_stock[0].take
-    @gold_ring_stock.shift
-    delete_material("rubber")
-    delete_material("leather")
+    build_item(@sneaker_stock, ["rubber", "leather"])
   end
   def build_hoodie
-    print "\n"
-    @gold_ring_stock[0].take
-    @gold_ring_stock.shift
-    delete_material("silk")
-    delete_material("silver")
+    build_item(@hoodie_stock, ["silk", "silver"])
   end
   def build_staff
-    print "\n"
-    @staff_stock[0].take
-    @staff_stock.shift
-    delete_material("branch")
-    delete_material("feather")
+    build_item(@staff_stock, ["branch", "feather"])
   end
   def build_tonic
-    print "\n"
-    @tonic_stock[0].take
-    @tonic_stock.shift
-    delete_material("water")
-    delete_material("purple flower")
+    build_item(@tonic_stock, ["water", "purple flower"])
   end
   def build_juice
-    print "\n"
-    @Juice_stock[0].take
-    @Juice_stock.shift
-    delete_material("water")
-    delete_material("red flower")
+    build_item(@Juice_stock, ["water", "red flower"])
   end
   def delete_material(material)
-    @@player.items.find do |item|
-      item.targets.include?(material) && @@player.remove_from_inventory(item)
-    end
+    @@player.items.find { |item| item.targets.include?(material) && @@player.remove_from_inventory(item) }
   end
   def start_building(choice)
-    if @lock_pick_stock[0].targets.include?(choice)
+    case choice
+    when *@lock_pick_stock[0].targets
       lock_pick_materials? ? build_lock_pick : greedy_mortal_message
-    elsif @silver_ring_stock[0].targets.include?(choice)
+    when *@silver_ring_stock[0].targets
       silver_ring_materials? ? build_silver_ring : greedy_mortal_message
-    elsif @gold_ring_stock[0].targets.include?(choice)
+    when *@gold_ring_stock[0].targets
       gold_ring_materials? ? build_gold_ring : greedy_mortal_message
-    elsif @sneaker_stock[0].targets.include?(choice)
+    when *@sneaker_stock[0].targets
       sneaker_materials? ? build_sneakers : greedy_mortal_message
-    elsif @hoodie_stock[0].targets.include?(choice)
+    when *@hoodie_stock[0].targets
       hoodie_materials? ? build_hoodie : greedy_mortal_message
-    elsif @staff_stock[0].targets.include?(choice)
-        staff_materials? ? build_staff : greedy_mortal_message
-    elsif @tonic_stock[0].targets.include?(choice)
-        tonic_materials? ? build_tonic : greedy_mortal_message
-    elsif @Juice_stock[0].targets.include?(choice)
-        juice_materials? ? build_juice : greedy_mortal_message
-    elsif ["salvation","ascension","freedom","transcend"].include?(choice)
-        level_complete_screen
+    when *@staff_stock[0].targets
+      staff_materials? ? build_staff : greedy_mortal_message
+    when *@tonic_stock[0].targets
+      tonic_materials? ? build_tonic : greedy_mortal_message
+    when *@Juice_stock[0].targets
+      juice_materials? ? build_juice : greedy_mortal_message
+    when "salvation", "ascension", "freedom", "transcend"
+      level_complete_screen
     else
       not_an_option
     end
   end
-  def wrong_move
+    def wrong_move
     print "	   - A sacrificial altar can be\n"
     print Rainbow("	     prayed to" ).cyan + ", or "
     print Rainbow("examined").cyan + ".\n\n"
