@@ -670,7 +670,6 @@ class Character < Gamepiece
 end
 
 
-
 ##############################################################################################################################################################################################################################################################
 #####     ALTAR     ##########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
@@ -683,76 +682,42 @@ class Altar < Gamepiece
     @bone = bone
     @moveset = MOVES[1] | MOVES[6..7].flatten
     @lock_pick_stock = []
-    fill_lock_pick_stock
     @silver_ring_stock = []
-    fill_silver_ring_stock
     @gold_ring_stock = []
-    fill_gold_ring_stock
     @sneaker_stock = []
-    fill_sneaker_stock
     @hoodie_stock = []
-    fill_hoodie_stock
     @staff_stock = []
-    fill_staff_stock
     @tonic_stock = []
-    fill_tonic_stock
-    @Juice_stock = []
-    fill_juice_stock
+    @juice_stock = []
+    fill_stock
+    print
   end
   def talk
     craft
   end
   def display_description
-    puts Rainbow("	   - It towers up to your chest.").red
-    puts Rainbow("	     Your ears ring a little.\n").red
+    puts Rainbow("	   - It towers up to your chest.").purple
+    puts Rainbow("	     Your ears ring a little.\n").purple
     wrong_move
   end
   def targets
     ["altar","shrine"]
   end
-  def fill_lock_pick_stock
-    999.times do
+  def fill_stock
+    50.times do
       @lock_pick_stock.push(Lockpick.new)
-    end
-  end
-  def fill_silver_ring_stock
-    999.times do
       @silver_ring_stock.push(SilverRing.new)
-    end
-  end
-  def fill_gold_ring_stock
-    999.times do
       @gold_ring_stock.push(GoldRing.new)
-    end
-  end
-  def fill_sneaker_stock
-    999.times do
       @sneaker_stock.push(Sneakers.new)
-    end
-  end
-  def fill_hoodie_stock
-    999.times do
       @hoodie_stock.push(Hoodie.new)
-    end
-  end
-  def fill_staff_stock
-    999.times do
       @staff_stock.push(Staff.new)
-    end
-  end
-  def fill_tonic_stock
-    999.times do
       @tonic_stock.push(Tonic.new)
-    end
-  end
-  def fill_juice_stock
-    999.times do
-      @Juice_stock.push(Juice.new)
+      @juice_stock.push(Juice.new)
     end
   end
   def display_backdrop
-    puts Rainbow("	   - You stand before a sinister").red
-    puts Rainbow("	     altar cut from black marble.\n").red
+    puts Rainbow("	   - You stand before a sinister").purple
+    puts Rainbow("	     altar cut from black marble.\n").purple
   end
   def craft
     print Rainbow("	   - You feel compelled to kneel.\n").red
@@ -793,7 +758,7 @@ class Altar < Gamepiece
     (@@player.all_item_types & [Silver, Silk]).size == 2
   end
   def staff_materials?
-    (@@player.all_item_types & [Branch, Feather]).size == 3
+    (@@player.all_item_types & [Branch, Feather]).size == 2
   end
   def tonic_materials?
     (@@player.all_item_types & [Water, PurpleFlower]).size == 2
@@ -853,11 +818,11 @@ class Altar < Gamepiece
       print("	       - 1 Red Flower\n\n")
     end
     if @@player.search_inventory(@bone)
-        print Rainbow("	   - You conquered your demon. To\n").pink
-        print Rainbow("	     leave this level, simply ask\n").pink
-        print Rainbow("	     for ").pink
-        print Rainbow("salvation").blue
-        print Rainbow(".\n\n").pink
+      print Rainbow("	   - You conquered your demon. To\n").pink
+      print Rainbow("	     leave this level, simply ask\n").pink
+      print Rainbow("	     for ").pink
+      print Rainbow("salvation").blue
+      print Rainbow(".\n\n").pink
     end
   end
   def build_lock_pick
