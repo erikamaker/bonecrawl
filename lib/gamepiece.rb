@@ -690,18 +690,6 @@ class Altar < Gamepiece
     @tonic_stock = []
     @juice_stock = []
     fill_stock
-    print
-  end
-  def talk
-    craft
-  end
-  def display_description
-    puts Rainbow("	   - It towers up to your chest.").purple
-    puts Rainbow("	     Your ears ring a little.\n").purple
-    wrong_move
-  end
-  def targets
-    ["altar","shrine"]
   end
   def fill_stock
     50.times do
@@ -715,9 +703,20 @@ class Altar < Gamepiece
       @juice_stock.push(Juice.new)
     end
   end
+  def targets
+    ["altar","shrine"]
+  end
   def display_backdrop
     puts Rainbow("	   - You stand before a sinister").purple
     puts Rainbow("	     altar cut from black marble.\n").purple
+  end
+  def talk
+    craft
+  end
+  def display_description
+    puts Rainbow("	   - It towers up to your chest.").purple
+    puts Rainbow("	     Your ears ring a little.\n").purple
+    wrong_move
   end
   def craft
     print Rainbow("	   - You feel compelled to kneel.\n").red
@@ -882,7 +881,9 @@ class Altar < Gamepiece
     delete_material("red flower")
   end
   def delete_material(material)
-    @@player.items.find { |item| item.targets.include?(material) && @@player.remove_from_inventory(item) }
+    @@player.items.find do |item|
+      item.targets.include?(material) && @@player.remove_from_inventory(item)
+    end
   end
   def start_building(choice)
     if @lock_pick_stock[0].targets.include?(choice)
