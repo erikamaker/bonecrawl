@@ -617,7 +617,7 @@ class RedFlower < Blossom
   def burn_effect
     puts Rainbow("	   - You feel flushed and dreamy.").orange
     print Rainbow("	     Your defense increases by 2.\n").orange
-    @@player.block_clock += 100
+    @@player.block_clock += 20
   end
 end
 

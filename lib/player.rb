@@ -89,8 +89,8 @@ class Player
   end
   def defense
     if armor_equipped?
-        @armor.profile[:defense] + block_clock
-    else 0 + block_clock
+        @armor.profile[:defense] + [block_clock,4].min
+    else 0 + [block_clock,4].min
     end
   end
   def focus_level
