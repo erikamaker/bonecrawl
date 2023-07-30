@@ -64,9 +64,6 @@ class Player
     toggle_state_idle
     effects_cooldown
     reset_input
-    print focus_level
-    print defense
-    print attack
   end
   def remove_from_inventory(item)
     @items.delete(item)
