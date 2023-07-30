@@ -499,6 +499,7 @@ class Character < Gamepiece
     @moveset = (MOVES[1] + MOVES[6] + MOVES[8]).flatten
     @hostile = false
     @passive = false
+    @demonic = false
     @regions = regions
     @desires = desires
     @rewards = rewards
@@ -512,7 +513,7 @@ class Character < Gamepiece
   def slain?
     @profile[:hearts] < 1
   end
-  def player_leverage
+  def player_has_leverage
     @@player.items.find do |item|
       item.targets == desires.targets
     end
@@ -565,7 +566,7 @@ class Character < Gamepiece
   end
   def business_as_usual
     default_script
-    barter if player_leverage
+    barter if player_has_leverage
   end
   def barter
     unique_bartering_script
@@ -590,7 +591,7 @@ class Character < Gamepiece
     reward.take
     @content = @weapons
     @content.push(@desires)
-    @@player.remove_from_inventory(player_leverage)
+    @@player.remove_from_inventory(player_has_leverage)
     become_passive
   end
 
@@ -661,6 +662,16 @@ class Character < Gamepiece
     else 1
     end
   end
+  def curse_player
+    return if !@demonic
+    return if @@player.curse_clock > 0
+    curse = rand(3..10)
+    if rand(3..3) == 3
+        puts Rainbow("	   - The demon manages to possess").red
+        puts Rainbow("	     you for #{curse} pages.\n").red
+        @@player.curse_clock += curse
+    end
+  end
   def attack_outcome
     if focus_level == 2
       damage_done = @@player.lose_health(attack_power)
@@ -670,6 +681,7 @@ class Character < Gamepiece
       damage_done != 1 ? print("s.\n\n") : print(".\n\n")
       @@player.health -= @@player.lose_health(attack_power)
       SoundBoard.take_damage
+      curse_player
     else
       puts Rainbow("	   - You narrowly avoid its blow.\n").green
     end

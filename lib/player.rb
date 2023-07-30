@@ -123,13 +123,13 @@ class Player
     end
     if @block_clock > 1
         puts Rainbow("	   - Your emboldened defense will").orange
-        puts Rainbow("	     last #{@block_clock} more pages.\n").orange
+        puts Rainbow("	     last #{@block_clock - 1} more pages.\n").orange
     end
   end
   def display_added_focus
     if @focus_clock > 1
         puts Rainbow("	   - Your blessed focus will last").cyan
-        puts Rainbow("	     just #{@focus_clock} more pages.\n").cyan
+        puts Rainbow("	     just #{@focus_clock - 1} more pages.\n").cyan
     end
   end
   def lose_health(magnitude)
@@ -141,8 +141,8 @@ class Player
     @health += (magnitude)
   end
   def display_clock(clock_name)
-    puts Rainbow("	   - The magick emboldening your").purple
-    puts Rainbow("	     #{clock_name} grows thin.\n").purple
+    puts Rainbow("	   - The magick that affects your").red
+    puts Rainbow("	     #{clock_name} grows thin.\n").red
   end
   def effects_cooldown
     if @focus_clock > 0
@@ -152,6 +152,10 @@ class Player
     if @block_clock > 0
       display_clock("defense") if @block_clock == 1
       @block_clock -= 1
+    end
+    if @curse_clock > 0
+        display_clock("possession") if @curse_clock == 1
+        @curse_clock -= 1
     end
   end
 end

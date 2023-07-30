@@ -1157,6 +1157,7 @@ end
 class Hellion < Character
   def initialize
     super
+    @demonic = true
     @weapons = [Cleaver.new]
     @rewards = [Apple.new]
     @content = @weapons | @rewards
