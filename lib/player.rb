@@ -32,6 +32,9 @@ class Player
     @action = :reset
     @target = :reset
   end
+  def reset_player_sight
+    @sight.clear
+  end
   def state_idle?
     @state == :idle
   end
@@ -55,6 +58,13 @@ class Player
     @action = (MOVES.flatten & (sentence)).join('')
     @target = (sentence - SPEECH).last
   end
+  def turn_page
+    reset_player_sight
+    Board.increment_page(1)
+    toggle_state_idle
+    effects_cooldown
+    reset_input
+  end
   def remove_from_inventory(item)
     @items.delete(item)
   end
@@ -72,7 +82,7 @@ class Player
   end
   def armor_name
     if armor_equipped?
-        Rainbow("#{armor.targets[0]}.").purple
+        Rainbow("#{armor.targets[0]}").purple
     end
   end
   def weapon_name
@@ -104,12 +114,13 @@ class Player
     print "	     with your #{weapon_name}\n\n"
   end
   def display_added_defense
-    print Rainbow("	     Your #{armor_name} absorbs")
-    print Rainbow(" #{armor.profile[:defense]}.\n").cyan
-    armor.profile[:lifespan] -= armor.profile[:defense]
+    if armor_equipped?
+        print Rainbow("	     Your #{armor_name} absorbs damage.\n")
+        armor.profile[:lifespan] -= armor.profile[:defense]
+    end
     if @block_clock > 0
-        puts Rainbow("	   - The magick emboldening your").orange
-        puts Rainbow("	     defense persists.\n\n").orange
+        puts Rainbow("\n	   - The magick emboldening your").orange
+        puts Rainbow("	     defense courses within you.\n").orange
     end
   end
   def lose_health(magnitude)
@@ -130,16 +141,16 @@ class Player
   def effects_cooldown
     unless @focus_clock == 0
         if @focus_clock == 1
-            puts Rainbow("	   - Your increased focus begins").purple
-            puts Rainbow("	     to run thin.\n\n").purple
+            puts Rainbow("	   - The magick emboldening your").purple
+            puts Rainbow("	     focus has worn off.\n\n").purple
         end
         @focus_clock > 0 && @focus_clock -= 1
         @focus_clock == 0 && @effect = nil
     end
     unless @block_clock == 0
         if @block_clock == 1
-            puts Rainbow("	   - Your increased defense starts").purple
-            puts Rainbow("	     to wear off.\n\n").purple
+            puts Rainbow("	   - The magick emboldening your").purple
+            puts Rainbow("	     defense has worn off.\n\n").purple
         end
         @block_clock > 0 && @block_clock -= 1
         @block_clock == 0 && @effect = nil
@@ -148,17 +159,4 @@ class Player
 
 
 
-
-
-
-  def turn_page
-    reset_player_sight
-    Board.increment_page(1)
-    toggle_state_idle
-    effects_cooldown
-    reset_input
-  end
-  def reset_player_sight
-    @sight.clear
-  end
 end

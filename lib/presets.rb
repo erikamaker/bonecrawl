@@ -615,8 +615,8 @@ class RedFlower < Blossom
   	puts "	     pain reliever and sedative.\n\n"
   end
   def burn_effect
-    puts Rainbow("	   - You feel flushed and dreamy.").orange
-    print Rainbow("	     Your defense increases by 2.\n").orange
+    puts Rainbow("	   - You feel light as a feather.").orange
+    print Rainbow("	     Your defense maxes out.\n").orange
     @@player.block_clock += 20
   end
 end

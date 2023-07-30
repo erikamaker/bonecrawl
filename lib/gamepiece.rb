@@ -614,7 +614,7 @@ class Character < Gamepiece
     end
   end
   def take_damage
-    @profile[:hearts] -= @@player.attack_power
+    @profile[:hearts] -= @@player.attack
     if @profile[:hearts] > 0
       print Rainbow("	   - You hit it. #{@profile[:hearts]} heart").green
       print Rainbow("s").green if @profile[:hearts] > 1
@@ -664,7 +664,7 @@ class Character < Gamepiece
     if focus_level == 2
       damage_done = @@player.lose_health(attack_power)
       print Rainbow("	   - It costs you #{damage_done} heart point").red
-      damage_done > 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
+      damage_done != 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
       @@player.display_added_defense
     else
       puts Rainbow("	   - You narrowly avoid its blow.\n").green
