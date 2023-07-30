@@ -134,32 +134,18 @@ class Player
     SoundBoard.heal_heart
     @health += (magnitude)
   end
-
-
-
-
-
-
-
+  def display_clock(clock_name)
+    puts Rainbow("	   - The magick emboldening your").purple
+    puts Rainbow("	     #{clock_name} grows thin.\n\n").purple
+  end
   def effects_cooldown
-    unless @focus_clock == 0
-        if @focus_clock == 1
-            puts Rainbow("	   - The magick emboldening your").purple
-            puts Rainbow("	     focus has worn off.\n\n").purple
-        end
-        @focus_clock > 0 && @focus_clock -= 1
-        @focus_clock == 0 && @effect = nil
+    if @focus_clock > 0
+      display_clock("focus") if @focus_clock == 1
+      @focus_clock -= 1
     end
-    unless @block_clock == 0
-        if @block_clock == 1
-            puts Rainbow("	   - The magick emboldening your").purple
-            puts Rainbow("	     defense has worn off.\n\n").purple
-        end
-        @block_clock > 0 && @block_clock -= 1
-        @block_clock == 0 && @effect = nil
+    if @block_clock > 0
+      display_clock("defense") if @block_clock == 1
+      @block_clock -= 1
     end
   end
-
-
-
 end
