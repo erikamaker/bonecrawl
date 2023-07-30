@@ -622,6 +622,7 @@ class Character < Gamepiece
       print Rainbow("s").green if @profile[:hearts] == 1
       print Rainbow(".\n\n").green
       damage_player_weapon
+      @@player.display_added_focus
     end
   end
   def did_player_hit_me?

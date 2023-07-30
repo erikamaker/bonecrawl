@@ -493,7 +493,6 @@ class Juice < Liquid
     puts "	     focus, and heals all hearts.\n\n"
   end
   def activate_side_effects
-    @@player.focus = 4
     @@player.focus_clock += 20
   end
 end

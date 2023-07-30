@@ -105,7 +105,7 @@ class Player
   end
   def focus_level
     if focus_clock > 0
-        rand(2..4)
+        3
     else rand(1..4)
     end
   end
@@ -121,9 +121,15 @@ class Player
         print "	     points. Watch its lifespan.\n\n "
         armor.profile[:lifespan] -= armor.profile[:defense]
     end
-    if @block_clock > 0
-        puts Rainbow("	   - The magick emboldening your").orange
-        puts Rainbow("	     defense courses within you.\n").orange
+    if @block_clock > 1
+        puts Rainbow("	   - Your emboldened defense will").orange
+        puts Rainbow("	     last #{@block_clock} more pages.\n").orange
+    end
+  end
+  def display_added_focus
+    if @focus_clock > 1
+        puts Rainbow("	   - Your blessed focus will last").cyan
+        puts Rainbow("	     just #{@focus_clock} more pages.\n").cyan
     end
   end
   def lose_health(magnitude)
@@ -136,7 +142,7 @@ class Player
   end
   def display_clock(clock_name)
     puts Rainbow("	   - The magick emboldening your").purple
-    puts Rainbow("	     #{clock_name} grows thin.\n\n").purple
+    puts Rainbow("	     #{clock_name} grows thin.\n").purple
   end
   def effects_cooldown
     if @focus_clock > 0
