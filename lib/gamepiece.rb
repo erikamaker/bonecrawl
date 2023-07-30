@@ -663,9 +663,12 @@ class Character < Gamepiece
   def attack_outcome
     if focus_level == 2
       damage_done = @@player.lose_health(attack_power)
-      print Rainbow("	   - It costs you #{damage_done} heart point").red
-      damage_done != 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
       @@player.display_added_defense
+      puts "	   - The attack costs you a total"
+      print "	     of #{Rainbow(damage_done).red} heart point"
+      damage_done != 1 ? print("s.\n\n") : print(".\n\n")
+      @@player.health -= @@player.lose_health(attack_power)
+      SoundBoard.take_damage
     else
       puts Rainbow("	   - You narrowly avoid its blow.\n").green
     end

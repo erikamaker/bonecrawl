@@ -64,6 +64,9 @@ class Player
     toggle_state_idle
     effects_cooldown
     reset_input
+    print focus_level
+    print defense
+    print attack
   end
   def remove_from_inventory(item)
     @items.delete(item)
@@ -99,7 +102,7 @@ class Player
   end
   def defense
     if armor_equipped?
-        @armor.profile[:defense] + [block_clock,4].min
+        [(@armor.profile[:defense] + block_clock),4].min
     else 0 + [block_clock,4].min
     end
   end
@@ -115,11 +118,14 @@ class Player
   end
   def display_added_defense
     if armor_equipped?
-        print Rainbow("	     Your #{armor_name} absorbs damage.\n")
+        print "	   - Your #{armor_name} absorbs "
+        print Rainbow("#{armor.profile[:defense]}").red
+        print " damage\n"
+        print "	     points. Watch its lifespan.\n\n "
         armor.profile[:lifespan] -= armor.profile[:defense]
     end
     if @block_clock > 0
-        puts Rainbow("\n	   - The magick emboldening your").orange
+        puts Rainbow("	   - The magick emboldening your").orange
         puts Rainbow("	     defense courses within you.\n").orange
     end
   end

@@ -49,4 +49,9 @@ class SoundBoard
         exec('aplay ./sounds/equip_item.wav > /dev/null 2>&1')
       end
     end
+    def self.take_damage
+        fork do
+          exec('aplay ./sounds/take_damage.wav > /dev/null 2>&1')
+        end
+      end
   end
