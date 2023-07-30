@@ -615,8 +615,14 @@ class Character < Gamepiece
     end
   end
   def take_damage
+    if @@player.curse_clock > 0
+        puts Rainbow("	   - The demon's curse is strong.").red
+        puts Rainbow("	     You can't move.\n").red
+        return
+    end
     @profile[:hearts] -= @@player.attack
     if @profile[:hearts] > 0
+      SoundBoard.hit_enemy
       print Rainbow("	   - You hit it. #{@profile[:hearts]} heart").green
       print Rainbow("s").green if @profile[:hearts] > 1
       print Rainbow(" remain").green
@@ -628,7 +634,6 @@ class Character < Gamepiece
   end
   def did_player_hit_me?
     if @@player.focus_level > 2
-      SoundBoard.hit_enemy
       take_damage
       become_hostile if alive?
       play_death_scene if slain?
