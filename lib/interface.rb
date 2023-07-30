@@ -10,16 +10,6 @@ module Interface
     print Rainbow("\n   What next?").cyan.bright
     print Rainbow("  >>  ").purple.bright
   end
-  def wrong_move
-    puts "	   - It would be uesless to try."
-    puts "	     A page passes in vain.\n\n"
-  end
-  def animate_ingestion
-    puts "	   - You drink the #{subtype[0]}, healing"
-  	print "	     #{heal_amount} heart"
-    print (heal_amount == 1 ? ". " : "s. ")
-    print(". ")
-  end
   def header
     print Rainbow("\n---------------------------------------------------------\n").blue.bright
     print Rainbow("[").blue.bright
@@ -48,10 +38,9 @@ module Interface
   end
   def print_defense_meter
     print "DEFENSE "
-    @defense = @armor.profile[:defense] unless @armor.nil?
-  	@defense = [@defense, 4].min
-  	@defense.times { print Rainbow("■ ").orange }
-  	(4 - @defense).times { print Rainbow("■ ").cyan }
+  	blocks = [defense, 4].min
+  	blocks.times { print Rainbow("■ ").orange }
+  	(4 - blocks).times { print Rainbow("■ ").cyan }
   end
   def print_hearts_meter
     print "HEARTS "

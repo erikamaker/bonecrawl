@@ -148,7 +148,7 @@ class Hook < Fixture
   end
   def view
     puts "	   - It looks sinister. Intuition"
-    puts "	     tells you the goblins use it"
+    puts "	     tells you that demons use it"
     puts "	     to hang more than just coats"
     puts "	     and keys.\n\n"
     @@player.toggle_state_idle
@@ -181,7 +181,7 @@ class Table < Surface
   	puts "	     table cut from solid rock.\n\n"
   end
   def subtype_view
-  	puts "	   - Its rocky top rises to meet"
+  	puts "	   - Its rugged top rises to meet"
   	puts "	     you at your neck.\n\n"
   end
 end
@@ -205,7 +205,7 @@ class Grave < Surface
   	["grave","slab","gravestone","headstone"]
   end
   def display_backdrop
-  	puts "	   - You stand a square headstone"
+  	puts "	   - You stand before a headstone"
   	puts "	     sticking out of the ground.\n\n"
   end
   def display_inscription
@@ -226,7 +226,7 @@ end
 class Lockpick < Weapon
   def initialize
     super
-    @profile = {:build => "copper", :lifespan => rand(2..4), :damage => 2}
+    @profile = {:build => "copper", :lifespan => 3, :damage => 2}
   end
   def subtype
     ["lock pick", "metal lock pick", "metal pick", "pick", "tool"]
@@ -274,8 +274,8 @@ class Lighter < Tool
     ["silver lighter", "lighter"]
   end
   def display_description
-  	puts "	   - It's indiscriminately fueled"
-    puts "	     by grease, wax, or sap.\n\n"
+  	puts "	   - It can be refueled using any"
+    puts "	     grease, wax, or sap.\n\n"
   end
 end
 
@@ -330,16 +330,17 @@ end
 class Staff < Weapon
   def initialize
     super
-    @profile = { :build => "wood", :lifespan => rand(15..25), :damage => 4 }
+    @profile = { :build => "wood", :lifespan => rand(5..10), :damage => 1 }
   end
   def subtype
     ["staff"]
   end
   def display_description
     puts "	   - It's a magick staff. It can"
-    puts "	     blind enemies in battle.\n\n"
+    puts "	     pacify a hostile demon.\n\n"
   end
 end
+
 
 ##############################################################################################################################################################################################################################################################
 #####    FOOD    #############################################################################################################################################################################################################################################
@@ -355,7 +356,7 @@ class Bread < Edible
     ["bread"]
   end
   def display_backdrop
-  	puts "	   - Some goblin bread sits here.\n\n"
+  	puts "	   - A loaf of bread sits here.\n\n"
   end
   def display_description
   	puts "	   - It's stale and burnt.\n\n"
@@ -379,23 +380,6 @@ class Apple < Edible
   end
 end
 
-class Plum < Edible
-  def initialize
-    super
-    @profile = { :hearts => 1, :portions => 4 }
-  end
-  def subtype
-    ["plum"]
-  end
-  def display_backdrop
-    puts "	   - A big black plum sits here.\n\n"
-  end
-  def display_description
-    puts "	   - Plums like these work well"
-    puts "	     in elixers. They're edible.\n\n"
-  end
-end
-
 class Mushroom < Edible
   def initialize
     super
@@ -415,42 +399,7 @@ class Mushroom < Edible
   def side_effect
     puts "	     The walls begin to breathe."
     puts "	     Colors whirl in your eyes.\n\n"
-  end
-end
-
-class Flesh < Edible
-  def initialize
-    super
-    @profile = { :hearts => 2, :portions => 2 }
-  end
-  def subtype
-    ["jerky","meat"]
-  end
-  def display_backdrop
-    puts "	   - A small strip of smoked meat"
-    puts "	     lays across the ground here.\n\n"
-  end
-  def display_description
-    puts "	   - It's dry and salty. It might"
-    puts "	     cook well with some bread.\n\n"
-  end
-end
-
-class Salt < Portable
-  def targets
-    ["salt","seasoning","sodium","cube"]
-  end
-  def display_backdrop
-    puts "	   - A pink cube of salt as big as"
-    puts "	     your fist sits here.\n\n"
-  end
-  def view
-    puts "	   - Cook it alongside ingredients"
-    puts "	     to increase healing potential.\n\n"
-  end
-  def wrong_move
-    puts "	   - It wouldn't taste right on its"
-    puts "	     own. You decide against it.\n\n"
+    @@player.effect = :trance
   end
 end
 
@@ -514,35 +463,38 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-class Juice < Liquid
-  def initialize
-    super
-  	@profile = { :effect => :focus, :portions => 3, :hearts => 3 }
-  end
-  def subtype
-    ["juice", "potion", "medicine","luck","elixer"]
-  end
-  def display_description
-  	puts "	   - It's cherub juice. It builds"
-    puts "	     accuracy, and heals hearts.\n\n"
-  end
-  def activate_side_effects
-    @@player.focus = 4
-    @@player.focus_timer += 20
-  end
-end
-
 class Water < Liquid
   def initialize
     super
-    @profile = { :effect => :luck, :magnitude => 3, :portions => 3 }
+    @profile = { :effect => :reset, :portions => 3, :hearts => 0 }
   end
   def subtype
-    ["water","holy water"]
+    ["water"]
   end
   def display_description
-  	puts "	   - It's water bottled by a rebel"
-    puts "	     cherub. It increases luck.\n\n"
+    puts "	   - It's water bottled by a rebel"
+    puts "	     cherub. It resets all effects"
+    puts "	     by itself. Brewed with either"
+    puts "	     red or purple flowers, and it"
+    puts "	     has more myserious effects.\n\n"
+  end
+end
+
+class Juice < Liquid
+  def initialize
+    super
+  	@profile = { :effect => :focus, :portions => 3, :hearts => 4 }
+  end
+  def subtype
+    ["juice","potion", "medicine","luck","elixer"]
+  end
+  def display_description
+  	puts "	   - It's cherub juice. It builds"
+    puts "	     focus, and heals all hearts.\n\n"
+  end
+  def activate_side_effects
+    @@player.focus = 4
+    @@player.focus_clock += 20
   end
 end
 
@@ -555,8 +507,12 @@ class Tonic < Liquid
     ["antidote","cure","exorcism"]
   end
   def display_description
-  	puts "	   - Made from rebel cherub spring"
-    puts "	     water, it cures demon hexes."
+  	puts "	   - It's cherub tonic. It builds"
+    puts "	     damage defense for 20 pages."
+  end
+  def activate_side_effects
+    @@player.defense = 4
+    @@player.block_clock += 20
   end
 end
 
@@ -573,7 +529,11 @@ class Torch < Burnable
       @lit = true
   end
   def targets
-      ["torch", "iron torch", "black torch", "metal torch"]
+      if !@lit
+        ["torch", "iron torch", "black torch", "metal torch"]
+      else
+        ["torch", "iron torch", "black torch", "metal torch","fire","flame"]
+      end
   end
   def moveset
       MOVES[1] | MOVES[9]
@@ -590,11 +550,19 @@ class Torch < Burnable
   def douse_torch
       @lit = false
   end
+  def use_lighter
+    if @@player.search_inventory(Fuel)
+      use_fuel
+      unique_burn_screen
+      remove_from_board
+    else
+      puts "	   - You're out of lighter fuel.\n\n"
+    end
+  end
   def unique_burn_screen
     if @lit
-      puts "	   - It's already lit.\n\n"
+      puts "	   - The torch is already lit.\n\n"
     else
-      use_fuel
       puts Rainbow("	   - The cold base of the torch").orange
       puts Rainbow("	     lights and catches fire.\n").orange
       reveal_secret
@@ -619,14 +587,13 @@ class Torch < Burnable
   end
 end
 
-
 class Blossom < Burnable
   def targets
     subtype | ["flower","blossom","plant","drug"]
   end
   def unique_burn_screen
     puts "	   - You hold the blossom against"
-    puts "	     the fire, inhaling its smoke."
+    puts "	     the fire, inhaling its smoke.\n\n"
     burn_effect
     print "\n"
   end
@@ -638,7 +605,7 @@ end
 class RedFlower < Blossom
   def initialize
     super
-  	@profile = { :effect => :sedation, :defense => 2 , :attack => -1}
+  	@profile = { :effect => :sedation, :defense => 2}
   end
   def subtype
   	["blood flower","crimson","red flower","red"]
@@ -648,9 +615,9 @@ class RedFlower < Blossom
   	puts "	     pain reliever and sedative.\n\n"
   end
   def burn_effect
-    puts Rainbow("	     A flushed and dreamy feeling").orange
-    print Rainbow("	     tickles through your body.\n\n").orange
-    display_profile
+    puts Rainbow("	   - You feel flushed and dreamy.").orange
+    print Rainbow("	     Your defense increases by 2.\n").orange
+    @@player.block_clock += 100
   end
 end
 
@@ -669,13 +636,13 @@ class PurpleFlower < Blossom
   def burn_effect
     puts "	     You feel light as a feather,"
     puts "	     and sharp as a razor.\n\n"
-    @agitation = 10
+    display_profile
   end
 end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    SILVER     ############################################################################################################################################################################################################################################
+#####    SILVER     ##########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
@@ -684,9 +651,9 @@ class Ore  < Portable
       subtype | ["ore","ingot"]
     end
     def view
-        puts "	   - It's worthless, but is often"
-        puts "	     used in crafting weapons.\n\n"
-      end
+        puts "	   - It's worthless in Hell, but"
+        puts "	     useful in crafting weapons.\n\n"
+    end
 end
 
 class Silver < Ore
@@ -724,7 +691,7 @@ end
 
 class Fat < Fuel
   def subtype
-    ["worm fat","stinkworm fat", "fat"]
+    ["fat"]
   end
   def display_backdrop
     puts "	   - A wad of stinkworm fat sulks"
@@ -738,11 +705,11 @@ end
 
 class Wax < Fuel
   def subtype
-    ["wax","cave wax","cavern wax"]
+    ["wax"]
   end
   def display_backdrop
-    puts "	   - A wad of orange wax grows out"
-  	puts "	     of the cave wall here.\n\n"
+    puts "	   - A wad of orange froths out of"
+  	puts "	     the cave wall here.\n\n"
   end
   def view
     puts "	   - It's cave wax. Most commonly,"
@@ -760,7 +727,7 @@ class Sap < Fuel
   end
   def view
     puts "	   - It's a rich amber color, but"
-  	puts "	     inedible. Makes good fuel.\n\n"
+  	puts "	     inedible. IT makes good fuel.\n\n"
   end
 end
 
@@ -780,7 +747,7 @@ class Leather < Portable
   	puts "	     lays on the ground.\n\n"
   end
   def view
-    puts "	   - It's durable leather. Usually"
+    puts "	   - It's durable leather. Usually,"
   	puts "	     it's used for crafting armor.\n\n"
   end
 end
@@ -819,11 +786,11 @@ class Bone < Portable
   end
   def display_backdrop
     puts "	   - A dirty bone fragment lays at"
-  	puts "	     your feet.\n\n"
+  	puts "	     your feet on the floor.\n\n"
   end
   def view
     puts "	   - It's a brittle base for tools"
-  	puts "	     and weapons. Just add metal.\n\n"
+  	puts "	     and weapons.\n\n"
   end
 end
 
@@ -860,8 +827,8 @@ class Feather < Portable
   	puts "	     lays on the floor here.\n\n"
   end
   def view
-    puts "	   - It's used for crafting arrows,"
-  	puts "	     or writing with squid ink.\n\n"
+    puts "	   - It's used for crafting magick"
+  	puts "	     staves, and sometimes potions.\n\n"
   end
 end
 
@@ -880,6 +847,10 @@ class Ash < Portable
 end
 
 class Branch < Burnable
+  def initialize
+    super
+    @ash = Ash.new
+  end
   def targets
     ["branch","stick","skin"]
   end
@@ -888,20 +859,17 @@ class Branch < Burnable
   	puts "	     the tree's gnarled roots.\n\n"
   end
   def burn_effect
-    puts "	   - You put the resulting ash in"
-    puts "	     your rucksack.\n\n"
-    @@inventory.delete(self)
-    @@inventory.push(Ash.new)
+    @@player.items.delete(self)
+    @ash.take
   end
   def unique_burn_screen
-    puts "	   - You hold the branch over the"
-    puts "	     fire. It burns quickly.\n\n"
+    puts Rainbow("	   - You hold the branch over the").orange
+    puts Rainbow("	     flame. It smolders to ashes.\n").orange
     burn_effect
   end
   def view
     puts "	   - Made of hardy wood, it builds"
-  	puts "	     sturdy bases for tools. It is"
-    puts "	     sometimes burned for ashes.\n\n"
+  	puts "	     magick staves. It is burnable.\n\n"
   end
 end
 
@@ -914,8 +882,8 @@ class Gland < Portable
   	puts "	     drips ink on the floor here.\n\n"
   end
   def view
-    puts "	   - It's rubbery and fat with ink."
-  	puts "	     A common brewing ingredient.\n\n"
+    puts "	   - It's rubbery and fat with ink,"
+  	puts "	     a common brewing component.\n\n"
   end
 end
 
@@ -927,18 +895,18 @@ end
 
 
 class Femur < Bone
-    def subtype
-      ["femur"]
-    end
-    def display_backdrop
-        puts "	   - A thick, white femur lays at"
-        puts "	     your feet on the ground.\n\n"
-    end
-    def view
-      puts "	   - It's your femur. Bring it to"
-      puts "	     this level's altar to ascend.\n\n"
-    end
+  def subtype
+    ["femur"]
   end
+  def display_backdrop
+      puts "	   - A thick, crystal femur lays at"
+      puts "	     your feet on the ground.\n\n"
+  end
+  def view
+    puts "	   - It's your lost femur. Fetch it"
+    puts "	     to the altar and ascend.\n\n"
+  end
+end
 
 
 ##############################################################################################################################################################################################################################################################
@@ -951,6 +919,7 @@ class Clothes < Tool
     subtype | ["clothing","clothes","garb","armor"]
   end
   def equip
+    SoundBoard.equip_item
     self.push_to_player_inventory if @@player.items.none?(self)
     view
     puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
@@ -1025,7 +994,6 @@ end
 class SilverRing < Ring  # Requires 1 silver
   def initialize
     @targets = ["ring","band"]
-
     @profile = {:build => "silver", :rune => "none"}
   end
   def display_backdrop
@@ -1052,9 +1020,6 @@ end
 
 
 class Toilet < Container
-  def needkey
-  	false
-  end
   def targets
     ["drain","toilet","bowl","lid"]
   end
@@ -1065,8 +1030,9 @@ class Toilet < Container
 end
 
 class Chest < Container
-  def needkey
-    true
+  def initialize
+    super
+    @needkey = true
   end
   def targets
     ["chest","strongbox","lootbox","box"]
@@ -1078,8 +1044,9 @@ class Chest < Container
 end
 
 class Urn < Container
-  def needkey
-    false
+  def initialize
+    super
+    @needkey = false
   end
   def targets
     ["urn","jar","bottle","remains"]
@@ -1090,8 +1057,9 @@ class Urn < Container
 end
 
 class Barrel < Container
-  def needkey
-    false
+  def initialize
+    super
+    @needkey = false
   end
   def targets
     ["barrel","keg","drum","vat"]

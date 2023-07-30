@@ -31,7 +31,7 @@ module Inventory
     return if target_isnt_inventory
     if opening_or_viewing
       open_inventory
-      toggle_engaged
+      toggle_state_engaged
     end
   end
   def equipped_weapon

@@ -210,8 +210,8 @@ end
 feather = Feather.new
 feather.location = [[0,2,1]]
 
-branch = Branch.new
-branch.location = [[0,2,1]]
+flower = RedFlower.new
+flower.location = [[0,2,1]]
 
 
 ##############################################################################################################################################################################################################################################################
@@ -219,7 +219,7 @@ branch.location = [[0,2,1]]
 ##############################################################################################################################################################################################################################################################
 
 
-levels = [ room_1, torch_1, branch, feather, lighter, fat, fat1, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
+levels = [ room_1, torch_1, flower, feather, lighter, fat1, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
 =begin
 system("clear")  # Clear the screen
@@ -260,10 +260,9 @@ loop do
   Board.player.load_inventory
   Board.player.target_does_not_exist
   Board.player.game_over
-  Board.player.reset_input
+  Board.player.turn_page
   Board.player.page_bottom
   Board.player.page_top
-  Board.player.turn_page
 end
 
 

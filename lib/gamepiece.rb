@@ -48,7 +48,7 @@ class Gamepiece < Board
     end
   end
   def interpret_action
-    @@player.actions.each do |action, moves|
+    Board.actions.each do |action, moves|
       send(action) if moves.include?(@@player.action)
     end
   end
@@ -56,6 +56,10 @@ class Gamepiece < Board
     execute_special_behavior
     player_near? ? reveal_targets_to_player : return
     @@player.state_idle? ? display_backdrop : interact
+  end
+  def wrong_move
+    puts "	   - It would be uesless to try."
+    puts "	     A page passes in vain.\n\n"
   end
   def interact
     return if targets.none?(@@player.target)
@@ -241,10 +245,11 @@ class Burnable < Portable
   end
   def use_lighter
     if @@player.search_inventory(Fuel)
+      use_fuel
       unique_burn_screen
       remove_from_board
     else
-      puts "	    - You're out of lighter fuel.\n\n"
+      puts "	   - You're out of lighter fuel.\n\n"
     end
   end
   def wrong_move
@@ -363,7 +368,7 @@ class FruitTree < Edible
   def execute_special_behavior
     @fruit.count < 3 && grow_fruit
   end
-  def be_patient
+  def fruit_needs_time_to_grow
     puts "	   - The fruit needs time to grow.\n\n"
     @@player.toggle_state_idle
   end
@@ -372,7 +377,7 @@ class FruitTree < Edible
       @fruit[0].take
       @fruit.shift
     else
-      be_patient
+      fruit_needs_time_to_grow
     end
   end
   def feed
@@ -384,7 +389,7 @@ class FruitTree < Edible
     display_description
     display_profile
     print "\n"
-    be_patient if @fruit.count < 1
+    fruit_needs_time_to_grow if @fruit.count < 1
   end
 end
 
@@ -404,6 +409,9 @@ class Tool < Portable
   def equip
     puts "	   - This item will automatically"
     puts "	     apply in its time of need.\n\n"
+  end
+  def damage_item
+    profile[:lifespan] -= 1
   end
   def break_item
     if profile[:lifespan] == 0
@@ -429,6 +437,7 @@ class Weapon < Tool
     subtype | ["weapon"]
   end
   def equip
+    SoundBoard.equip_item
     self.push_to_player_inventory if @@player.items.none?(self)
     view
     puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
@@ -584,23 +593,39 @@ class Character < Gamepiece
     @@player.remove_from_inventory(player_leverage)
     become_passive
   end
+
+
+
+
+
+
+
+
+
+
   def battle
     @@player.move_to_attack
     did_player_hit_me?
   end
+  def damage_player_weapon
+    if @@player.weapon_equipped?
+      @@player.weapon.damage_item
+      @@player.weapon.break_item
+    end
+  end
   def take_damage
-    @profile[:hearts] -= @@player.damage_power
+    @profile[:hearts] -= @@player.attack_power
     if @profile[:hearts] > 0
       print Rainbow("	   - You hit it. #{@profile[:hearts]} heart").green
       print Rainbow("s").green if @profile[:hearts] > 1
       print Rainbow(" remain").green
       print Rainbow("s").green if @profile[:hearts] == 1
       print Rainbow(".\n\n").green
-      @@player.damage_weapon
+      damage_player_weapon
     end
   end
   def did_player_hit_me?
-    if @@player.accuracy_level > 2
+    if @@player.focus_level > 2
       SoundBoard.hit_enemy
       take_damage
       become_hostile if alive?
@@ -610,8 +635,8 @@ class Character < Gamepiece
       become_hostile
     end
   end
-  def accuracy_level
-    rand(@profile[:focus]..2) == 2
+  def focus_level
+    rand(@profile[:focus]..2)
   end
   def dodge_player_attack
     puts Rainbow("	   - The demon dodges your attack.\n").red
@@ -636,11 +661,11 @@ class Character < Gamepiece
     end
   end
   def attack_outcome
-    if accuracy_level
-      damage_done = @@player.health - @@player.lose_health(attack_power)
+    if focus_level == 2
+      damage_done = @@player.lose_health(attack_power)
       print Rainbow("	   - It costs you #{damage_done} heart point").red
       damage_done > 1 ? print(Rainbow("s.\n").red) : print(Rainbow(".\n").red)
-      @@player.display_armor_result
+      @@player.display_added_defense
     else
       puts Rainbow("	   - You narrowly avoid its blow.\n").green
     end
@@ -711,14 +736,14 @@ class Altar < Gamepiece
     puts Rainbow("	     altar cut from black marble.\n").purple
   end
   def talk
-    craft
+    make
   end
   def display_description
     puts Rainbow("	   - It towers up to your chest.").purple
     puts Rainbow("	     Your ears ring a little.\n").purple
     wrong_move
   end
-  def craft
+  def make
     print Rainbow("	   - You feel compelled to kneel.\n").red
     if any_materials? == true
         print Rainbow("	     The spirits offer a trade...\n\n").red
@@ -751,19 +776,19 @@ class Altar < Gamepiece
     @@player.all_item_types.count(Gold) > 1
   end
   def sneaker_materials?
-    (@@player.all_item_types & [Rubber, Leather]).size == 2
+    (@@player.all_item_types & [Rubber,Leather]).size == 2
   end
   def hoodie_materials?
-    (@@player.all_item_types & [Silver, Silk]).size == 2
+    (@@player.all_item_types & [Silver,Silk]).size == 2
   end
   def staff_materials?
-    (@@player.all_item_types & [Branch, Feather]).size == 2
+    (@@player.all_item_types & [Branch,Feather]).size == 2
   end
   def tonic_materials?
-    (@@player.all_item_types & [Water, PurpleFlower]).size == 2
+    (@@player.all_item_types & [Water,PurpleFlower]).size == 2
   end
   def juice_materials?
-    (@@player.all_item_types & [Water, RedFlower]).size == 2
+    (@@player.all_item_types & [Water,RedFlower]).size == 2
   end
   def any_materials?
     materials = [
@@ -831,28 +856,28 @@ class Altar < Gamepiece
     materials.each { |material| delete_material(material) }
   end
   def build_lock_pick
-    build_item(@lock_pick_stock, ["key", "key"])
+    build_item(@lock_pick_stock, ["key","key"])
   end
   def build_silver_ring
-    build_item(@silver_ring_stock, ["silver", "silver"])
+    build_item(@silver_ring_stock, ["silver","silver"])
   end
   def build_gold_ring
-    build_item(@gold_ring_stock, ["gold", "gold"])
+    build_item(@gold_ring_stock, ["gold","gold"])
   end
   def build_sneakers
-    build_item(@sneaker_stock, ["rubber", "leather"])
+    build_item(@sneaker_stock, ["rubber","leather"])
   end
   def build_hoodie
-    build_item(@hoodie_stock, ["silk", "silver"])
+    build_item(@hoodie_stock, ["silk","silver"])
   end
   def build_staff
-    build_item(@staff_stock, ["branch", "feather"])
+    build_item(@staff_stock, ["branch","feather"])
   end
   def build_tonic
-    build_item(@tonic_stock, ["water", "purple flower"])
+    build_item(@tonic_stock, ["water","purple flower"])
   end
   def build_juice
-    build_item(@Juice_stock, ["water", "red flower"])
+    build_item(@Juice_stock, ["water","red flower"])
   end
   def delete_material(material)
     @@player.items.find { |item| item.targets.include?(material) && @@player.remove_from_inventory(item) }
@@ -881,7 +906,7 @@ class Altar < Gamepiece
       not_an_option
     end
   end
-    def wrong_move
+  def wrong_move
     print "	   - A sacrificial altar can be\n"
     print Rainbow("	     prayed to" ).cyan + ", or "
     print Rainbow("examined").cyan + ".\n\n"
