@@ -580,7 +580,7 @@ class Character < Gamepiece
     if ["yes","yeah","sure","yep","aye"].include?(choice)
       exchange_gifts
     else
-        puts "	   - It's a little pissed off.\n\n"
+        puts "	   - It doesn't look thrilled.\n\n"
     end
   end
   def exchange_gifts
@@ -594,16 +594,6 @@ class Character < Gamepiece
     @@player.remove_from_inventory(player_has_leverage)
     become_passive
   end
-
-
-
-
-
-
-
-
-
-
   def battle
     @@player.move_to_attack
     did_player_hit_me?
@@ -633,7 +623,7 @@ class Character < Gamepiece
     end
   end
   def did_player_hit_me?
-    if @@player.focus_level > 2
+    if @@player.focus_level > 2 || @@player.curse_clock > 0
       take_damage
       become_hostile if alive?
       play_death_scene if slain?
@@ -646,7 +636,7 @@ class Character < Gamepiece
     rand(@profile[:focus]..2)
   end
   def dodge_player_attack
-    puts Rainbow("	   - The demon dodges your attack.\n").red
+    puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
   end
   def attack_player
     puts "	   - The #{subtype[0]} strikes to attack"
@@ -671,14 +661,14 @@ class Character < Gamepiece
     return if !@demonic
     return if @@player.curse_clock > 0
     curse = rand(3..10)
-    if rand(3..3) == 3
+    if rand(1..3) == 3
         puts Rainbow("	   - The demon manages to possess").red
         puts Rainbow("	     you for #{curse} pages.\n").red
         @@player.curse_clock += curse
     end
   end
   def attack_outcome
-    if focus_level == 2
+    if focus_level == 2 or @@player.curse_clock > 0
       damage_done = @@player.lose_health(attack_power)
       @@player.display_added_defense
       puts "	   - The attack costs you a total"

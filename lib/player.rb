@@ -64,6 +64,7 @@ class Player
     toggle_state_idle
     effects_cooldown
     reset_input
+    print @curse_clock
   end
   def remove_from_inventory(item)
     @items.delete(item)
