@@ -126,10 +126,10 @@ class Player
         print Rainbow("#{armor.profile[:defense]}").red
         print " damage\n"
         print "	     points. Watch its lifespan.\n\n "
-        armor.profile[:lifespan] -= armor.profile[:defense]
+        armor.profile[:lifespan] -= 1
     end
     if @block_clock > 1
-        puts Rainbow("	   - Your emboldened defense will").orange
+        puts Rainbow("	   - Your enchanted defense shall").orange
         puts Rainbow("	     last #{@block_clock - 1} more pages.\n").orange
     end
   end

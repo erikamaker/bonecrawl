@@ -1181,7 +1181,7 @@ class Hellion < Character
   end
 end
 
-class Hellion < Character
+class Goblin < Character
     def initialize
       super
       @demonic = false

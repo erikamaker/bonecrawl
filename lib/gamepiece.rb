@@ -599,10 +599,21 @@ class Character < Gamepiece
     @@player.move_to_attack
     did_player_hit_me?
   end
+  def violent_possession
+    def damage_done
+        @@player.lose_health(@@player.attack)
+    end
+    if rand(1..3) == 3
+        puts "	   - Horrified, you watch it turn"
+        puts "	     and attack your own body.\n\n"
+        damage_player
+    end
+  end
   def take_damage
     if @@player.curse_clock > 0
         puts Rainbow("	   - The demon's curse is strong.").red
         puts Rainbow("	     Your arm locks in place.\n").red
+        violent_possession
         return
     end
     @profile[:hearts] -= @@player.attack
@@ -670,15 +681,20 @@ class Character < Gamepiece
       @@player.curse_clock += curse_duration
     end
   end
-  def attack_outcome
-    if focus_level == 2 or @@player.curse_clock > 0
-      damage_done = @@player.lose_health(attack_power)
+  def damage_done
+    @@player.lose_health(attack_power)
+  end
+  def damage_player
       @@player.display_added_defense
       puts "	   - The attack costs you a total"
       print "	     of #{Rainbow(damage_done).red} heart point"
       damage_done != 1 ? print("s.\n\n") : print(".\n\n")
       @@player.health -= @@player.lose_health(attack_power)
       SoundBoard.take_damage
+  end
+  def attack_outcome
+    if focus_level == 2 or @@player.curse_clock > 0
+      damage_player
       curse_player
     else
       puts Rainbow("	   - You narrowly avoid its blow.\n").green
