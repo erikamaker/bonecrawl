@@ -36,9 +36,17 @@ module Navigation
     print Rainbow("east").orange + ", or "
     print Rainbow("west").orange + ".\n\n"
   end
+  def can_player_walk?
+    if @curse_clock < 1
+        reposition_player
+    else
+        puts Rainbow("	   - You're possessed. You cannot").red
+        puts Rainbow("	     take a single step.\n").red
+    end
+  end
   def detect_direction
     if directions.include?(@target)
-      reposition_player
+      can_player_walk?
     else no_direction_detected
     end
   end

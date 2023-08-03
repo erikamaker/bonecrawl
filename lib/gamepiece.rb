@@ -636,7 +636,7 @@ class Character < Gamepiece
     rand(@profile[:focus]..2)
   end
   def dodge_player_attack
-    puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
+    puts Rainbow("	   - The beast dodges your attack.\n").red
   end
   def attack_player
     puts "	   - The #{subtype[0]} strikes to attack"
