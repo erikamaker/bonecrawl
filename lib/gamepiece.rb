@@ -540,8 +540,8 @@ class Character < Gamepiece
     @profile[:hostile] = @hostile
   end
   def execute_special_behavior
-    update_profile
-    if @hostile && alive?
+    update_profile # living things are always in flux :-)
+    if @hostile && alive? # and they fight for their right to party ;-)
       attack_player
     end
   end
@@ -559,7 +559,7 @@ class Character < Gamepiece
   end
   def conversation
     if @passive
-        unlocked_script
+        passive_script
     else
         business_as_usual
     end
@@ -577,10 +577,11 @@ class Character < Gamepiece
     bartering_outcome(choice)
   end
   def bartering_outcome(choice)
-    if ["yes","yeah","sure","yep","aye"].include?(choice)
+    if AFFIRMATIONS.include?(choice)
       exchange_gifts
     else
-        puts "	   - It doesn't look thrilled.\n\n"
+        puts "	   - It doesn't look too thrilled.\n\n"
+        become_hostile if rand(1..3) == 3
     end
   end
   def exchange_gifts

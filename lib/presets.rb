@@ -1173,7 +1173,7 @@ class Hellion < Character
   end
   def hostile_script
     puts "	   - Its black pupils quiver with"
-    puts "	     rage. It looks rabid.\n\n"
+    puts "	     rage. It bleats aggressively.\n\n"
   end
   def display_description
     puts "	   - It's a hellion. This goatish"
