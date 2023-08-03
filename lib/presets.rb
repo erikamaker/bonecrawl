@@ -616,7 +616,7 @@ class RedFlower < Blossom
   def burn_effect
     puts Rainbow("	   - You feel light as a feather.").orange
     print Rainbow("	     Your defense maxes out.\n").orange
-    @@player.block_clock += 20
+    @@player.block_clock += 5
   end
 end
 
@@ -635,7 +635,7 @@ class PurpleFlower < Blossom
   def burn_effect
     puts "	     You feel light as a feather,"
     puts "	     and sharp as a razor.\n\n"
-    display_profile
+    @@player.block_clock += 5
   end
 end
 
@@ -1165,7 +1165,7 @@ class Hellion < Character
     @profile = {:hearts => 10, :focus => 1}
   end
   def subtype
-    ["hellion","goat","monster","enemy","demon","daemon"]
+    ["hellion","goat","monster","beast","enemy","demon","daemon"]
   end
   def docile_backdrop
     puts "	   - A dark hellion stands on two\n"
@@ -1180,3 +1180,30 @@ class Hellion < Character
     puts "	     demon has a quick temper.\n\n"
   end
 end
+
+class Hellion < Character
+    def initialize
+      super
+      @demonic = false
+      @weapons = [Knife.new]
+      @rewards = [Bread.new,Hoodie.new]
+      @content = @weapons | @rewards
+      @desires = Lighter.new
+      @profile = {:hearts => 8, :focus => 1}
+    end
+    def subtype
+      ["goblin","imp","orc","yrch","enemy","monster","beast","demon","daemon"]
+    end
+    def docile_backdrop
+      puts "	   - A knobby goblin stoops near\n"
+      puts "	     you in a black hoodie.\n\n"
+    end
+    def hostile_script
+      puts "	   - Its yellow eyes narrow with"
+      puts "	     cunning. It bears its fangs.\n\n"
+    end
+    def display_description
+      puts "	   - It's a pallid-green goblin."
+      puts "	     Its kind is untrustworthy.\n\n"
+    end
+  end
