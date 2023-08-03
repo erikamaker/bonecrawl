@@ -75,6 +75,12 @@ class Player
   def armor_equipped?
     armor != nil
   end
+  def damage_weapon
+    if weapon_equipped?
+      weapon.damage_item
+      weapon.break_item
+    end
+  end
   def clear_weapon
     @weapon = nil
   end

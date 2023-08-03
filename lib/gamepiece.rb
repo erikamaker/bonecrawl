@@ -599,16 +599,10 @@ class Character < Gamepiece
     @@player.move_to_attack
     did_player_hit_me?
   end
-  def damage_player_weapon
-    if @@player.weapon_equipped?
-      @@player.weapon.damage_item
-      @@player.weapon.break_item
-    end
-  end
   def take_damage
     if @@player.curse_clock > 0
         puts Rainbow("	   - The demon's curse is strong.").red
-        puts Rainbow("	     You can't move.\n").red
+        puts Rainbow("	     Your arm locks in place.\n").red
         return
     end
     @profile[:hearts] -= @@player.attack
@@ -619,7 +613,7 @@ class Character < Gamepiece
       print Rainbow(" remain").green
       print Rainbow("s").green if @profile[:hearts] == 1
       print Rainbow(".\n\n").green
-      damage_player_weapon
+      @@player.damage_weapon
       @@player.display_added_focus
     end
   end
@@ -658,14 +652,22 @@ class Character < Gamepiece
     else 1
     end
   end
+  def curse_chance
+    rand(1..3)
+  end
+  def curse_duration
+    rand(5..10)
+  end
+  def display_curse_message
+    puts Rainbow("	   - The demon manages to possess").red
+    puts Rainbow("	     you for #{curse_duration} pages.\n").red
+  end
   def curse_player
-    return if !@demonic
-    return if @@player.curse_clock > 0
-    curse = rand(3..10)
-    if rand(1..3) == 3
-        puts Rainbow("	   - The demon manages to possess").red
-        puts Rainbow("	     you for #{curse} pages.\n").red
-        @@player.curse_clock += curse
+    if !@demonic || @@player.curse_clock > 0
+      return
+    elsif curse_chance == 3
+      display_curse_message
+      @@player.curse_clock += curse_duration
     end
   end
   def attack_outcome
