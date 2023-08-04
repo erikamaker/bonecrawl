@@ -139,7 +139,7 @@ class Player
         puts Rainbow("	     just #{@focus_clock - 1} more pages.\n").cyan
     end
   end
-  def damage_endured(magnitude)
+  def lose_health(magnitude)
     total = (magnitude - defense)
     total > 0 ? total : 0
   end

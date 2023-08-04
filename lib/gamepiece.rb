@@ -641,7 +641,7 @@ class Character < Gamepiece
   end
   def violent_possession
     def damage_done
-        @@player.damage_endured(@@player.attack)
+        @@player.lose_health(@@player.attack)
     end
     if curse_chance == 3  #for bosses, increase their random low range from 1 to 2.
         puts "	   - Horrified, you watch it turn"
@@ -682,13 +682,13 @@ class Character < Gamepiece
   end
   def damage_player
     def damage_done
-      @@player.damage_endured(attack_power)
+      @@player.lose_health(attack_power)
     end
     @@player.display_added_defense
     puts "	   - The attack costs you a total"
     print "	     of #{Rainbow(damage_done).red} heart point"
     damage_done != 1 ? print("s.\n\n") : print(".\n\n")
-    @@player.health -= @@player.damage_endured(attack_power)
+    @@player.health -= @@player.lose_health(attack_power)
     SoundBoard.take_damage
   end
   def curse_player
