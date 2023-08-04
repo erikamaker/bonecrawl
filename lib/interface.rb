@@ -13,7 +13,7 @@ module Interface
   def header
     print Rainbow("\n---------------------------------------------------------\n").blue.bright
     print Rainbow("[").blue.bright
-    print Rainbow("           BONE CRAWL  |  CH. 1  |  2020 ©             ").violet.bright
+    print Rainbow("          Bone Crawl  |  Chapter 1  |  2020 ©          ").red
     print Rainbow("]").blue.bright
     print Rainbow("\n---------------------------------------------------------").blue.bright
     print "\n\n\n\n\n"

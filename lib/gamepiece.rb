@@ -599,6 +599,9 @@ class Character < Gamepiece
     @@player.move_to_attack
     did_player_hit_me?
   end
+
+
+
   def violent_possession
     def damage_done
         @@player.damage_endured(@@player.attack)
@@ -607,15 +610,10 @@ class Character < Gamepiece
         puts "	   - Horrified, you watch it turn"
         puts "	     and attack your own body.\n\n"
         damage_player
+    else player_successful_hit
     end
   end
-  def take_damage
-    if @@player.curse_clock > 0
-        puts Rainbow("	   - The demon's curse is strong.").red
-        puts Rainbow("	     Your arm locks in place.\n").red
-        violent_possession
-        return
-    end
+  def player_successful_hit
     @profile[:hearts] -= @@player.attack
     if @profile[:hearts] > 0
       SoundBoard.hit_enemy
@@ -628,6 +626,19 @@ class Character < Gamepiece
       @@player.display_added_focus
     end
   end
+  def take_damage
+    if @@player.curse_clock > 0
+        puts Rainbow("	   - The demon's curse is strong.").red
+        puts Rainbow("	     You struggle to fight it.\n").red
+        violent_possession
+        return
+    end
+    player_successful_hit
+  end
+
+
+
+
   def did_player_hit_me?
     if @@player.focus_level > 2 || @@player.curse_clock > 0
       take_damage
@@ -681,10 +692,10 @@ class Character < Gamepiece
       @@player.curse_clock += curse_duration
     end
   end
-  def damage_done
-    @@player.damage_endured(attack_power)
-  end
   def damage_player
+      def damage_done
+        @@player.damage_endured(attack_power)
+      end
       @@player.display_added_defense
       puts "	   - The attack costs you a total"
       print "	     of #{Rainbow(damage_done).red} heart point"

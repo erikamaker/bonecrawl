@@ -122,8 +122,8 @@ class Player
   end
   def display_added_defense
     if armor_equipped?
-        print "	   - Your #{armor_name} absorbs "
-        print Rainbow("#{armor.profile[:defense]}").red
+        print "	   - Your #{armor_name} deflects "
+        print Rainbow("#{armor.profile[:defense]}").green
         print " damage\n"
         print "	     points. Its lifespan wanes.\n\n "
         armor.profile[:lifespan] -= 1

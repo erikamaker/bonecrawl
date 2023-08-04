@@ -496,7 +496,7 @@ class Juice < Liquid
   end
   def activate_side_effects
     puts Rainbow("	   - Your focus sharpens. Details").cyan
-    print Rainbow("	     you've never noticed shimmer.\n").cyan
+    print Rainbow("	     you've never noticed shimmer.\n\n").cyan
     @@player.focus_clock += 7
   end
 end
@@ -504,7 +504,7 @@ end
 class Tonic < Liquid
   def initialize
     super
-    @profile = { :effect => :analgesic, :portions => 2, :hearts: => 2, duration => 10 }
+    @profile = { :effect => :analgesic, :portions => 2, :hearts => 2, :duration => 10 }
   end
   def subtype
     ["tonic","brew"]
@@ -621,6 +621,7 @@ class RedFlower < Blossom
     puts Rainbow("	   - You feel light as a feather.").orange
     print Rainbow("	     Your defense begins to soar.\n").orange
     @@player.block_clock += 5
+    self.remove_from_board
   end
 end
 
@@ -640,6 +641,7 @@ end
     puts Rainbow("	   - Your focus sharpens. Details").cyan
     print Rainbow("	     you've never noticed shimmer.\n").cyan
     @@player.focus_clock += 5
+    self.remove_from_board
   end
 end
 
