@@ -582,8 +582,8 @@ class Character < Gamepiece
     if AFFIRMATIONS.include?(choice)
       exchange_gifts
     else
-        puts "	   - It doesn't look too thrilled.\n\n"
-        become_hostile if rand(1..3) == 3
+      puts "	   - It doesn't look too thrilled.\n\n"
+      become_hostile if rand(1..3) == 3
     end
   end
   def exchange_gifts
@@ -643,7 +643,7 @@ class Character < Gamepiece
     def damage_done
         @@player.damage_endured(@@player.attack)
     end
-    if rand(1..3) == 3
+    if curse_chance == 3  #for bosses, increase their random low range from 1 to 2.
         puts "	   - Horrified, you watch it turn"
         puts "	     and attack your own body.\n\n"
         damage_player
