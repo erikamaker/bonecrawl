@@ -608,19 +608,19 @@ end
 class RedFlower < Blossom
   def initialize
     super
-  	@profile = { :effect => :analgesic, :duration => 5}
+  	@profile = { :effect => :analgesic, :duration => 10}
   end
   def subtype
   	["blood flower","crimson","red flower","red"]
   end
   def display_description
-  	puts "	   - When burned, it's a powerful"
+  	puts "	   - When burned, it's a powerful,"
   	puts "	     but temporary pain reliever.\n\n"
   end
   def burn_effect
     puts Rainbow("	   - You feel light as a feather.").orange
     print Rainbow("	     Your defense begins to soar.\n").orange
-    @@player.block_clock += 5
+    @@player.block_clock += 10
     self.remove_from_board
   end
 end
@@ -628,19 +628,19 @@ end
 class PurpleFlower < Blossom
   def initialize
     super
-  	@profile = { :effect => :stimulant, :duration => 5}
+  	@profile = { :effect => :stimulant, :duration => 10}
   end
   def subtype
   	["purple flower","purple","violet","indigo"]
   end
   def display_description
-    puts "	   - When burned, it's a powerful"
+    puts "	   - When burned, it's a powerful,"
     puts "	     but temporary stimulant.\n\n"
 end
   def burn_effect
     puts Rainbow("	   - Your focus sharpens. Details").cyan
     print Rainbow("	     you've never noticed shimmer.\n").cyan
-    @@player.focus_clock += 5
+    @@player.focus_clock += 10
     self.remove_from_board
   end
 end

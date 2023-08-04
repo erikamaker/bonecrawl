@@ -98,7 +98,7 @@ def hellion_1.default_script
   puts "	     flexing in its yellow eyes."
   puts "	     It says it lost its lighter.\n\n"
 end
-def hellion_1.unlocked_script
+def hellion_1.passive_script
   puts "	   - It says this place isn't all"
   puts "	     that it seems. Be vigilant.\n\n"
 end

@@ -153,16 +153,16 @@ class Player
   end
   def effects_cooldown
     if @focus_clock > 0
-      display_clock("focus") if @focus_clock == 1
       @focus_clock -= 1
+      display_clock("focus") if @focus_clock == 1
     end
     if @block_clock > 0
-      display_clock("defense") if @block_clock == 1
       @block_clock -= 1
+      display_clock("defense") if @block_clock == 1
     end
     if @curse_clock > 0
-        display_clock("possession") if @curse_clock == 1
         @curse_clock -= 1
+        display_clock("possession") if @curse_clock == 1
     end
   end
 end

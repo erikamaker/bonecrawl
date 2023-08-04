@@ -493,19 +493,19 @@ end
 
 
 class Character < Gamepiece
-  attr_accessor :hostile, :desires, :content, :passive, :subtype, :regions, :rewards
+  attr_accessor :regions, :desires, :content, :rewards
   def initialize
     super
     @moveset = (MOVES[1] + MOVES[6] + MOVES[8]).flatten
     @hostile = false
     @passive = false
     @demonic = false
-    @regions = regions
-    @desires = desires
-    @rewards = rewards
   end
   def targets
     subtype | ["character","person","npc"]
+  end
+  def focus_level
+    rand(@profile[:focus]..2)
   end
   def alive?
     @profile[:hearts] > 0
@@ -513,7 +513,7 @@ class Character < Gamepiece
   def slain?
     @profile[:hearts] < 1
   end
-  def player_has_leverage
+  def material_leverage
     @@player.items.find do |item|
       item.targets == desires.targets
     end
@@ -528,8 +528,8 @@ class Character < Gamepiece
   def become_hostile
     unless @hostile
       @hostile = true
-      hostile_script
       @location = @regions
+      hostile_script
     end
   end
   def become_passive
@@ -539,9 +539,12 @@ class Character < Gamepiece
   def update_profile
     @profile[:hostile] = @hostile
   end
+  def reverse_curse
+    @@player.curse_clock > 0 && @@player.curse_clock = 1
+  end
   def execute_special_behavior
-    update_profile # living things are always in flux :-)
-    if @hostile && alive? # and they fight for their right to party ;-)
+    update_profile
+    if @hostile && alive?
       attack_player
     end
   end
@@ -560,13 +563,12 @@ class Character < Gamepiece
   def conversation
     if @passive
         passive_script
-    else
-        business_as_usual
+    else business_as_usual
     end
   end
   def business_as_usual
     default_script
-    barter if player_has_leverage
+    barter if material_leverage
   end
   def barter
     unique_bartering_script
@@ -592,16 +594,51 @@ class Character < Gamepiece
     reward.take
     @content = @weapons
     @content.push(@desires)
-    @@player.remove_from_inventory(player_has_leverage)
+    @@player.remove_from_inventory(material_leverage)
     become_passive
+  end
+  def weapon_equipped?
+    if @weapons[0]
+      @weapons[0]
+    else
+      "bare hands.\n\n"
+    end
+  end
+  def attack_power
+    if @weapons[0]
+      @weapons[0].profile[:damage]
+    else 1
+    end
+  end
+  def curse_chance
+    rand(1..3)
+  end
+  def curse_duration
+    rand(5..10)
   end
   def battle
     @@player.move_to_attack
-    did_player_hit_me?
+    retaliate
   end
-
-
-
+  def retaliate
+    if @@player.focus_level > 2 || @@player.curse_clock > 0
+      take_damage
+      become_hostile if alive?
+      play_death_scene if slain?
+    else
+      dodge_player_attack
+      become_hostile
+    end
+  end
+  def take_damage
+    if @@player.curse_clock > 0
+        puts Rainbow("	   - The demon's curse is strong.").red
+        puts Rainbow("	     You struggle to fight it.\n").red
+        violent_possession
+        return
+    end
+    player_successful_hit
+  end
   def violent_possession
     def damage_done
         @@player.damage_endured(@@player.attack)
@@ -626,32 +663,6 @@ class Character < Gamepiece
       @@player.display_added_focus
     end
   end
-  def take_damage
-    if @@player.curse_clock > 0
-        puts Rainbow("	   - The demon's curse is strong.").red
-        puts Rainbow("	     You struggle to fight it.\n").red
-        violent_possession
-        return
-    end
-    player_successful_hit
-  end
-
-
-
-
-  def did_player_hit_me?
-    if @@player.focus_level > 2 || @@player.curse_clock > 0
-      take_damage
-      become_hostile if alive?
-      play_death_scene if slain?
-    else
-      dodge_player_attack
-      become_hostile
-    end
-  end
-  def focus_level
-    rand(@profile[:focus]..2)
-  end
   def dodge_player_attack
     puts Rainbow("	   - The beast dodges your attack.\n").red
   end
@@ -661,28 +672,24 @@ class Character < Gamepiece
     print Rainbow("#{weapon_equipped?.targets[0]}.\n\n").purple
     attack_outcome
   end
-  def weapon_equipped?
-    if @weapons[0]
-      @weapons[0]
+  def attack_outcome
+    if focus_level == 2 or @@player.curse_clock > 0
+      damage_player
+      curse_player
     else
-      "bare hands.\n\n"
+      puts Rainbow("	   - You narrowly avoid its blow.\n").green
     end
   end
-  def attack_power
-    if @weapons[0]
-      @weapons[0].profile[:damage]
-    else 1
+  def damage_player
+    def damage_done
+      @@player.damage_endured(attack_power)
     end
-  end
-  def curse_chance
-    rand(1..3)
-  end
-  def curse_duration
-    rand(5..10)
-  end
-  def display_curse_message
-    puts Rainbow("	   - The demon manages to possess").red
-    puts Rainbow("	     you for #{curse_duration} pages.\n").red
+    @@player.display_added_defense
+    puts "	   - The attack costs you a total"
+    print "	     of #{Rainbow(damage_done).red} heart point"
+    damage_done != 1 ? print("s.\n\n") : print(".\n\n")
+    @@player.health -= @@player.damage_endured(attack_power)
+    SoundBoard.take_damage
   end
   def curse_player
     if !@demonic || @@player.curse_clock > 0
@@ -692,33 +699,19 @@ class Character < Gamepiece
       @@player.curse_clock += curse_duration
     end
   end
-  def damage_player
-      def damage_done
-        @@player.damage_endured(attack_power)
-      end
-      @@player.display_added_defense
-      puts "	   - The attack costs you a total"
-      print "	     of #{Rainbow(damage_done).red} heart point"
-      damage_done != 1 ? print("s.\n\n") : print(".\n\n")
-      @@player.health -= @@player.damage_endured(attack_power)
-      SoundBoard.take_damage
-  end
-  def attack_outcome
-    if focus_level == 2 or @@player.curse_clock > 0
-      damage_player
-      curse_player
-    else
-      puts Rainbow("	   - You narrowly avoid its blow.\n").green
-    end
+  def display_curse_message
+    puts Rainbow("	   - The demon manages to possess").red
+    puts Rainbow("	     you for #{curse_duration} pages.\n").red
   end
   def play_death_scene
     if @profile[:hearts] < 1
       puts Rainbow("	   - The demon is slain. It drops:\n").cyan
       list_rewards
       lose_all_items
-      remove_from_board
       puts Rainbow("	   - You stuff the spoils of this").orange
       puts Rainbow("	     victory in your rucksack.\n").orange
+      reverse_curse
+      remove_from_board
     end
   end
   def list_rewards
