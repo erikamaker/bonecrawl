@@ -601,7 +601,7 @@ class Character < Gamepiece
   end
   def violent_possession
     def damage_done
-        @@player.lose_health(@@player.attack)
+        @@player.damage_endured(@@player.attack)
     end
     if rand(1..3) == 3
         puts "	   - Horrified, you watch it turn"
@@ -682,14 +682,14 @@ class Character < Gamepiece
     end
   end
   def damage_done
-    @@player.lose_health(attack_power)
+    @@player.damage_endured(attack_power)
   end
   def damage_player
       @@player.display_added_defense
       puts "	   - The attack costs you a total"
       print "	     of #{Rainbow(damage_done).red} heart point"
       damage_done != 1 ? print("s.\n\n") : print(".\n\n")
-      @@player.health -= @@player.lose_health(attack_power)
+      @@player.health -= @@player.damage_endured(attack_power)
       SoundBoard.take_damage
   end
   def attack_outcome

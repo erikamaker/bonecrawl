@@ -75,17 +75,17 @@ class Player
   def armor_equipped?
     armor != nil
   end
-  def damage_weapon
-    if weapon_equipped?
-      weapon.damage_item
-      weapon.break_item
-    end
-  end
   def clear_weapon
     @weapon = nil
   end
   def clear_armor
     @armor = nil
+  end
+  def damage_weapon
+    if weapon_equipped?
+      weapon.damage_item
+      weapon.break_item
+    end
   end
   def armor_name
     if armor_equipped?
@@ -125,7 +125,7 @@ class Player
         print "	   - Your #{armor_name} absorbs "
         print Rainbow("#{armor.profile[:defense]}").red
         print " damage\n"
-        print "	     points. Watch its lifespan.\n\n "
+        print "	     points. Its lifespan wanes.\n\n "
         armor.profile[:lifespan] -= 1
     end
     if @block_clock > 1
@@ -139,7 +139,7 @@ class Player
         puts Rainbow("	     just #{@focus_clock - 1} more pages.\n").cyan
     end
   end
-  def lose_health(magnitude)
+  def damage_endured(magnitude)
     total = (magnitude - defense)
     total > 0 ? total : 0
   end

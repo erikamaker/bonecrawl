@@ -466,52 +466,57 @@ end
 class Water < Liquid
   def initialize
     super
-    @profile = { :effect => :reset, :portions => 3, :hearts => 0 }
+    @profile = { :effect => :detoxification, :portions => 2}
   end
   def subtype
     ["water"]
   end
   def display_description
     puts "	   - It's water bottled by a rebel"
-    puts "	     cherub. It resets all effects"
-    puts "	     by itself. Brewed with either"
-    puts "	     red or purple flowers, and it"
-    puts "	     has more myserious effects.\n\n"
+    puts "	     cherub. It exorcises curses.\n\n"
+  end
+  def activate_side_effects
+    puts Rainbow("	   - A weight is lifted off your").cyan
+    print Rainbow("	     back as the curse lifts.\n").cyan
+    @@player.curse_clock = 1
   end
 end
 
 class Juice < Liquid
   def initialize
     super
-  	@profile = { :effect => :focus, :portions => 3, :hearts => 4 }
+  	@profile = { :effect => :stimulant, :portions => 3, :hearts => 2, :duration => 7}
   end
   def subtype
-    ["juice","potion", "medicine","luck","elixer"]
+    ["juice","brew"]
   end
   def display_description
   	puts "	   - It's cherub juice. It builds"
-    puts "	     focus, and heals all hearts.\n\n"
+    puts "	     focus, and heals 2 hearts.\n\n"
   end
   def activate_side_effects
-    @@player.focus_clock += 20
+    puts Rainbow("	   - Your focus sharpens. Details").cyan
+    print Rainbow("	     you've never noticed shimmer.\n").cyan
+    @@player.focus_clock += 7
   end
 end
 
 class Tonic < Liquid
   def initialize
     super
-    @profile = { :effect => :exorcism, :portions => 1 }
+    @profile = { :effect => :analgesic, :portions => 2, :hearts: => 2, duration => 10 }
   end
   def subtype
-    ["antidote","cure","exorcism"]
+    ["tonic","brew"]
   end
   def display_description
   	puts "	   - It's cherub tonic. It builds"
-    puts "	     damage defense for 20 pages."
+    puts "	     defense, and heals 2 hearts.\n\n"
   end
   def activate_side_effects
-    @@player.defense = 4
-    @@player.block_clock += 20
+    puts Rainbow("	   - You feel light as a feather.").orange
+    print Rainbow("	     Your defense begins to soar.\n").orange
+    @@player.block_clock += 10
   end
 end
 
@@ -527,12 +532,11 @@ class Torch < Burnable
       super
       @lit = true
   end
+  def unlit_target
+    ["torch"]
+  end
   def targets
-      if !@lit
-        ["torch", "iron torch", "black torch", "metal torch"]
-      else
-        ["torch", "iron torch", "black torch", "metal torch","fire","flame"]
-      end
+      !@lit ? unlit_target : unlit_target | ["fire","flame"]
   end
   def moveset
       MOVES[1] | MOVES[9]
@@ -604,18 +608,18 @@ end
 class RedFlower < Blossom
   def initialize
     super
-  	@profile = { :effect => :sedation, :defense => 2}
+  	@profile = { :effect => :analgesic, :duration => 5}
   end
   def subtype
   	["blood flower","crimson","red flower","red"]
   end
   def display_description
   	puts "	   - When burned, it's a powerful"
-  	puts "	     pain reliever and sedative.\n\n"
+  	puts "	     but temporary pain reliever.\n\n"
   end
   def burn_effect
     puts Rainbow("	   - You feel light as a feather.").orange
-    print Rainbow("	     Your defense maxes out.\n").orange
+    print Rainbow("	     Your defense begins to soar.\n").orange
     @@player.block_clock += 5
   end
 end
@@ -623,19 +627,19 @@ end
 class PurpleFlower < Blossom
   def initialize
     super
-  	@profile = { :effect => :agitation, :defense => 2 , :attack => 2}
+  	@profile = { :effect => :stimulant, :duration => 5}
   end
   def subtype
   	["purple flower","purple","violet","indigo"]
   end
   def display_description
-  	puts Rainbow("	   - It's an aggressive stimulant.")
-  	puts Rainbow("	     Its combusted form is smoke.\n\n")
-  end
+    puts "	   - When burned, it's a powerful"
+    puts "	     but temporary stimulant.\n\n"
+end
   def burn_effect
-    puts "	     You feel light as a feather,"
-    puts "	     and sharp as a razor.\n\n"
-    @@player.block_clock += 5
+    puts Rainbow("	   - Your focus sharpens. Details").cyan
+    print Rainbow("	     you've never noticed shimmer.\n").cyan
+    @@player.focus_clock += 5
   end
 end
 
