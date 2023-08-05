@@ -499,10 +499,6 @@ class Character < Gamepiece
     @moveset = (MOVES[1] + MOVES[6] + MOVES[8]).flatten
     @hostile = false
     @passive = false
-    @demonic = false
-  end
-  def targets
-    subtype | ["character","person","npc"]
   end
   def focus_level
     rand(@profile[:focus]..2)
@@ -512,11 +508,6 @@ class Character < Gamepiece
   end
   def slain?
     @profile[:hearts] < 1
-  end
-  def material_leverage
-    @@player.items.find do |item|
-      item.targets == desires.targets
-    end
   end
   def display_backdrop
     if @hostile
@@ -539,63 +530,10 @@ class Character < Gamepiece
   def update_profile
     @profile[:hostile] = @hostile
   end
-  def reverse_curse
-    @@player.curse_clock > 0 && @@player.curse_clock = 1
-  end
-  def execute_special_behavior
-    update_profile
-    if @hostile && alive?
-      attack_player
-    end
-  end
   def activate
     player_near? ? reveal_targets_to_player : return
     @@player.state_idle? ? display_backdrop : interact
     execute_special_behavior
-  end
-  def talk
-    if @hostile
-      puts "	   - You cannot reason with it.\n\n"
-    else
-      conversation
-    end
-  end
-  def conversation
-    if @passive
-        passive_script
-    else business_as_usual
-    end
-  end
-  def business_as_usual
-    default_script
-    barter if material_leverage
-  end
-  def barter
-    unique_bartering_script
-    print Rainbow("	   - Yes / No  ").cyan
-    print Rainbow(">>  ").purple
-    choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '')
-    print "\n"
-    bartering_outcome(choice)
-  end
-  def bartering_outcome(choice)
-    if AFFIRMATIONS.include?(choice)
-      exchange_gifts
-    else
-      puts "	   - It doesn't look too thrilled.\n\n"
-      become_hostile if rand(1..3) == 3
-    end
-  end
-  def exchange_gifts
-    reward_animation
-    reward = @rewards.sample
-    puts "	   - To help you on your journey,"
-    puts "	     you're given 1 #{reward.targets[0]}.\n\n"
-    reward.take
-    @content = @weapons
-    @content.push(@desires)
-    @@player.remove_from_inventory(material_leverage)
-    become_passive
   end
   def weapon_equipped?
     if @weapons[0]
@@ -610,45 +548,21 @@ class Character < Gamepiece
     else 1
     end
   end
-  def curse_chance
-    rand(1..3)
-  end
-  def curse_duration
-    rand(5..10)
-  end
   def battle
     @@player.move_to_attack
     retaliate
   end
   def retaliate
+    become_hostile if alive?
     if @@player.focus_level > 2 || @@player.curse_clock > 0
       take_damage
-      become_hostile if alive?
       play_death_scene if slain?
     else
       dodge_player_attack
-      become_hostile
     end
   end
   def take_damage
-    if @@player.curse_clock > 0
-        puts Rainbow("	   - The demon's curse is strong.").red
-        puts Rainbow("	     You struggle to fight it.\n").red
-        violent_possession
-        return
-    end
     player_successful_hit
-  end
-  def violent_possession
-    def damage_done
-        @@player.lose_health(@@player.attack)
-    end
-    if curse_chance == 3  #for bosses, increase their random low range from 1 to 2.
-        puts "	   - Horrified, you watch it turn"
-        puts "	     and attack your own body.\n\n"
-        damage_player
-    else player_successful_hit
-    end
   end
   def player_successful_hit
     @profile[:hearts] -= @@player.attack
@@ -672,10 +586,12 @@ class Character < Gamepiece
     print Rainbow("#{weapon_equipped?.targets[0]}.\n\n").purple
     attack_outcome
   end
+  def successful_hit?
+    focus_level == 2
+  end
   def attack_outcome
-    if focus_level == 2 or @@player.curse_clock > 0
+    if successful_hit?
       damage_player
-      curse_player
     else
       puts Rainbow("	   - You narrowly avoid its blow.\n").green
     end
@@ -691,8 +607,178 @@ class Character < Gamepiece
     @@player.health -= @@player.lose_health(attack_power)
     SoundBoard.take_damage
   end
+  def play_death_scene
+    if @profile[:hearts] < 1
+      puts Rainbow("	   - The demon is slain. It drops:\n").cyan
+      @content.each {|item| puts "	       - 1 #{item.targets[0]}"}
+      puts "\n"
+      puts Rainbow("	   - You stuff the spoils of this").orange
+      puts Rainbow("	     victory in your rucksack.\n").orange
+      dematerialize_entity
+    end
+  end
+  def dematerialize_entity
+    lose_all_items
+    remove_from_board
+  end
+  def lose_all_items
+    @content.each { |item| item.push_to_player_inventory }
+  end
+  def wrong_move
+    print "	   - This character is capable of\n"
+    print Rainbow("	     talking").cyan + ", or "
+    print Rainbow("battling").cyan + ".\n\n"
+  end
+end
+
+
+
+##############################################################################################################################################################################################################################################################
+#####     MONSTERS     #######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Monster < Character
+  def initialize
+      super
+      @hostile = true
+      @passive = false
+  end
+  def targets
+    subtype | ["monster","beast","abomination"]
+  end
+  def execute_special_behavior
+    update_profile
+    if alive?
+      attack_player
+    end
+  end
+end
+
+
+##############################################################################################################################################################################################################################################################
+#####     NEUTRALS     #######################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Neutral < Character
+  def initialize
+      super
+      @hostile = true
+      @passive = false
+  end
+  def targets
+    subtype | ["character","person","npc"]
+  end
+  def material_leverage
+    @@player.items.find do |item|
+      item.targets == desires.targets
+    end
+  end
+  def talk
+    if @hostile
+      puts "	   - You cannot reason with it.\n\n"
+    else
+      conversation
+    end
+  end
+  def conversation
+    if @passive
+        passive_script
+    else business_as_usual
+    end
+  end
+  def business_as_usual                         # NEUTRAL
+    default_script
+    barter if material_leverage
+  end
+  def barter                                    # NEUTRAL
+    unique_bartering_script
+    print Rainbow("	   - Yes / No  ").cyan
+    print Rainbow(">>  ").purple
+    choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '')
+    print "\n"
+    bartering_outcome(choice)
+  end
+  def bartering_outcome(choice)                 # NEUTRAL
+    if AFFIRMATIONS.include?(choice)
+      exchange_gifts
+    else
+      puts "	   - It doesn't look too thrilled.\n\n"
+      become_hostile if rand(1..3) == 3
+    end
+  end                                           # NEUTRAL
+  def exchange_gifts
+    reward_animation
+    reward = @rewards.sample
+    puts "	   - To help you on your journey,"
+    puts "	     you're given 1 #{reward.targets[0]}.\n\n"
+    reward.take
+    @content = @weapons
+    @content.push(@desires)
+    @@player.remove_from_inventory(material_leverage)
+    become_passive
+  end
+end
+
+
+##############################################################################################################################################################################################################################################################
+#####     DEMONS     #########################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+
+class Demon < Character
+  def initialize
+      super
+      @hostile = true
+      @passive = false
+  end
+  def successful_hit?
+    focus_level == 2 || @@player.curse_clock > 0
+  end
+  def dematerialize_entity
+    lose_all_items
+    reverse_curse
+    remove_from_board
+  end
+  def execute_special_behavior
+    update_profile
+    if alive?
+      attack_player
+      curse_player
+    end
+  end
+  def reverse_curse                                                     #
+    @@player.curse_clock > 0 && @@player.curse_clock = 1
+  end
+  def curse_chance                                                      #
+    rand(1..3)
+  end
+  def curse_duration
+    rand(5..10)
+  end
+  def curse_is_strong
+    if @@player.curse_clock > 0
+        puts Rainbow("	   - The demon's curse is strong.").red
+        puts Rainbow("	     You struggle to fight it.\n").red
+        violent_possession
+        return
+    end
+  end
+  def violent_possession
+    def damage_done
+        @@player.lose_health(@@player.attack)
+    end
+    if curse_chance == 3
+        puts "	   - Horrified, you watch it turn"
+        puts "	     and attack your own body.\n\n"
+        damage_player
+    else player_successful_hit
+    end
+  end
   def curse_player
-    if !@demonic || @@player.curse_clock > 0
+    if @@player.curse_clock > 0
       return
     elsif curse_chance == 3
       display_curse_message
@@ -703,28 +789,9 @@ class Character < Gamepiece
     puts Rainbow("	   - The demon manages to possess").red
     puts Rainbow("	     you for #{curse_duration} pages.\n").red
   end
-  def play_death_scene
-    if @profile[:hearts] < 1
-      puts Rainbow("	   - The demon is slain. It drops:\n").cyan
-      list_rewards
-      lose_all_items
-      puts Rainbow("	   - You stuff the spoils of this").orange
-      puts Rainbow("	     victory in your rucksack.\n").orange
-      reverse_curse
-      remove_from_board
-    end
-  end
-  def list_rewards
-    @content.each {|item| puts "	       - 1 #{item.targets[0]}"}
-    puts "\n"
-  end
-  def lose_all_items
-    @content.each { |item| item.push_to_player_inventory }
-  end
-  def wrong_move
-    print "	   - This character is capable of\n"
-    print Rainbow("	     talking").cyan + ", or "
-    print Rainbow("battling").cyan + ".\n\n"
+  def take_damage
+    curse_is_strong
+    player_successful_hit
   end
 end
 
