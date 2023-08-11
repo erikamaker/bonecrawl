@@ -598,6 +598,8 @@ class Blossom < Burnable
     puts "	   - You hold the blossom against"
     puts "	     the fire, inhaling its smoke.\n\n"
     burn_effect
+    remove_from_board
+    remove_from_inventory
     print "\n"
   end
   def display_backdrop
@@ -621,7 +623,6 @@ class RedFlower < Blossom
     puts Rainbow("	   - You feel light as a feather.").orange
     print Rainbow("	     Your defense begins to soar.\n").orange
     @@player.block_clock += 10
-    self.remove_from_board
   end
 end
 
@@ -1160,10 +1161,9 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-class Hellion < Character
+class Hellion < Monster
   def initialize
     super
-    @demonic = true
     @weapons = [Cleaver.new]
     @rewards = [Apple.new]
     @content = @weapons | @rewards

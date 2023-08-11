@@ -641,7 +641,7 @@ end
 class Monster < Character
   def initialize
       super
-      @hostile = true
+      @hostile = false
       @passive = false
   end
   def targets
@@ -649,6 +649,9 @@ class Monster < Character
   end
   def execute_special_behavior
     update_profile
+    if player_near?
+        become_hostile
+    end
     if alive?
       attack_player
     end
