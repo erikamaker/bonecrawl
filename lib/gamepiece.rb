@@ -530,6 +530,12 @@ class Character < Gamepiece
   def update_profile
     @profile[:hostile] = @hostile
   end
+  def execute_special_behavior
+    update_profile
+    if @hostile  and alive?
+        attack_player
+    end
+  end
   def activate
     player_near? ? reveal_targets_to_player : return
     @@player.state_idle? ? display_backdrop : interact
@@ -578,7 +584,7 @@ class Character < Gamepiece
     end
   end
   def dodge_player_attack
-    puts Rainbow("	   - The beast dodges your attack.\n").red
+    puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
   end
   def attack_player
     puts "	   - The #{subtype[0]} strikes to attack"
@@ -609,7 +615,7 @@ class Character < Gamepiece
   end
   def play_death_scene
     if @profile[:hearts] < 1
-      puts Rainbow("	   - The demon is slain. It drops:\n").cyan
+      puts Rainbow("	   - You slay the #{targets[0]}. It drops:\n").cyan
       @content.each {|item| puts "	       - 1 #{item.targets[0]}"}
       puts "\n"
       puts Rainbow("	   - You stuff the spoils of this").orange
@@ -645,7 +651,7 @@ class Monster < Character
       @passive = false
   end
   def targets
-    subtype | ["monster","beast","abomination"]
+    subtype | ["monster","beast","abomination","enemy","cryptid"]
   end
   def execute_special_behavior
     update_profile
@@ -667,7 +673,7 @@ end
 class Neutral < Character
   def initialize
       super
-      @hostile = true
+      @hostile = false
       @passive = false
   end
   def targets
@@ -680,7 +686,7 @@ class Neutral < Character
   end
   def talk
     if @hostile
-      puts "	   - You cannot reason with it.\n\n"
+      puts "	   - You cannot reason with them.\n\n"
     else
       conversation
     end
@@ -707,7 +713,7 @@ class Neutral < Character
     if AFFIRMATIONS.include?(choice)
       exchange_gifts
     else
-      puts "	   - It doesn't look too thrilled.\n\n"
+      puts "	   - They don't appear thrilled.\n\n"
       become_hostile if rand(1..3) == 3
     end
   end                                           # NEUTRAL

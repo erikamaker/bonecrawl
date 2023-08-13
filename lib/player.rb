@@ -117,8 +117,8 @@ class Player
     end
   end
   def move_to_attack
-    puts "	   - You move to strike the demon"
-    print "	     with your #{weapon_name}\n\n"
+    puts "	   - You move to strike with your"
+    print "	     #{weapon_name}\n\n"
   end
   def display_added_defense
     if armor_equipped?

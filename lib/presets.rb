@@ -599,7 +599,7 @@ class Blossom < Burnable
     puts "	     the fire, inhaling its smoke.\n\n"
     burn_effect
     remove_from_board
-    remove_from_inventory
+    @@player.remove_from_inventory(self)
     print "\n"
   end
   def display_backdrop
@@ -957,6 +957,24 @@ class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
   end
 end
 
+class Cloak < Clothes   # Requires 1 copper ore, and 3 spider spools
+  def initialize
+    super
+    @profile = {:defense => 2, :lifespan => 30}
+  end
+  def subtype
+    ["cloak","roab","coat"]
+  end
+  def display_backdrop
+    puts "	   - A dark and weighty cloak is"
+    puts "	     hung on the wall here.\n\n"
+  end
+  def display_description
+    puts "	   - It's a cloak. It was knitted"
+    puts "	     from wool for a wizard.\n\n"
+  end
+end
+
 class Sneakers < Clothes    # Requires 2 spider spools, 1 copper ore, and 4 rat leather
   def initialize
     super
@@ -1171,7 +1189,7 @@ class Hellion < Monster
     @profile = {:hearts => 10, :focus => 1}
   end
   def subtype
-    ["hellion","goat","monster","beast","enemy","demon","daemon"]
+    ["hellion","goat"]
   end
   def docile_backdrop
     puts "	   - A dark hellion stands on two\n"
@@ -1187,10 +1205,9 @@ class Hellion < Monster
   end
 end
 
-class Goblin < Character
+class Goblin < Monster
     def initialize
       super
-      @demonic = false
       @weapons = [Knife.new]
       @rewards = [Bread.new,Hoodie.new]
       @content = @weapons | @rewards
@@ -1198,7 +1215,7 @@ class Goblin < Character
       @profile = {:hearts => 8, :focus => 1}
     end
     def subtype
-      ["goblin","imp","orc","yrch","enemy","monster","beast","demon","daemon"]
+      ["goblin","imp","orc","yrch"]
     end
     def docile_backdrop
       puts "	   - A knobby goblin stoops near\n"
@@ -1211,5 +1228,31 @@ class Goblin < Character
     def display_description
       puts "	   - It's a pallid-green goblin."
       puts "	     Its kind is untrustworthy.\n\n"
+    end
+  end
+
+  class Wizard < Neutral
+    def initialize
+      super
+      @weapons = [Staff.new]
+      @rewards = [Cloak.new]
+      @content = @weapons | @rewards
+      @desires = Gold.new
+      @profile = {:hearts => 8, :focus => 2}
+    end
+    def subtype
+      ["wizard","caster","istari"]
+    end
+    def docile_backdrop
+      puts "	   - A leathery old magick wizard\n"
+      puts "	     stands here, lost in thought.\n\n"
+    end
+    def hostile_script
+      puts "	   - Light flashes across his pale"
+      puts "	     blue eyes. His brow furrows.\n\n"
+    end
+    def display_description
+      puts "	   - It's a wizard. They are full"
+      puts "	     of anient power and wisdom.\n\n"
     end
   end

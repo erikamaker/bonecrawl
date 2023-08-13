@@ -216,13 +216,37 @@ flower.location = [[0,2,1]]
 juice = Juice.new
 juice.location = [[0,2,1]]
 
+wizard = Wizard.new
+wizard.location = [[0,2,2]]
+wizard.regions = hall_1.location | room_2.location | room_1.location
+
+def wizard.unique_bartering_script
+  puts "	   - They say they're hunting for"
+  print "	     gold. Why is not important.\n\n"
+end
+def wizard.reward_animation
+  puts "	   - The wizard whispers in your"
+  puts "	     ear, chilling you...\n\n"
+  puts Rainbow("	   \" Staves can stun even the").green
+  puts Rainbow("	     hardiest of beasts. \"\n").green
+end
+def wizard.default_script
+  puts "	   - They examine you up and down,"
+  puts "	     and smile. They ask where an"
+  puts "	     old man can find some gold.\n\n"
+end
+def wizard.passive_script
+  puts "	   - If you're ever lost, follow"
+  puts "	     your nose. It never lies.\n\n"
+end
+
 
 ##############################################################################################################################################################################################################################################################
 #####    GAME LOOP     #######################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
-levels = [ room_1, torch_1, juice, flower, feather, lighter, fat1, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
+levels = [ room_1, torch_1, juice, flower, wizard, feather, lighter, fat1, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
 =begin
 system("clear")  # Clear the screen
