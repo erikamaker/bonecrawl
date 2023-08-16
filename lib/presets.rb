@@ -330,7 +330,7 @@ end
 class Staff < Weapon
   def initialize
     super
-    @profile = { :build => "wood", :lifespan => rand(5..10), :damage => 1 }
+    @profile = { :build => "wood", :lifespan => rand(5..10), :damage => 3 }
   end
   def subtype
     ["staff"]
@@ -471,6 +471,10 @@ class Water < Liquid
   def subtype
     ["water"]
   end
+  def display_backdrop
+    puts "	   - A vial of cherubim water sits"
+    print "	     gleaming in the low light.\n\n"
+  end
   def display_description
     puts "	   - It's water bottled by a rebel"
     puts "	     cherub. It exorcises curses.\n\n"
@@ -489,6 +493,10 @@ class Juice < Liquid
   end
   def subtype
     ["juice","brew"]
+  end
+  def display_backdrop
+    puts "	   - A vial of cherub juice glows"
+    print "	     with a pale pink hue.\n\n"
   end
   def display_description
   	puts "	   - It's cherub juice. It builds"
@@ -657,8 +665,8 @@ class Ore  < Portable
       subtype | ["ore","ingot"]
     end
     def view
-        puts "	   - It's worthless in Hell, but"
-        puts "	     useful in crafting weapons.\n\n"
+        puts "	   - It's valueless in Hell, but"
+        puts "	     useful for crafting things.\n\n"
     end
 end
 
@@ -960,10 +968,10 @@ end
 class Cloak < Clothes   # Requires 1 copper ore, and 3 spider spools
   def initialize
     super
-    @profile = {:defense => 2, :lifespan => 30}
+    @profile = {:defense => 3, :lifespan => 30}
   end
   def subtype
-    ["cloak","roab","coat"]
+    ["cloak","robe","coat"]
   end
   def display_backdrop
     puts "	   - A dark and weighty cloak is"
@@ -1248,7 +1256,7 @@ class Goblin < Monster
       puts "	     stands here, lost in thought.\n\n"
     end
     def hostile_script
-      puts "	   - Light flashes across his pale"
+      puts "	   - Light gleams in the wizard's"
       puts "	     blue eyes. His brow furrows.\n\n"
     end
     def display_description

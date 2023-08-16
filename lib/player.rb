@@ -129,8 +129,8 @@ class Player
         armor.profile[:lifespan] -= 1
     end
     if @block_clock > 1
-        puts Rainbow("	   - Your enchanted defense shall").orange
-        puts Rainbow("	     last #{@block_clock - 1} more pages.\n").orange
+        puts Rainbow("	   - Your enchanted defense won't").orange
+        puts Rainbow("	     last more than#{@block_clock - 1} pages.\n").orange
     end
   end
   def display_added_focus

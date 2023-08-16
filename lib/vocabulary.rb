@@ -40,5 +40,6 @@ SPEECH =
 INVENTORY =
   ["rucksack","knapsack","backpack","bag","pack","items","inventory","stuff","things"]
 
+
 AFFIRMATIONS =
   ["yes","yeah","sure","yep","aye","affirmative","yea","yh"]
