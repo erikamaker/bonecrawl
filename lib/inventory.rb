@@ -41,12 +41,12 @@ module Inventory
     @armor.targets[0].split.map(&:capitalize).join(' ')
   end
   def print_equipped_items
-    print Rainbow("	     WEAPON: ").orange
+    print Rainbow("	     WEAPON EQUIPPED: ").orange
     if @weapon
       print equipped_weapon
     end
     print "\n"
-    print Rainbow("	      ARMOR: ").orange
+    print Rainbow("	      ARMOR EQUIPPED: ").orange
     if @armor
       print equipped_armor
     end

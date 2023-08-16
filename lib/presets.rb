@@ -330,14 +330,14 @@ end
 class Staff < Weapon
   def initialize
     super
-    @profile = { :build => "wood", :lifespan => rand(5..10), :damage => 3 }
+    @profile = { :build => "wood", :lifespan => rand(5..10), :damage => 5 }
   end
   def subtype
     ["staff"]
   end
   def display_description
-    puts "	   - It's a magick staff. It can"
-    puts "	     pacify a hostile demon.\n\n"
+    puts "	   - A magick staff's power level"
+    puts "	     builds with its user's focus.\n\n"                     ## ADD A MAGIC LEVEL TO INVENTORY TODO
   end
 end
 
@@ -1243,7 +1243,7 @@ class Goblin < Monster
     def initialize
       super
       @weapons = [Staff.new]
-      @rewards = [Cloak.new]
+      @rewards = [Staff.new]
       @content = @weapons | @rewards
       @desires = Gold.new
       @profile = {:hearts => 8, :focus => 2}
