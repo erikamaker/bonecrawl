@@ -22,10 +22,10 @@ class Board
       pull: MOVES[5],
       talk: MOVES[6],
       make: MOVES[7],
-    battle: MOVES[8],
+      harm: MOVES[8],
       burn: MOVES[9],
       feed: MOVES[10],
-     drink: MOVES[11],
+      gulp: MOVES[11],
       mine: MOVES[12],
       lift: MOVES[13],
      equip: MOVES[14]

@@ -14,7 +14,7 @@ class Gamepiece < Board
   end
   def display_backdrop
     # Some pieces have unique backdrops.
-    # Others may have none and return nil.
+    # Hidden items will return nil.
   end
   def execute_special_behavior
     # Unique behavior during activation.
@@ -330,7 +330,7 @@ class Liquid < Edible
   def moveset
   	[MOVES[1..2],MOVES[10..11]].flatten
   end
-  def drink
+  def gulp
     feed
   end
   def animate_ingestion
@@ -554,8 +554,8 @@ class Character < Gamepiece
     else 1
     end
   end
-  def battle
-    @@player.move_to_attack
+  def harm
+    @@player.player_attack_animation
     retaliate
   end
   def retaliate

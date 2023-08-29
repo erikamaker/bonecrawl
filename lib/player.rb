@@ -32,7 +32,7 @@ class Player
     @action = :reset
     @target = :reset
   end
-  def reset_player_sight
+  def clear_sight
     @sight.clear
   end
   def state_idle?
@@ -59,10 +59,10 @@ class Player
     @target = (sentence - SPEECH).last
   end
   def turn_page
-    reset_player_sight
+    clear_sight
     Board.increment_page(1)
     toggle_state_idle
-    effects_cooldown
+    cooldown_effects
     reset_input
   end
   def remove_from_inventory(item)
@@ -88,12 +88,12 @@ class Player
   end
   def armor_name
     if armor_equipped?
-        Rainbow("#{armor.targets[0]}").purple
+      Rainbow("#{armor.targets[0]}").purple
     end
   end
   def weapon_name
     if weapon_equipped?
-        Rainbow("#{weapon.targets[0]}.").purple
+      Rainbow("#{weapon.targets[0]}.").purple
     else Rainbow("bare hands.").purple
     end
   end
@@ -105,37 +105,37 @@ class Player
   end
   def defense
     if armor_equipped?
-        [(@armor.profile[:defense] + block_clock),4].min
+      [(@armor.profile[:defense] + block_clock),4].min
     else 0 + [block_clock,4].min
     end
   end
   def focus_level
     if focus_clock > 0
-        3
+      3
     else rand(1..4)
     end
   end
-  def move_to_attack
+  def player_attack_animation
     puts "	   - You move to strike with your"
     print "	     #{weapon_name}\n\n"
   end
   def display_added_defense
     if armor_equipped?
-        print "	   - Your #{armor_name} deflects "
-        print Rainbow("#{armor.profile[:defense]}").green
-        print " damage\n"
-        print "	     points. Its lifespan wanes.\n\n "
-        armor.profile[:lifespan] -= 1
+      print "	   - Your #{armor_name} deflects "
+      print Rainbow("#{armor.profile[:defense]}").green
+      print " damage\n"
+      print "	     points. Its lifespan wanes.\n\n "
+      armor.profile[:lifespan] -= 1
     end
     if @block_clock > 1
-        puts Rainbow("	   - Your enchanted defense won't").orange
-        puts Rainbow("	     last more than#{@block_clock - 1} pages.\n").orange
+      puts Rainbow("	   - Your enchanted defense won't").orange
+      puts Rainbow("	     last more than#{@block_clock - 1} pages.\n").orange
     end
   end
   def display_added_focus
     if @focus_clock > 1
-        puts Rainbow("	   - Your blessed focus will last").cyan
-        puts Rainbow("	     just #{@focus_clock - 1} more pages.\n").cyan
+      puts Rainbow("	   - Your blessed focus will last").cyan
+      puts Rainbow("	     just #{@focus_clock - 1} more pages.\n").cyan
     end
   end
   def lose_health(magnitude)
@@ -150,18 +150,27 @@ class Player
     puts Rainbow("	   - The magick that affects your").red
     puts Rainbow("	     #{clock_name} grows thin.\n").red
   end
-  def effects_cooldown
+  def cooldown_focus
     if @focus_clock > 0
       @focus_clock -= 1
       display_clock("focus") if @focus_clock == 1
     end
+  end
+  def cooldown_block
     if @block_clock > 0
       @block_clock -= 1
       display_clock("defense") if @block_clock == 1
     end
+  end
+  def cooldown_curse
     if @curse_clock > 0
-        @curse_clock -= 1
-        display_clock("possession") if @curse_clock == 1
+      @curse_clock -= 1
+      display_clock("possession") if @curse_clock == 1
     end
+  end
+  def cooldown_effects
+    cooldown_focus
+    cooldown_block
+    cooldown_curse
   end
 end

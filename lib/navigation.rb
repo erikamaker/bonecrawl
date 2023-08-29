@@ -38,10 +38,10 @@ module Navigation
   end
   def can_player_walk?
     if @curse_clock < 1
-        reposition_player
+      reposition_player
     else
-        puts Rainbow("	   - You're possessed. You cannot").red
-        puts Rainbow("	     take a single step.\n").red
+      puts Rainbow("	   - You're possessed. You cannot").red
+      puts Rainbow("	     take a single step.\n").red
     end
   end
   def detect_direction
