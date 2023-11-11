@@ -25,12 +25,15 @@ class Player
     @items = []
     @armor = nil
     @weapon = nil
+    @defense = 0
     @health = 2
     @foucs = 1
-    @defense = 0
     @focus_clock = 0
     @block_clock = 0
     @curse_clock = 0
+  end
+  def defense
+    @armor.nil? ? 0 : @armor.profile[:defense]
   end
   def lose_health(magnitude)
     total = (magnitude - defense)
