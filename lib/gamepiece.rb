@@ -3,9 +3,11 @@
 ##############################################################################################################################################################################################################################################################
 
 
-require './board'
-require './sound'
-require './gamepiece'
+require_relative 'board'
+require_relative 'sound'
+require_relative 'player'
+require_relative 'battle'
+
 
 class Gamepiece < Board
   attr_accessor :location, :targets, :moveset, :profile
@@ -55,7 +57,7 @@ class Gamepiece < Board
   def activate
     execute_special_behavior
     player_near? ? reveal_targets_to_player : return
-    @@player.state_idle? ? display_backdrop : interact
+    @@player.state_inert? ? display_backdrop : interact
   end
   def wrong_move
     puts "	   - It would be uesless to try."
@@ -107,7 +109,7 @@ class Tiles < Fixture
   def interpret_action
     case @@player.target
     when *general
-      @@player.toggle_state_idle
+      @@player.toggle_state_inert
       overview
     when *terrain
       view_type
@@ -370,7 +372,7 @@ class FruitTree < Edible
   end
   def fruit_needs_time_to_grow
     puts "	   - The fruit needs time to grow.\n\n"
-    @@player.toggle_state_idle
+    @@player.toggle_state_inert
   end
   def take
     if @fruit.count > 0
@@ -403,6 +405,9 @@ class Tool < Portable
   def moveset
   	MOVES[1..2].flatten | MOVES[14]
   end
+  def damage_item
+    profile[:lifespan] -= 1
+  end
   def targets
     subtype | ["tool"]
   end
@@ -410,15 +415,12 @@ class Tool < Portable
     puts "	   - This item will automatically"
     puts "	     apply in its time of need.\n\n"
   end
-  def damage_item
-    profile[:lifespan] -= 1
-  end
   def break_item
     if profile[:lifespan] == 0
       puts Rainbow("	   - Your #{targets[0]} snaps in two.").red
       puts Rainbow("	     You toss away the pieces.\n").red
       @@player.remove_from_inventory(self)
-      @@player.clear_weapon
+      @@player.weapon = nil
     end
   end
   def display_backdrop
@@ -493,6 +495,7 @@ end
 
 
 class Character < Gamepiece
+  include Battle
   attr_accessor :regions, :desires, :content, :rewards
   def initialize
     super
@@ -500,13 +503,10 @@ class Character < Gamepiece
     @hostile = false
     @passive = false
   end
-  def focus_level
-    rand(@profile[:focus]..2)
-  end
   def alive?
     @profile[:hearts] > 0
   end
-  def slain?
+  def slain
     @profile[:hearts] < 1
   end
   def display_backdrop
@@ -533,99 +533,13 @@ class Character < Gamepiece
   def execute_special_behavior
     update_profile
     if @hostile  and alive?
-        attack_player
+        enemy_turn
     end
   end
   def activate
     player_near? ? reveal_targets_to_player : return
-    @@player.state_idle? ? display_backdrop : interact
+    @@player.state_inert? ? display_backdrop : interact
     execute_special_behavior
-  end
-  def weapon_equipped?
-    if @weapons[0]
-      @weapons[0]
-    else
-      "bare hands.\n\n"
-    end
-  end
-  def attack_power
-    if @weapons[0]
-      @weapons[0].profile[:damage]
-    else 1
-    end
-  end
-  def harm
-    @@player.player_attack_animation
-    retaliate
-  end
-  def retaliate
-    become_hostile if alive?
-    if @@player.focus_level > 2 || @@player.curse_clock > 0
-      take_damage
-      play_death_scene if slain?
-    else
-      dodge_player_attack
-    end
-  end
-  def take_damage
-    player_successful_hit
-  end
-  def player_successful_hit
-    @profile[:hearts] -= @@player.attack
-    if @profile[:hearts] > 0
-      SoundBoard.hit_enemy
-      print Rainbow("	   - You hit it. #{@profile[:hearts]} heart").green
-      print Rainbow("s").green if @profile[:hearts] > 1
-      print Rainbow(" remain").green
-      print Rainbow("s").green if @profile[:hearts] == 1
-      print Rainbow(".\n\n").green
-      @@player.damage_weapon
-      @@player.display_added_focus
-    end
-  end
-  def dodge_player_attack
-    puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
-  end
-  def attack_player
-    puts "	   - The #{subtype[0]} strikes to attack"
-    print "	     with its "
-    print Rainbow("#{weapon_equipped?.targets[0]}.\n\n").purple
-    attack_outcome
-  end
-  def successful_hit?
-    focus_level == 2
-  end
-  def attack_outcome
-    if successful_hit?
-      damage_player
-    else
-      puts Rainbow("	   - You narrowly avoid its blow.\n").green
-    end
-  end
-  def damage_player
-    def damage_done
-      @@player.lose_health(attack_power)
-    end
-    @@player.display_added_defense
-    puts "	   - The attack costs you a total"
-    print "	     of #{Rainbow(damage_done).red} heart point"
-    damage_done != 1 ? print("s.\n\n") : print(".\n\n")
-    @@player.health -= @@player.lose_health(attack_power)
-    SoundBoard.take_damage
-  end
-  def play_death_scene
-    if @profile[:hearts] < 1
-      puts Rainbow("	   - You slay the #{targets[0]}. It drops:\n").cyan
-      @content.each {|item| puts "	       - 1 #{item.targets[0]}"}
-      puts "\n"
-      puts Rainbow("	   - You stuff the spoils of this").orange
-      puts Rainbow("	     victory in your rucksack.\n").orange
-      dematerialize_entity
-    end
-  end
-  def dematerialize_entity
-    lose_all_items
-    remove_from_board
   end
   def lose_all_items
     @content.each { |item| item.push_to_player_inventory }
@@ -636,7 +550,6 @@ class Character < Gamepiece
     print Rainbow("battling").cyan + ".\n\n"
   end
 end
-
 
 
 ##############################################################################################################################################################################################################################################################
@@ -659,7 +572,7 @@ class Monster < Character
         become_hostile
     end
     if alive?
-      attack_player
+      enemy_turn
     end
   end
 end
@@ -713,7 +626,7 @@ class Neutral < Character
     if AFFIRMATIONS.include?(choice)
       exchange_gifts
     else
-      puts "	   - They don't appear thrilled.\n\n"
+      puts "	   - They don't appear thrilled.\n\n"           ## UPDATE TO ONE OF MANY
       become_hostile if rand(1..3) == 3
     end
   end                                           # NEUTRAL
@@ -723,8 +636,7 @@ class Neutral < Character
     puts "	   - To help you on your journey,"
     puts "	     you're given 1 #{reward.targets[0]}.\n\n"
     reward.take
-    @content = @weapons
-    @content.push(@desires)
+    @content.concat([@weapon,@desires])
     @@player.remove_from_inventory(material_leverage)
     become_passive
   end
@@ -753,7 +665,7 @@ class Demon < Character
   def execute_special_behavior
     update_profile
     if alive?
-      attack_player
+      enemy_turn
       curse_player
     end
   end

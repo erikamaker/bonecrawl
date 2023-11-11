@@ -10,6 +10,22 @@ module Interface
     print Rainbow("\n   What next?").cyan.bright
     print Rainbow("  >>  ").purple.bright
   end
+  def action_select
+    prompt_player
+    process_input
+    toggle_state_engaged
+    print "\n\n\n\n"
+  end
+  def process_input
+    @action = gets.chomp.downcase
+    sentence = @action.scan(/[\w']+/)
+    @action = (MOVES.flatten & (sentence)).join('')
+    @target = (sentence - SPEECH).last
+  end
+  def reset_input
+    @action = :reset
+    @target = :reset
+  end
   def header
     print Rainbow("\n---------------------------------------------------------\n").blue.bright
     print Rainbow("[").blue.bright
@@ -67,7 +83,7 @@ module Interface
   def suggest_tutorial
   	if nontraditional_move?
   	  return if tutorial_selected?
-  	  toggle_state_idle
+  	  toggle_state_inert
   	  print "	   - A single page passes. Review\n"
   	  print "	     tutorial with command"
       print Rainbow(" help").cyan + ".\n\n"
@@ -75,7 +91,7 @@ module Interface
   end
   def target_does_not_exist
     return if @target == @action
-    return if @state == :idle
+    return if @state == :inert
     if @sight.none?(@target)
       puts "	   - If it exists, it isn't here."
       puts "	     To view your inventory, open"

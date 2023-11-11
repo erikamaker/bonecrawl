@@ -151,7 +151,7 @@ class Hook < Fixture
     puts "	     tells you that demons use it"
     puts "	     to hang more than just coats"
     puts "	     and keys.\n\n"
-    @@player.toggle_state_idle
+    @@player.toggle_state_inert
   end
 end
 
@@ -168,7 +168,7 @@ class Surface < Fixture
   end
   def view
     subtype_view
-    @@player.toggle_state_idle
+    @@player.toggle_state_inert
   end
 end
 
@@ -932,6 +932,14 @@ class Clothes < Tool
   def targets
     subtype | ["clothing","clothes","garb","armor"]
   end
+  def break_item
+    if profile[:lifespan] == 0
+      puts Rainbow("	   - Your #{targets[0]} completely degrades").red
+      puts Rainbow("	     off your vulnerable body.\n").red
+      @@player.remove_from_inventory(self)
+      @@player.armor = nil
+    end
+  end
   def equip
     SoundBoard.equip_item
     self.push_to_player_inventory if @@player.items.none?(self)
@@ -1190,9 +1198,10 @@ end
 class Hellion < Monster
   def initialize
     super
-    @weapons = [Cleaver.new]
+    @weapon = Cleaver.new
+    @armor = nil
     @rewards = [Apple.new]
-    @content = @weapons | @rewards
+    @content = [].concat(@rewards.push(@weapon))
     @desires = Lighter.new
     @profile = {:hearts => 10, :focus => 1}
   end
@@ -1216,9 +1225,10 @@ end
 class Goblin < Monster
     def initialize
       super
-      @weapons = [Knife.new]
+      @weapon = Knife.new
+      @armor = Hoodie.new
       @rewards = [Bread.new,Hoodie.new]
-      @content = @weapons | @rewards
+      @content = @rewards.push(@weapon)
       @desires = Lighter.new
       @profile = {:hearts => 8, :focus => 1}
     end
@@ -1242,9 +1252,9 @@ class Goblin < Monster
   class Wizard < Neutral
     def initialize
       super
-      @weapons = [Staff.new]
+      @weapon = Staff.new
       @rewards = [Staff.new]
-      @content = @weapons | @rewards
+      @content = @rewards.push(@weapon)
       @desires = Gold.new
       @profile = {:hearts => 8, :focus => 2}
     end

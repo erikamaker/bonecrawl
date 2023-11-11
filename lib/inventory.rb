@@ -90,7 +90,6 @@ module Inventory
     elsif item.nil?
       puts Rainbow("           - You don't have that.\n").red
     elsif MOVES[2].include?(@action)
-      interface_hint
       puts Rainbow("           - That's already in your bag.\n").red
     else
       item.interact

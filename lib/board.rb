@@ -22,7 +22,7 @@ class Board
       pull: MOVES[5],
       talk: MOVES[6],
       make: MOVES[7],
-      harm: MOVES[8],
+    battle: MOVES[8],
       burn: MOVES[9],
       feed: MOVES[10],
       gulp: MOVES[11],
