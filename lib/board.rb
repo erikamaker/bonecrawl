@@ -5,9 +5,11 @@
 
 require_relative 'vocabulary'
 require_relative 'player'
+require_relative 'battle'
 
 class Board
   include Interface
+  include Battle
   def initialize
     @@page = 0
     @@map = []

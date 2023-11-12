@@ -504,10 +504,10 @@ class Character < Gamepiece
     @passive = false
   end
   def alive?
-    @profile[:hearts] > 0
+    @profile[:health] > 0
   end
   def slain
-    @profile[:hearts] < 1
+    @profile[:health] < 1
   end
   def display_backdrop
     if @hostile
@@ -533,7 +533,7 @@ class Character < Gamepiece
   def execute_special_behavior
     update_profile
     if @hostile  and alive?
-        enemy_turn
+        attack_player
     end
   end
   def activate
@@ -549,6 +549,55 @@ class Character < Gamepiece
     print Rainbow("	     talking").cyan + ", or "
     print Rainbow("battling").cyan + ".\n\n"
   end
+  def attack_player
+    hearts_lost = @@player.damage(attack_points)
+    puts "	   - The #{targets[0]} lunges to attack"
+    print "	     with its #{weapon_name}.\n\n"
+    if rand(@profile[:focus]..4) > 3
+        SoundBoard.take_damage
+        @@player.health -= hearts_lost
+        @@player.display_defense
+        print Rainbow("	   - It costs you #{hearts_lost} heart point").red
+        hearts_lost != 1 && print(Rainbow("s").red)
+        print(".\n\n")
+        @@player.degrade_armor
+    else puts Rainbow("	   - You narrowly avoid its blow.\n").green
+        ## CHANCE OF PARRY
+    end
+end
+def battle
+  puts "	   - You move to strike with your"
+  print "	     #{@@player.weapon_name}.\n\n"
+  if @@player.focus > 1
+      @@player.degrade_weapon
+      @profile[:health] -= @@player.attack_points
+      demon_animate_damage
+      play_death_scene
+  else puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
+      ## CHANCE OF DEMON PARRY
+  end
+end
+  def demon_animate_damage
+    if alive?
+        SoundBoard.hit_enemy
+        print Rainbow("	   - You hit it. #{@profile[:health]} heart").green
+        print Rainbow("s").green if @profile[:health] > 1
+        print Rainbow(" remain").green
+        print Rainbow("s").green if @profile[:health] == 1
+        print Rainbow(".\n\n").green
+    end
+end
+def play_death_scene
+  if slain
+    puts Rainbow("	   - You slay the #{targets[0]}. It drops:\n").cyan
+    @content.each {|item| puts "	       - 1 #{item.targets[0]}"}
+    puts "\n"
+    puts Rainbow("	   - You stuff the spoils of this").orange
+    puts Rainbow("	     victory in your rucksack.\n").orange
+    lose_all_items
+    remove_from_board
+  end
+end
 end
 
 
@@ -572,7 +621,7 @@ class Monster < Character
         become_hostile
     end
     if alive?
-      enemy_turn
+      attack_player
     end
   end
 end
@@ -665,7 +714,7 @@ class Demon < Character
   def execute_special_behavior
     update_profile
     if alive?
-      enemy_turn
+      attack_player
       curse_player
     end
   end

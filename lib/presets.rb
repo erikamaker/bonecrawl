@@ -1203,7 +1203,7 @@ class Hellion < Monster
     @rewards = [Apple.new]
     @content = [].concat(@rewards.push(@weapon))
     @desires = Lighter.new
-    @profile = {:hearts => 10, :focus => 1}
+    @profile = {:health => 10, :focus => 1}
   end
   def subtype
     ["hellion","goat"]
@@ -1230,7 +1230,7 @@ class Goblin < Monster
       @rewards = [Bread.new,Hoodie.new]
       @content = @rewards.push(@weapon)
       @desires = Lighter.new
-      @profile = {:hearts => 8, :focus => 1}
+      @profile = {:health => 8, :focus => 1}
     end
     def subtype
       ["goblin","imp","orc","yrch"]
@@ -1256,7 +1256,7 @@ class Goblin < Monster
       @rewards = [Staff.new]
       @content = @rewards.push(@weapon)
       @desires = Gold.new
-      @profile = {:hearts => 8, :focus => 2}
+      @profile = {:health => 8, :focus => 2}
     end
     def subtype
       ["wizard","caster","istari"]
