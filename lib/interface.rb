@@ -4,11 +4,9 @@
 
 
 require 'rainbow'
-require_relative 'battle'
 
 
 module Interface
-  include Battle
   def prompt_player
     print Rainbow("\n   What next?").cyan.bright
     print Rainbow("  >>  ").purple.bright

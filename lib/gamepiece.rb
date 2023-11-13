@@ -420,7 +420,7 @@ class Tool < Portable
       puts Rainbow("	   - Your #{targets[0]} snaps in two.").red
       puts Rainbow("	     You toss away the pieces.\n").red
       @@player.remove_from_inventory(self)
-      @@player.weapon = nil
+      @@player.weapon = nil if self == @@player.weapon
     end
   end
   def display_backdrop

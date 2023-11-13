@@ -256,19 +256,6 @@ sleep 2
 print Rainbow("	   - You wake up with a headache\n").violet
 print Rainbow("	     on the cold, hard floor.\n\n").violet
 sleep 3
-print Rainbow("	   - It smells like sulfur. You\n").violet
-print Rainbow("	     wonder aloud where you are.\n\n").violet
-sleep 3
-print Rainbow("	   - A voice in your ear answers,\n").violet
-print Rainbow("	     startling you in the dark.\n\n").violet
-SoundBoard.evil_laugh
-sleep 3
-system("clear")  # Clear the screen
-sleep 3
-print Rainbow("\n\n\n\n\n\n\n\n	   \" You're part of my flock now. \n" ).red
-sleep 3
-print Rainbow("	     It's shearing season, lamby. \" \n\n " ).red
-sleep 3
 Board.player.reset_input
 Board.player.page_bottom
 Board.player.page_top
