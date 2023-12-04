@@ -1122,7 +1122,7 @@ class Door < Container
     @needkey = true
   end
   def execute_special_behavior
-    if state == :"jammed open"
+    if state == :"already open"
       content.activate
     end
   end
@@ -1201,7 +1201,6 @@ class Hellion < Monster
     @weapon = Cleaver.new
     @armor = nil
     @rewards = [Apple.new]
-    @content = [].concat(@rewards.push(@weapon))
     @desires = Lighter.new
     @profile = {:health => 10, :focus => 1}
   end
@@ -1228,7 +1227,6 @@ class Goblin < Monster
       @weapon = Knife.new
       @armor = Hoodie.new
       @rewards = [Bread.new,Hoodie.new]
-      @content = @rewards.push(@weapon)
       @desires = Lighter.new
       @profile = {:health => 8, :focus => 1}
     end
@@ -1253,8 +1251,8 @@ class Goblin < Monster
     def initialize
       super
       @weapon = Staff.new
-      @rewards = [Staff.new]
-      @content = @rewards.push(@weapon)
+      @rewards = [Silver.new]
+      @armor = Hoodie.new
       @desires = Gold.new
       @profile = {:health => 8, :focus => 2}
     end
