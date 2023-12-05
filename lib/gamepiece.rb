@@ -6,71 +6,71 @@
 require_relative 'board'
 require_relative 'sound'
 require_relative 'player'
-require_relative 'attack'
+require_relative 'battling'
 
 
 class Gamepiece < Board
-  attr_accessor :location, :targets, :moveset, :profile
-  def initialize
-    super
-  end
-  def display_backdrop
-    # Some pieces have unique backdrops.
-    # Hidden items will return nil.
-  end
-  def execute_special_behavior
-    # Unique behavior during activation.
-    # E.G. Fruit trees can grow new fruit.
-  end
-  def remove_from_board
-    @location = [0]
-  end
-  def teleport(new_plot)
-    @location = new_plot
-  end
-  def reveal_targets_to_player
-    @@player.sight |= targets
-  end
-  def player_near
-    @location.include?(@@player.position)
-  end
-  def view
-    display_description
-    display_profile
-    print "\n"
-  end
-  def display_profile
-    return if @profile.nil?
-    @profile.each do |key, value|
-      length = 25 - (key.to_s.length + value.to_s.length)
-      dots = Rainbow(".").purple * length
-      space = " " * 13
-      value = value.to_s.capitalize
-      puts space + "#{key.capitalize} #{dots} #{value}"
+    attr_accessor :location, :targets, :moveset, :profile
+    def initialize
+        super
     end
-  end
-  def interpret_action
-    Board.actions.each do |action, moves|
-      send(action) if moves.include?(@@player.action)
+    def display_backdrop
+        # Some pieces have unique backdrops.
+        # Hidden items will return nil.
     end
-  end
-  def activate
-    execute_special_behavior
-    player_near ? reveal_targets_to_player : return
-    @@player.state_inert ? display_backdrop : interact
-  end
-  def wrong_move
-    puts "	   - It would be uesless to try."
-    puts "	     A page passes in vain.\n\n"
-  end
-  def interact
-    return if targets.none?(@@player.target)
-    if moveset.include?(@@player.action)
-      interpret_action
-    else
-      wrong_move
+    def execute_special_behavior
+        # Unique behavior during activation.
+        # E.G. Fruit trees can grow new fruit.
     end
-  end
+    def remove_from_board
+        @location = [0]
+    end
+    def teleport(new_plot)
+        @location = new_plot
+    end
+    def reveal_targets_to_player
+        @@player.sight |= targets
+    end
+    def player_near
+        @location.include?(@@player.position)
+    end
+    def view
+        display_description
+        display_profile
+        print "\n"
+    end
+    def display_profile
+        return if @profile.nil?
+        @profile.each do |key, value|
+            length = 25 - (key.to_s.length + value.to_s.length)
+            dots = Rainbow(".").purple * length
+            space = " " * 13
+            value = value.to_s.capitalize
+            puts space + "#{key.capitalize} #{dots} #{value}"
+        end
+    end
+    def interpret_action
+        Board.actions.each do |action, moves|
+            send(action) if moves.include?(@@player.action)
+        end
+    end
+    def activate
+        execute_special_behavior
+        player_near ? reveal_targets_to_player : return
+        @@player.state_inert ? display_backdrop : interact
+    end
+    def wrong_move
+        puts "	   - It would be uesless to try."
+        puts "	     A page passes in vain.\n\n"
+    end
+    def interact
+        return if targets.none?(@@player.target)
+        if moveset.include?(@@player.action)
+            interpret_action
+        else
+            wrong_move
+        end
+    end
 end
 
 
@@ -80,9 +80,9 @@ end
 
 
 class Fixture < Gamepiece
-  def moveset
-    MOVES[1]
-  end
+    def moveset
+        MOVES[1]
+    end
 end
 
 
@@ -92,35 +92,35 @@ end
 
 
 class Tiles < Fixture
-  attr_accessor  :subtype, :composition, :terrain, :borders, :general, :targets
-  def initialize
-    super
-    @general = ["around","room","area","surroundings"] | subtype
-    @borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
-    @terrain = ["terrain","medium","material"] | composition
-    @targets = (general + terrain + borders).flatten
-  end
-  def view
-    overview
-  end
-  def execute_special_behavior
-    @@map |= @location
-  end
-  def interpret_action
-    case @@player.target
-    when *general
-      @@player.toggle_state_inert
-      overview
-    when *terrain
-      view_type
-    when *borders[0]
-      view_wall
-    when *borders[1]
-      view_down
-    when *borders[2]
-      view_above
+    attr_accessor  :subtype, :composition, :terrain, :borders, :general, :targets
+    def initialize
+        super
+        @general = ["around","room","area","surroundings"] | subtype
+        @borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
+        @terrain = ["terrain","medium","material"] | composition
+        @targets = (general + terrain + borders).flatten
     end
-  end
+    def view
+        overview
+    end
+    def execute_special_behavior
+        @@map |= @location
+    end
+    def interpret_action
+        case @@player.target
+        when *general
+            @@player.toggle_state_inert
+            overview
+        when *terrain
+            view_type
+        when *borders[0]
+            view_wall
+        when *borders[1]
+            view_down
+        when *borders[2]
+            view_above
+        end
+    end
 end
 
 
@@ -130,24 +130,24 @@ end
 
 
 class Portable < Gamepiece
-  def moveset
-  	MOVES[1..2].flatten
-  end
-  def wrong_move
-    print "	   - This portable object can be\n"
-    print Rainbow("	     viewed").cyan + " or "
-    print Rainbow("taken").cyan + ".\n\n"
-  end
-  def take
-    self.view
-    puts Rainbow("	   - You take the #{targets[0]}.\n").orange
-    push_to_player_inventory
-    SoundBoard.found_item
-  end
-  def push_to_player_inventory
-    remove_from_board
-    @@player.items.push(self)
-  end
+    def moveset
+    	MOVES[1..2].flatten
+    end
+    def wrong_move
+        print "	   - This portable object can be\n"
+        print Rainbow("	     viewed").cyan + " or "
+        print Rainbow("taken").cyan + ".\n\n"
+    end
+    def take
+        self.view
+        puts Rainbow("	   - You take the #{targets[0]}.\n").orange
+        push_to_player_inventory
+        SoundBoard.found_item
+    end
+    def push_to_player_inventory
+        remove_from_board
+        @@player.items.push(self)
+    end
 end
 
 
@@ -157,60 +157,60 @@ end
 
 
 class Container < Gamepiece
-  attr_accessor :content, :needkey, :state
-  def initialize
-    super
-    @state = :"closed shut"
-    @needkey = false
-  end
-  def moveset
-    @moveset = MOVES[1] | MOVES[3]
-  end
-  def toggle_state_open
-    @state = :"already open"
-  end
-  def view
-  	puts "	   - This #{targets[0]} is #{state}.\n\n"
-  end
-  def key
-    @@player.items.find {|i| i.is_a?(Lockpick) or i.is_a?(Key)}
-  end
-  def open
-    if @state == :"closed shut"
-      @needkey ? is_locked : give_content
-    else
-      puts "	   - This #{targets[0]}'s already open.\n\n"
+    attr_accessor :content, :needkey, :state
+    def initialize
+        super
+        @state = :"closed shut"
+        @needkey = false
     end
-  end
-  def use_key
-    key.profile[:lifespan] -= 1
-    key.break_item
-  end
-  def is_locked
-    if key.nil?
-      puts "	   - It won't open. It's locked.\n\n"
-    else
-      puts "	   - You twirl a #{key.targets[0]} in the"
-      print "	     #{targets[0]}'s latch. "
-      print Rainbow("Click.\n\n").orange
-      use_key
-      give_content
+    def moveset
+        @moveset = MOVES[1] | MOVES[3]
     end
-  end
-  def animate_opening
-    puts Rainbow("           - It swings open and reveals a").cyan
-    puts Rainbow("             hidden #{content.targets[0]}.\n").cyan
-    toggle_state_open
-  end
-  def give_content
-    animate_opening
-    content.take
-  end
-  def wrong_move
-    print "	   - This container can only be\n"
-    print Rainbow("	     viewed").cyan + " or "
-    print Rainbow("opened").cyan + ".\n\n"
-  end
+    def toggle_state_open
+        @state = :"already open"
+    end
+    def view
+    	puts "	   - This #{targets[0]} is #{state}.\n\n"
+    end
+    def key
+        @@player.items.find {|i| i.is_a?(Lockpick) or i.is_a?(Key)}
+    end
+    def open
+        if @state == :"closed shut"
+            @needkey ? is_locked : give_content
+        else
+            puts "	   - This #{targets[0]}'s already open.\n\n"
+        end
+    end
+    def use_key
+        key.profile[:lifespan] -= 1
+        key.break_item
+    end
+    def is_locked
+        if key.nil?
+            puts "	   - It won't open. It's locked.\n\n"
+        else
+            puts "	   - You twirl a #{key.targets[0]} in the"
+            print "	     #{targets[0]}'s latch. "
+            print Rainbow("Click.\n\n").orange
+            use_key
+            give_content
+        end
+    end
+    def animate_opening
+        puts Rainbow("           - It swings open and reveals a").cyan
+        puts Rainbow("             hidden #{content.targets[0]}.\n").cyan
+        toggle_state_open
+    end
+    def give_content
+        animate_opening
+        content.take
+    end
+    def wrong_move
+        print "	   - This container can only be\n"
+        print Rainbow("	     viewed").cyan + " or "
+        print Rainbow("opened").cyan + ".\n\n"
+    end
 end
 
 
@@ -220,45 +220,44 @@ end
 
 
 class Burnable < Portable
-  def moveset
-    MOVES[1..2].flatten + MOVES[9]
-  end
-  def fuel
-      @@player.items.find { |item| item.is_a?(Fuel) }
+    def moveset
+        MOVES[1..2].flatten + MOVES[9]
     end
-  def fire_near?
-    @@player.sight.include?("fire")
-  end
-  def burn
-    if fire_near?
-      unique_burn_screen
-      remove_from_board
-    elsif @@player.search_inventory(Lighter)
-      use_lighter
-    else
-      puts "	   - There's isn't any fire here.\n\n"
+    def fuel
+        @@player.items.find { |item| item.is_a?(Fuel) }
+      end
+    def fire_near?
+        @@player.sight.include?("fire")
     end
-  end
-  def use_fuel
-      puts "	   - You thumb a little fuel into"
-      puts "	     your lighter's fuel canister."
-      puts "	     It sparks a warm flame.\n\n"
-      @@player.remove_from_inventory(fuel)
-  end
-  def use_lighter
-    if @@player.search_inventory(Fuel)
-      use_fuel
-      unique_burn_screen
-      remove_from_board
-    else
-      puts "	   - You're out of lighter fuel.\n\n"
+    def burn
+        if fire_near?
+            unique_burn_screen
+            remove_from_board
+        elsif @@player.search_inventory(Lighter)
+            use_lighter
+        else puts "	   - There's isn't any fire here.\n\n"
+      end
     end
-  end
-  def wrong_move
-    print "	   - This burnable object can be\n"
-    print Rainbow("	     viewed").cyan + " or "
-    print Rainbow("burned").cyan + ".\n\n"
-  end
+    def use_fuel
+        puts "	   - You thumb a little fuel into"
+        puts "	     your lighter's fuel canister."
+        puts "	     It sparks a warm flame.\n\n"
+        @@player.remove_from_inventory(fuel)
+    end
+    def use_lighter
+        if @@player.search_inventory(Fuel)
+            use_fuel
+            unique_burn_screen
+            remove_from_board
+        else
+            puts "	   - You're out of lighter fuel.\n\n"
+        end
+    end
+    def wrong_move
+        print "	   - This burnable object can be\n"
+        print Rainbow("	     viewed").cyan + " or "
+        print Rainbow("burned").cyan + ".\n\n"
+    end
 end
 
 
@@ -268,55 +267,55 @@ end
 
 
 class Edible < Portable
-  def targets
-  	subtype | ["food","edible","nourishment","nutrients","nutrient"]
-  end
-  def moveset
-  	MOVES[1..2].flatten | MOVES[10]
-  end
-  def eat
-    animate_ingestion
-    remove_portion
-    display_remaining_portions
-    @@player.gain_health(heal_amount)
-    activate_side_effects
-  end
-  def animate_ingestion
-    puts Rainbow("	   - You eat the #{subtype[0]}, healing").orange
-  	print Rainbow("	     #{heal_amount} heart").orange
-    print Rainbow("#{heal_amount == 1 ? '.' : 's.'} ").orange
-  end
-  def remove_portion
-    profile[:portions] -= 1
-  end
-  def display_remaining_portions
-    case profile[:portions]
-    when 1
-      print "#{profile[:portions]} portion left.\n\n"
-    when * [2..7]
-      print "#{profile[:portions]} portions left.\n\n"
-    else
-      print "You finish it.\n\n"
-      remove_from_board
-      @@player.remove_from_inventory(self)
+    def targets
+    	subtype | ["food","edible","nourishment","nutrients","nutrient"]
     end
-  end
-  def heal_amount
-    if @@player.health + profile[:hearts] > 4
-      (4 - @@player.health)
-    else
-      profile[:hearts]
+    def moveset
+    	MOVES[1..2].flatten | MOVES[10]
     end
-  end
-  def activate_side_effects
-    # Reserved for foods or drinks that affect
-    # player's stats in some way. See presets.
-  end
-  def wrong_move
-    print "	   - This food item can only be\n"
-    print Rainbow("	     viewed").cyan + " or "
-    print Rainbow("ingested").cyan + ".\n\n"
-  end
+    def eat
+        animate_ingestion
+        remove_portion
+        display_remaining_portions
+        @@player.gain_health(heal_amount)
+        activate_side_effects
+    end
+    def animate_ingestion
+        puts Rainbow("	   - You eat the #{subtype[0]}, healing").orange
+    	print Rainbow("	     #{heal_amount} heart").orange
+        print Rainbow("#{heal_amount == 1 ? '.' : 's.'} ").orange
+    end
+    def remove_portion
+        profile[:portions] -= 1
+    end
+    def display_remaining_portions
+        case profile[:portions]
+        when 1
+            print "#{profile[:portions]} portion left.\n\n"
+        when * [2..7]
+            print "#{profile[:portions]} portions left.\n\n"
+        else
+            print "You finish it.\n\n"
+            remove_from_board
+            @@player.remove_from_inventory(self)
+        end
+    end
+    def heal_amount
+        if @@player.health + profile[:hearts] > 4
+            (4 - @@player.health)
+        else
+            profile[:hearts]
+        end
+    end
+    def activate_side_effects
+        # Reserved for foods or drinks that affect
+        # player's stats in some way. See presets.
+    end
+    def wrong_move
+        print "	   - This food item can only be\n"
+        print Rainbow("	     viewed").cyan + " or "
+        print Rainbow("ingested").cyan + ".\n\n"
+    end
 end
 
 
@@ -326,25 +325,25 @@ end
 
 
 class Liquid < Edible
-  def targets
-  	subtype | ["drink","liquid","fluid"]
-  end
-  def moveset
-  	[MOVES[1..2],MOVES[10..11]].flatten
-  end
-  def drink
-    eat
-  end
-  def animate_ingestion
-    puts Rainbow("	   - You drink the #{subtype[0]}, healing").orange
-  	print Rainbow("	     #{heal_amount} heart").orange
-    print Rainbow("#{heal_amount == 1 ? '.' : 's.'} ").orange
-  end
-  def wrong_move
-    print "	   - This liquid item can only be\n"
-    print Rainbow("	     taken").cyan + " or "
-    print Rainbow("ingested").cyan + ".\n\n"
-  end
+    def targets
+    	subtype | ["drink","liquid","fluid"]
+    end
+    def moveset
+    	[MOVES[1..2],MOVES[10..11]].flatten
+    end
+    def drink
+        eat
+    end
+    def animate_ingestion
+        puts Rainbow("	   - You drink the #{subtype[0]}, healing").orange
+    	print Rainbow("	     #{heal_amount} heart").orange
+        print Rainbow("#{heal_amount == 1 ? '.' : 's.'} ").orange
+    end
+    def wrong_move
+        print "	   - This liquid item can only be\n"
+        print Rainbow("	     taken").cyan + " or "
+        print Rainbow("ingested").cyan + ".\n\n"
+    end
 end
 
 
@@ -495,20 +494,19 @@ end
 
 
 class Character < Gamepiece
-    include Battling
-    include Trading
+    include Battle
     attr_accessor :regions, :desires, :content, :rewards
     def initialize
         super
-        @moveset = (MOVESET[1] + MOVES[6..7])
+        @moveset = (MOVES[1] | MOVES[6..7])
         @hostile = false
         @content = [@weapon,@armor,@rewards]
         @armor = nil
         @weapon = nil
-        @rewards nil
+        @rewards = nil
         @type = nil
         @health = 0
-        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :poisoned => 0}
+        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0}
     end
     def targets
         subtype | ["character","person","npc"]
@@ -548,7 +546,7 @@ class Character < Gamepiece
         @hostile = false
     end
     def wrong_move
-        puts "	   - The #{@targets[0]} leers at you. You"
+        puts "	   - The #{targets[0]} leers at you. You"
         puts "	     shouldn't annoy the locals.\n\n"
         become_hostile if rand(1..8) == 8
     end
@@ -567,7 +565,11 @@ class Monster < Character
     def execute_special_behavior
         update_profile
         become_hostile if player_near
-        retaliate if is_alive
+        #if chance == 1
+            retaliate if is_alive
+        #else
+            #special_move
+        #end
     end
 end
 
@@ -577,59 +579,60 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-def targets
-    subtype | ["character","person","npc"]
-end
-def material_leverage
-    @@player.items.find do |item|
-        item.targets == desires.targets
+class Neutral < Character
+    def targets
+        subtype | ["character","person","npc"]
     end
-end
-def talk
-    if @hostile
-        puts "	   - Talking won't help.\n\n"
-    else
-        conversation
-    end
-end
-def conversation
-    if @passive
-        passive_script
-    else business_as_usual
-    end
-end
-def business_as_usual
-    default_script
-    barter if material_leverage
-end
-def barter
-    unique_bartering_script
-    print Rainbow("	   - Yes / No  ").cyan
-    print Rainbow(">>  ").purple
-    choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '')
-    print "\n"
-    bartering_outcome(choice)
-end
-def bartering_outcome(choice)
-    if AFFIRMATIONS.include?(choice)
-        exchange_gifts
-    else
-        roll = rand(1..5)
-        case roll
-        when 1
-            puts "	   - 'Nothing comes from nothing.'\n\n"
-        when 2
-            puts "	   - 'If you change your mind...'\n\n"
-        when 3
-            puts "	   - 'Really? Why not?'\n\n"
-        when 4
-            puts "	   - 'Never mind, then.\n\n"
-        when 5
-            puts "	   - 'I promise a fair trade.\n\n"
+    def material_leverage
+        @@player.items.find do |item|
+            item.targets == desires.targets
         end
     end
-end
-def exchange_gifts
+    def talk
+        if @hostile
+            puts "	   - Talking won't help.\n\n"
+        else
+            conversation
+        end
+    end
+    def conversation
+        if @passive
+            passive_script
+        else business_as_usual
+        end
+    end
+    def business_as_usual
+        default_script
+        barter if material_leverage
+    end
+    def barter
+        unique_bartering_script
+        print Rainbow("	   - Yes / No  ").cyan
+        print Rainbow(">>  ").purple
+        choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '')
+        print "\n"
+        bartering_outcome(choice)
+    end
+    def bartering_outcome(choice)
+        if AFFIRMATIONS.include?(choice)
+            exchange_gifts
+        else
+            roll = rand(1..5)
+            case roll
+            when 1
+                puts "	   - 'Nothing comes from nothing.'\n\n"
+            when 2
+                puts "	   - 'If you change your mind...'\n\n"
+            when 3
+                puts "	   - 'Really? Why not?'\n\n"
+            when 4
+                puts "	   - 'Never mind, then.\n\n"
+            when 5
+                puts "	   - 'I promise a fair trade.\n\n"
+            end
+        end
+    end
+    def exchange_gifts
         reward_animation
         reward = @rewards.sample
         puts "	   - To help you on your journey,"
@@ -638,15 +641,9 @@ def exchange_gifts
         @content.concat([@weapon,@desires])
         @@player.remove_from_inventory(material_leverage)
         become_passive
+
     end
 end
-
-
-
-
-
-
-
 
 
 ##############################################################################################################################################################################################################################################################

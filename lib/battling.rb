@@ -3,7 +3,7 @@
 ##############################################################################################################################################################################################################################################################
 
 
-module Battling
+module Battle
     def is_alive
         @health > 0
     end
@@ -124,7 +124,7 @@ module Battling
     def cooldown_effects
         if @stats_clock[:stunned] > 0
             @stats_clock[:stunned] -= 1
-            display_clock("movement") if @stats_clock[:stunned] == 1
+            display_clock("haste") if @stats_clock[:stunned] == 1
         end
         if @stats_clock[:cursed] > 0
             @stats_clock[:cursed] -= 1
@@ -134,9 +134,9 @@ module Battling
             @stats_clock[:subdued] -= 1
             display_clock("defense") if @stats_clock[:subdued] == 1
         end
-        if @stats_clock[:poisoned] > 0
-            @stats_clock[:poisoned] -= 1
-            display_clock("defense") if @stats_clock[:poisoned] == 1
+        if @stats_clock[:infected] > 0
+            @stats_clock[:infected] -= 1
+            display_clock("health") if @stats_clock[:poisoned] == 1
         end
     end
 end

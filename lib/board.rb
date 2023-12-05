@@ -5,7 +5,7 @@
 
 require_relative 'vocabulary'
 require_relative 'player'
-require_relative 'battle'
+require_relative 'battling'
 
 class Board
   include Interface
