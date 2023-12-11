@@ -7,6 +7,7 @@ require_relative 'vocabulary'
 require_relative 'player'
 require_relative 'battling'
 
+
 class Board
   include Interface
   include Battle
@@ -23,8 +24,8 @@ class Board
       push: MOVES[4],
       pull: MOVES[5],
       talk: MOVES[6],
-      make: MOVES[7],
-    attack: MOVES[8],
+    attack: MOVES[7],
+    craft: MOVES[8],
       burn: MOVES[9],
       eat: MOVES[10],
       drink: MOVES[11],

@@ -505,7 +505,7 @@ class Juice < Liquid
   def activate_side_effects
     puts Rainbow("	   - Your focus sharpens. Details").cyan
     print Rainbow("	     you've never noticed shimmer.\n\n").cyan
-    @@player.focus_clock += 7
+    @@player.stats_clock[:intelligence] += 7
   end
 end
 
@@ -539,6 +539,9 @@ class Torch < Burnable
   def initialize
       super
       @lit = true
+  end
+  def is_lit
+    @lit == true
   end
   def unlit_target
     ["torch"]
@@ -630,7 +633,7 @@ class RedFlower < Blossom
   def burn_effect
     puts Rainbow("	   - You feel light as a feather.").orange
     print Rainbow("	     Your defense begins to soar.\n").orange
-    @@player.block_clock += 10
+    @@player.stats_clock[:strength] += 10
   end
 end
 
@@ -1202,7 +1205,9 @@ class Hellion < Monster
     @armor = nil
     @rewards = [Apple.new]
     @desires = Lighter.new
-    @profile = {:health => 10, :focus => 1}
+    @health = 10
+    @focus = 1
+    @level = 1
   end
   def subtype
     ["hellion","goat"]
@@ -1210,6 +1215,10 @@ class Hellion < Monster
   def docile_backdrop
     puts "	   - A dark hellion stands on two\n"
     puts "	     cloven hooves. It stinks.\n\n"
+  end
+  def hostile_backdrop
+    puts "	   - A dark and violent hellion is"
+    puts "	     stalking your every move.\n\n"
   end
   def hostile_script
     puts "	   - Its black pupils quiver with"
@@ -1245,16 +1254,18 @@ class Goblin < Monster
       puts "	   - It's a pallid-green goblin."
       puts "	     Its kind is untrustworthy.\n\n"
     end
-  end
+end
 
-  class Wizard < Neutral
+  class Wizard < Character
     def initialize
       super
+      @health = 8
+      @focus = 1
+      @defense = 3
       @weapon = Staff.new
       @rewards = [Silver.new]
       @armor = Hoodie.new
       @desires = Gold.new
-      @profile = {:health => 8, :focus => 2}
     end
     def subtype
       ["wizard","caster","istari"]

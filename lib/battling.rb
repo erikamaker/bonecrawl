@@ -28,35 +28,6 @@ module Battle
         else Rainbow("bare skin").orange
         end
     end
-    def attack
-        puts "	   - You move to strike with your"
-        print "	     #{@@player.weapon_name}.\n\n"
-        hearts_lost = damage_received(@@player.attack_points)
-        if @@player.successful_hit
-            @@player.degrade_weapon
-            @hearts -= hearts_lost
-            animate_damage if is_alive
-            animate_death if is_slain
-        else puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
-            ## CHANCE OF DEMON PARRY
-        end
-    end
-    def retaliate
-        hearts_lost = @@player.damage_received(attack_points)
-        puts "	   - The #{targets[0]} lunges to attack"
-        print "	     with its #{weapon_name}.\n\n"
-        if successful_hit
-            SoundBoard.take_damage
-            @@player.health -= hearts_lost
-            @@player.display_defense
-            print Rainbow("	   - It costs you #{hearts_lost} heart point").red
-            hearts_lost != 1 && print(Rainbow("s").red)
-            print(".\n\n")
-            @@player.degrade_armor
-        else puts Rainbow("	   - You narrowly avoid its blow.\n").green
-            ## CHANCE OF PARRY
-        end
-    end
     def attack_points
         if weapon_equipped
             @weapon.profile[:damage] + @level
@@ -71,8 +42,8 @@ module Battle
     end
     def defense
         if armor_equipped
-            [(@armor.profile[:defense] + @block_clock),4].min
-        else 0 + [block_clock,4].min
+            [(@armor.profile[:defense] + @stats_clock[:strength]),4].min
+        else 0 + [@stats_clock[:strength],4].min
         end
     end
     def successful_hit

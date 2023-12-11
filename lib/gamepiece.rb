@@ -225,7 +225,7 @@ class Burnable < Portable
     end
     def fuel
         @@player.items.find { |item| item.is_a?(Fuel) }
-      end
+    end
     def fire_near?
         @@player.sight.include?("fire")
     end
@@ -236,7 +236,7 @@ class Burnable < Portable
         elsif @@player.search_inventory(Lighter)
             use_lighter
         else puts "	   - There's isn't any fire here.\n\n"
-      end
+        end
     end
     def use_fuel
         puts "	   - You thumb a little fuel into"
@@ -498,19 +498,20 @@ class Character < Gamepiece
     attr_accessor :regions, :desires, :content, :rewards
     def initialize
         super
-        @moveset = (MOVES[1] | MOVES[6..7])
+        @moveset = (MOVES[1] | MOVES[6..7]).flatten
         @hostile = false
         @content = [@weapon,@armor,@rewards]
         @armor = nil
         @weapon = nil
         @rewards = nil
         @type = nil
-        @health = 0
-        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0}
+        @profile = {:health => @health, :focus => @focus}
+        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :strength => 0, :aggression => 0, :intelligence => 0}
     end
     def targets
         subtype | ["character","person","npc"]
     end
+
     def material_leverage
         @@player.items.find do |item|
             item.targets == desires.targets
@@ -548,8 +549,86 @@ class Character < Gamepiece
     def wrong_move
         puts "	   - The #{targets[0]} leers at you. You"
         puts "	     shouldn't annoy the locals.\n\n"
-        become_hostile if rand(1..8) == 8
     end
+    def talk
+        if @hostile
+            puts "	   - Talking won't help.\n\n"
+        else conversation
+        end
+    end
+    def conversation
+        if !@hostile
+            passive_script
+        else business_as_usual
+        end
+    end
+    def business_as_usual
+        default_script
+        barter if material_leverage
+    end
+    def barter
+        unique_bartering_script
+        print Rainbow("	   - Yes / No  ").cyan
+        print Rainbow(">>  ").purple
+        choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '')
+        print "\n"
+        bartering_outcome(choice)
+    end
+    def bartering_outcome(choice)
+        if AFFIRMATIONS.include?(choice)
+            exchange_gifts
+        else
+            @speech = [
+                "	   - 'Nothing comes from nothing.'\n\n",
+                "	   - 'If you change your mind...'\n\n",
+                "	   - 'Really? Why not? Trust me.'\n\n",
+                "	   - 'Never mind, then. Forget it.'\n\n",
+                "	   - 'I can guarantee a fair trade.'\n\n",
+                "	   - 'I can guarantee a fair trade.'\n\n"]
+                become_hostile if rand(1..8) == 8
+            puts @speech.sample
+        end
+    end
+    def exchange_gifts
+        reward_animation
+        reward = @rewards.sample
+        puts "	   - To help you on your journey,"
+        puts "	     you're given 1 #{reward.targets[0]}.\n\n"
+        reward.take
+        @content.concat([@weapon,@desires])
+        @@player.remove_from_inventory(material_leverage)
+        become_passive
+    end
+    def attack
+        puts "	   - You move to strike with your"
+        print "	     #{@@player.weapon_name}.\n\n"
+        hearts_lost = damage_received(@@player.attack_points)
+        if @@player.successful_hit
+            @@player.degrade_weapon
+            @hearts -= hearts_lost
+            animate_damage if is_alive
+            animate_death if is_slain
+        else puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
+            ## CHANCE OF DEMON PARRY
+        end
+    end
+    def retaliate
+        hearts_lost = @@player.damage_received(attack_points)
+        puts "	   - The #{targets[0]} lunges to attack"
+        print "	     with its #{weapon_name}.\n\n"
+        if successful_hit
+            SoundBoard.take_damage
+            @@player.health -= hearts_lost
+            @@player.display_defense
+            print Rainbow("	   - It costs you #{hearts_lost} heart point").red
+            hearts_lost != 1 && print(Rainbow("s").red)
+            print(".\n\n")
+            @@player.degrade_armor
+        else puts Rainbow("	   - You narrowly avoid its blow.\n").green
+            ## CHANCE OF PARRY
+        end
+    end
+
 end
 
 
@@ -579,71 +658,7 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-class Neutral < Character
-    def targets
-        subtype | ["character","person","npc"]
-    end
-    def material_leverage
-        @@player.items.find do |item|
-            item.targets == desires.targets
-        end
-    end
-    def talk
-        if @hostile
-            puts "	   - Talking won't help.\n\n"
-        else
-            conversation
-        end
-    end
-    def conversation
-        if @passive
-            passive_script
-        else business_as_usual
-        end
-    end
-    def business_as_usual
-        default_script
-        barter if material_leverage
-    end
-    def barter
-        unique_bartering_script
-        print Rainbow("	   - Yes / No  ").cyan
-        print Rainbow(">>  ").purple
-        choice = gets.chomp.downcase.gsub(/[[:punct:]]/, '')
-        print "\n"
-        bartering_outcome(choice)
-    end
-    def bartering_outcome(choice)
-        if AFFIRMATIONS.include?(choice)
-            exchange_gifts
-        else
-            roll = rand(1..5)
-            case roll
-            when 1
-                puts "	   - 'Nothing comes from nothing.'\n\n"
-            when 2
-                puts "	   - 'If you change your mind...'\n\n"
-            when 3
-                puts "	   - 'Really? Why not?'\n\n"
-            when 4
-                puts "	   - 'Never mind, then.\n\n"
-            when 5
-                puts "	   - 'I promise a fair trade.\n\n"
-            end
-        end
-    end
-    def exchange_gifts
-        reward_animation
-        reward = @rewards.sample
-        puts "	   - To help you on your journey,"
-        puts "	     you're given 1 #{reward.targets[0]}.\n\n"
-        reward.take
-        @content.concat([@weapon,@desires])
-        @@player.remove_from_inventory(material_leverage)
-        become_passive
 
-    end
-end
 
 
 ##############################################################################################################################################################################################################################################################
@@ -687,14 +702,14 @@ class Altar < Gamepiece
     puts Rainbow("	     altar cut from black marble.\n").purple
   end
   def talk
-    make
+    craft
   end
   def display_description
     puts Rainbow("	   - It towers up to your chest.").purple
     puts Rainbow("	     Your ears ring a little.\n").purple
     wrong_move
   end
-  def make
+  def craft
     print Rainbow("	   - You feel compelled to kneel.\n").red
     if any_materials? == true
         print Rainbow("	     The spirits offer a trade...\n\n").red
@@ -715,7 +730,7 @@ class Altar < Gamepiece
   end
   def not_an_option
     print Rainbow("\n	   - The altar can only grant so\n").red
-    print Rainbow("	     much. It can't make that.\n\n").red
+    print Rainbow("	     much. It can't craft that.\n\n").red
   end
   def lock_pick_materials?
     @@player.all_item_types.count(Key) > 1

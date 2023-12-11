@@ -27,8 +27,8 @@ class Player
         @items = []
         @armor = nil
         @weapon = nil
-        @health = 2
-        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :strength => 0, :rage => 0}
+        @health = 4
+        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :strength => 80, :aggression => 0, :intelligence => 0}
     end
     def defense
         if armor_equipped
