@@ -47,7 +47,9 @@ module Battle
         end
     end
     def successful_hit
-        rand(@focus..4) > 3
+        focus_value = @focus.to_i  # Convert focus to integer as a safeguard
+
+        rand(focus_value..4) > 3
     end
     def degrade_weapon
         if weapon_equipped

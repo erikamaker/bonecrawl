@@ -1262,10 +1262,12 @@ end
       @health = 8
       @focus = 1
       @defense = 3
+      @type = :magick
       @weapon = Staff.new
       @rewards = [Silver.new]
       @armor = Hoodie.new
       @desires = Gold.new
+      @level = 1
     end
     def subtype
       ["wizard","caster","istari"]
@@ -1273,6 +1275,10 @@ end
     def docile_backdrop
       puts "	   - A leathery old magick wizard\n"
       puts "	     stands here, lost in thought.\n\n"
+    end
+    def hostile_backdrop
+        puts "	   - A wrathful wizard stalks you,\n"
+        puts "	     his keen eyes glowing blue.\n\n"
     end
     def hostile_script
       puts "	   - Light gleams in the wizard's"

@@ -505,7 +505,7 @@ class Character < Gamepiece
         @weapon = nil
         @rewards = nil
         @type = nil
-        @profile = {:health => @health, :focus => @focus}
+        @profile = {}
         @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :strength => 0, :aggression => 0, :intelligence => 0}
     end
     def targets
@@ -524,8 +524,11 @@ class Character < Gamepiece
         @profile[:hostile] = @hostile
         @profile[:heatlh] = @health
         @profile[:defense] = @defense
-        @profile[:weapon] = @weapon
-        @profile[:armor] = @armor
+        @profile[:weapon] = @weapon.targets[0]
+        @profile[:armor] = @armor.targets[0]
+        @profile[:type] = @type
+        @profile[:focus] = @focus
+        self.cooldown_effects
     end
     def activate
         player_near ? reveal_targets_to_player : return
@@ -600,6 +603,7 @@ class Character < Gamepiece
         become_passive
     end
     def attack
+        become_hostile
         puts "	   - You move to strike with your"
         print "	     #{@@player.weapon_name}.\n\n"
         hearts_lost = damage_received(@@player.attack_points)
