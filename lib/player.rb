@@ -18,7 +18,7 @@ class Player
     attr_accessor :stats_clock
     def initialize
         super
-        @level = 7
+        @level = 1
         @position = [0,1,2]
         @action = :start
         @target = :start
@@ -30,8 +30,9 @@ class Player
         @health = 4
         @focus = 3
         @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 80, :stimulated => 0, :envigored => 0}
-        @stats = { :level => @level, :attack => attack, :health => @health, :focus => @focus}
-
+    end
+    def stats
+        { :level => @level, :attack => attack_points, :defense => defense, :health => @health, :focus => @focus}
     end
     def attack
         attack_points + @stats_clock[:envigored]

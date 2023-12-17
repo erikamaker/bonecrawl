@@ -30,7 +30,8 @@ module Battle
     end
     def attack_points
         if weapon_equipped
-            @weapon.profile[:damage] + @level
+            total = weapon.profile[:damage] + @level
+            total
         else @level
         end
     end

@@ -81,10 +81,13 @@ module Interface
     def tutorial_selected
         MOVES[15].include?(@target)
     end
+    def stats_selected
+        MOVES[16].include?(@target)
+    end
     def suggest_tutorial
     	if nontraditional_move
-    	    return if tutorial_selected
             return if stats_selected
+    	    return if tutorial_selected
     	    toggle_state_inert
     	    print "	   - A single page passes. Review\n"
     	    print "	     tutorial with command"
@@ -96,6 +99,7 @@ module Interface
     	    puts "	   - Speak your move plainly in a"
     	    puts "	     few short words, referencing"
     	    puts "	     only one subject per page.\n\n"
+            puts Rainbow("	     View my stats.").orange
     	    puts Rainbow("	     Slay the troll.").red
     	    puts Rainbow("	     View my items.").yellow
     	    puts Rainbow("	     Eat some bread.").green
@@ -108,38 +112,38 @@ module Interface
             puts "	     or to quickly pass time.\n\n"
     	end
     end
-    def stats_selected
-        MOVES[16].include?(@target)
-    end
-    def stats_screen
-        return if !stats_selected
-        if [1..9].include?(@level)
-            title = "desicrated spirit"
-        else
-            title = "sanctified spirit"
-        end
-        puts "	   - You're a desicrated spirit"
-        if title != "sanctified spirit"
-            puts "	     condemned to perditiion."
-        else puts "	     primed for ascension.\n\n"
-        end
-        @stats.each do |key, value|
+    def display_stats
+        stats.each do |key, value|
             length = 25 - (key.to_s.length + value.to_s.length)
             dots = Rainbow(".").purple * length
             space = " " * 13
             value = value.to_s.capitalize
             puts space + "#{key.capitalize} #{dots} #{value}"
         end
-        print "\n\n"
+    end
+    def stats_screen
+        return if !stats_selected
+        if @level < 10
+            title = "desicrated"
+        else title = "sanctified"
+        end
+        puts "	   - You're a #{title} spirit,"
+        if title != "santified"
+            puts "	     condemned to perditiion.\n\n"
+        else puts "	     cleansed for ascension.\n\n"
+        end
+        display_stats
         toggle_state_engaged
     end
     def target_does_not_exist
+        return if MOVES[16].include?(@target) || MOVES[16].include?(@move)
         return if @target == @action
         return if @state == :inert
         if @sight.none?(@target)
             puts "	   - If it exists, it isn't here."
-            puts "	     To view your inventory, open"
-            puts "	     your knapsack.\n\n"
+            print "	     To view your inventory, "
+            print Rainbow("open\n").cyan
+            print Rainbow("	     your knapsack").cyan + ".\n\n"
         end
     end
     def game_map
