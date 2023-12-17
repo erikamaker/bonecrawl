@@ -35,6 +35,9 @@ def room_1.overview
   puts "	     your cell's only exit.\n\n"
 end
 
+staff = Staff.new
+staff.location = [[0,1,1]]
+
 lighter = Lighter.new
 lighter.location = [[0,1,2]]
 
@@ -246,7 +249,7 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-levels = [ room_1, torch_1, juice, flower, wizard, gold, lighter, fat1, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
+levels = [ room_1, staff, torch_1, juice, flower, wizard, gold, lighter, fat1, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
 =begin
 system("clear")  # Clear the screen

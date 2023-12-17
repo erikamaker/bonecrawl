@@ -72,17 +72,20 @@ module Battle
         end
     end
     def animate_damage
-        if alive
+        if is_alive
             SoundBoard.hit_enemy
-            print Rainbow("	   - You hit it. #{@profile[:health]} heart").green
-            print Rainbow("s").green if @profile[:health] > 1
+            print Rainbow("	   - You hit it. #{@health} heart").green
+            print Rainbow("s").green if @health > 1
             print Rainbow(" remain").green
-            print Rainbow("s").green if @profile[:health] == 1
+            print Rainbow("s").green if @health == 1
             print Rainbow(".\n\n").green
         end
     end
+    def lose_all_items
+        @content.each { |item| item.push_to_player_inventory }
+    end
     def animate_death
-        if slain
+        if is_slain
             puts Rainbow("	   - You slay the #{targets[0]}. It drops:\n").cyan
             @content.each {|item| puts("	       - 1 #{item.targets[0]}") if item}
             puts "\n"

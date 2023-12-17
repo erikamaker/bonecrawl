@@ -501,10 +501,7 @@ class Character < Gamepiece
         @moveset = (MOVES[1] | MOVES[6..7]).flatten
         @hostile = false
         @content = [@weapon,@armor,@rewards]
-        @armor = nil
-        @weapon = nil
-        @rewards = nil
-        @type = nil
+        @sigil = nil
         @profile = {}
         @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :strength => 0, :aggression => 0, :intelligence => 0}
     end
@@ -521,14 +518,15 @@ class Character < Gamepiece
         @hostile ? hostile_backdrop : docile_backdrop
     end
     def update_profile
-        @profile[:hostile] = @hostile
         @profile[:heatlh] = @health
         @profile[:defense] = @defense
+        @profile[:hostile] = @hostile
+        @profile[:focus] = @focus
         @profile[:weapon] = @weapon.targets[0]
         @profile[:armor] = @armor.targets[0]
-        @profile[:type] = @type
-        @profile[:focus] = @focus
+        @profile[:sigil] = @sigil
         self.cooldown_effects
+        @content = [@rewards,@armor,@weapon]
     end
     def activate
         player_near ? reveal_targets_to_player : return
@@ -606,15 +604,16 @@ class Character < Gamepiece
         become_hostile
         puts "	   - You move to strike with your"
         print "	     #{@@player.weapon_name}.\n\n"
-        hearts_lost = damage_received(@@player.attack_points)
+        hearts_lost = @@player.attack_points
         if @@player.successful_hit
             @@player.degrade_weapon
-            @hearts -= hearts_lost
+            @health -= hearts_lost
             animate_damage if is_alive
             animate_death if is_slain
         else puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
             ## CHANCE OF DEMON PARRY
         end
+        puts @health
     end
     def retaliate
         hearts_lost = @@player.damage_received(attack_points)

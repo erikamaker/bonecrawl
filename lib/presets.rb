@@ -1251,8 +1251,8 @@ class Goblin < Monster
       puts "	     cunning. It bears its fangs.\n\n"
     end
     def display_description
-      puts "	   - It's a pallid-green goblin."
-      puts "	     Its kind is untrustworthy.\n\n"
+      puts "	   - It's a pallid-green goblin,"
+      puts "	     about half your height.\n\n"
     end
 end
 
@@ -1260,14 +1260,14 @@ end
     def initialize
       super
       @health = 8
-      @focus = 1
-      @defense = 3
-      @type = :magick
+      @focus = -9
+      @defense = 0
+      @sigil = "Magick"
       @weapon = Staff.new
-      @rewards = [Silver.new]
+      @rewards = Silver.new
       @armor = Hoodie.new
       @desires = Gold.new
-      @level = 1
+      @level = 0
     end
     def subtype
       ["wizard","caster","istari"]

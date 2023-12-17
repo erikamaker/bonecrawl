@@ -18,7 +18,7 @@ class Player
     attr_accessor :stats_clock
     def initialize
         super
-        @level = 1
+        @level = 7
         @position = [0,1,2]
         @action = :start
         @target = :start
@@ -28,6 +28,7 @@ class Player
         @armor = nil
         @weapon = nil
         @health = 4
+        @focus = 3
         @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :strength => 80, :aggression => 0, :intelligence => 0}
     end
     def defense
@@ -35,9 +36,6 @@ class Player
             [(@armor.profile[:defense] + @stats_clock[:strength]),4].min
         else 0 + [@stats_clock[:strength],4].min
         end
-    end
-    def focus
-        rand(1..3)
     end
     def gain_health(magnitude)
         SoundBoard.heal_heart
