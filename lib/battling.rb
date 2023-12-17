@@ -100,19 +100,19 @@ module Battle
     def cooldown_effects
         if @stats_clock[:stunned] > 0
             @stats_clock[:stunned] -= 1
-            display_clock("haste") if @stats_clock[:stunned] == 1
+            display_clock("Stunned") if @stats_clock[:stunned] == 1
         end
         if @stats_clock[:cursed] > 0
             @stats_clock[:cursed] -= 1
-            display_clock("focus") if @stats_clock[:cursed] == 1
+            display_clock("Cursed") if @stats_clock[:cursed] == 1
         end
         if @stats_clock[:subdued] > 0
             @stats_clock[:subdued] -= 1
-            display_clock("defense") if @stats_clock[:subdued] == 1
+            display_clock("Subdued") if @stats_clock[:subdued] == 1
         end
         if @stats_clock[:infected] > 0
             @stats_clock[:infected] -= 1
-            display_clock("health") if @stats_clock[:poisoned] == 1
+            display_clock("Infected") if @stats_clock[:poisoned] == 1
         end
     end
 end
