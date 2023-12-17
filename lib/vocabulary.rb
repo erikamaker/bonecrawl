@@ -19,7 +19,8 @@ MOVES =
   ["mine", "dig", "tunnel", "bore", "burrow", "gouge", "drill", "break"],
   ["lift","raise","hoist","elevate","uplift","heft","upraise"],
   ["equip","prepare","select","enable","use"],
-  ["help", "assist", "menu", "moves", "moveslist", "moveset", "hint"]]
+  ["help", "assist", "moves", "moveslist", "moveset", "hint","menu"],
+  ["stats","player","self","profile","myself","statistics"]]
 
 
 SPEECH =

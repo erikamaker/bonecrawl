@@ -67,8 +67,6 @@ def hoodie_1.draw_backdrop
     puts "	   - A black hoodie hangs from it.\n\n"
 end
 
-
-
 room_2 = Dungeon.new
 room_2.location = [[0,1,-3],[0,2,-3],[0,3,-3],[0,1,-4],[0,2,-4],[0,3,-4],[0,1,-5],[0,2,-5],[0,3,-5]]
 def room_2.draw_backdrop
@@ -224,23 +222,21 @@ wizard.location = [[0,2,2]]
 wizard.regions = hall_1.location | room_2.location | room_1.location
 
 def wizard.unique_bartering_script
-  puts "	   - They say they need your gold."
-  print "	     Why is not important.\n\n"
+  puts "	   - He requests your gold. It's"
+  print "	     very important he have it.\n\n"
 end
 def wizard.reward_animation
   puts "	   - The wizard whispers in your"
-  puts "	     ear, in a chilling voice...\n\n"
-  puts Rainbow("	   \" Staves stun even the foulest").green
-  puts Rainbow("	     of demons. \"\n").green
+  print "	     ear, "
+  print Rainbow("\'Luck be with you.\'\n\n").green
 end
 def wizard.default_script
-  puts "	   - They examine you up and down,"
-  puts "	     and smile. They ask where an"
-  puts "	     old man can find some gold.\n\n"
+  puts "	   - He says the dungeon stinks."
+  puts "	     He's looking for a way out.\n\n"
 end
 def wizard.passive_script
-  puts "	   - If you are ever lost, always"
-  puts "	     follow your nose.\n\n"
+  puts "	   - He says if you're ever lost,"
+  puts "	     to always follow your nose.\n\n"
 end
 
 
@@ -251,19 +247,17 @@ end
 
 levels = [ room_1, staff, torch_1, juice, flower, wizard, gold, lighter, fat1, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
 
-=begin
-system("clear")  # Clear the screen
-print "\e[?25l"
-print "\n\n\n\n\n\n\n\n"
-sleep 2
-print Rainbow("	   - You wake up with a headache\n").violet
-print Rainbow("	     on the cold, hard floor.\n\n").violet
-sleep 3
-Board.player.reset_input
-Board.player.page_bottom
-Board.player.page_top
-Board.player.turn_page
-=end
+# system("clear")  # Clear the screen
+# print "\e[?25l"
+# print "\n\n\n\n\n\n\n\n"
+# sleep 2
+# print Rainbow("	   - You wake up with a headache\n").violet
+# print Rainbow("	     on the cold, hard floor.\n\n").violet
+# sleep 3
+# Board.player.reset_input
+# Board.player.page_bottom
+# Board.player.page_top
+# Board.player.turn_page
 
 loop do
   print "\e[?25h"
@@ -273,6 +267,7 @@ loop do
   Board.player.detect_movement
   Board.player.suggest_tutorial
   Board.player.tutorial_screen
+  Board.player.stats_screen
   levels.each { |gamepiece| gamepiece.activate }
   Board.player.load_inventory
   Board.player.target_does_not_exist

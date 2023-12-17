@@ -84,20 +84,12 @@ module Interface
     def suggest_tutorial
     	if nontraditional_move
     	    return if tutorial_selected
+            return if stats_selected
     	    toggle_state_inert
     	    print "	   - A single page passes. Review\n"
     	    print "	     tutorial with command"
             print Rainbow(" help").cyan + ".\n\n"
     	end
-    end
-    def target_does_not_exist
-        return if @target == @action
-        return if @state == :inert
-        if @sight.none?(@target)
-            puts "	   - If it exists, it isn't here."
-            puts "	     To view your inventory, open"
-            puts "	     your knapsack.\n\n"
-        end
     end
     def tutorial_screen
     	if tutorial_selected
@@ -115,6 +107,40 @@ module Interface
             puts "	     coordinate's list of targets,"
             puts "	     or to quickly pass time.\n\n"
     	end
+    end
+    def stats_selected
+        MOVES[16].include?(@target)
+    end
+    def stats_screen
+        return if !stats_selected
+        if [1..9].include?(@level)
+            title = "desicrated spirit"
+        else
+            title = "sanctified spirit"
+        end
+        puts "	   - You're a desicrated spirit"
+        if title != "sanctified spirit"
+            puts "	     condemned to perditiion."
+        else puts "	     primed for ascension.\n\n"
+        end
+        @stats.each do |key, value|
+            length = 25 - (key.to_s.length + value.to_s.length)
+            dots = Rainbow(".").purple * length
+            space = " " * 13
+            value = value.to_s.capitalize
+            puts space + "#{key.capitalize} #{dots} #{value}"
+        end
+        print "\n\n"
+        toggle_state_engaged
+    end
+    def target_does_not_exist
+        return if @target == @action
+        return if @state == :inert
+        if @sight.none?(@target)
+            puts "	   - If it exists, it isn't here."
+            puts "	     To view your inventory, open"
+            puts "	     your knapsack.\n\n"
+        end
     end
     def game_map
         z = @position[0]

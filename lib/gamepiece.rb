@@ -558,9 +558,9 @@ class Character < Gamepiece
         end
     end
     def conversation
-        if !@hostile
-            passive_script
-        else business_as_usual
+        if @desires != nil
+            business_as_usual
+        else passive_script
         end
     end
     def business_as_usual
@@ -592,13 +592,13 @@ class Character < Gamepiece
     end
     def exchange_gifts
         reward_animation
-        reward = @rewards.sample
+        reward = @rewards
         puts "	   - To help you on your journey,"
         puts "	     you're given 1 #{reward.targets[0]}.\n\n"
         reward.take
-        @content.concat([@weapon,@desires])
         @@player.remove_from_inventory(material_leverage)
-        become_passive
+        @hostile = false
+        @desires = nil
     end
     def attack
         become_hostile
@@ -613,7 +613,6 @@ class Character < Gamepiece
         else puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
             ## CHANCE OF DEMON PARRY
         end
-        puts @health
     end
     def retaliate
         hearts_lost = @@player.damage_received(attack_points)
@@ -654,14 +653,6 @@ class Monster < Character
         #end
     end
 end
-
-
-##############################################################################################################################################################################################################################################################
-#####     NEUTRALS     #######################################################################################################################################################################################################################################
-##############################################################################################################################################################################################################################################################
-
-
-
 
 
 ##############################################################################################################################################################################################################################################################

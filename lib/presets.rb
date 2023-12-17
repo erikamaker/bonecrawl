@@ -505,7 +505,7 @@ class Juice < Liquid
   def activate_side_effects
     puts Rainbow("	   - Your focus sharpens. Details").cyan
     print Rainbow("	     you've never noticed shimmer.\n\n").cyan
-    @@player.stats_clock[:intelligence] += 7
+    @@player.stats_clock[:stimulated] += 7
   end
 end
 
@@ -951,7 +951,7 @@ class Clothes < Tool
     @@player.armor = self
   end
   def wrong_move
-    print "	   - This weapon can be"
+    print "	   - This clothing can be"
     print Rainbow(" examined").cyan + ",\n"
     print Rainbow("	     taken").cyan + ", or "
     print Rainbow("equipped").cyan + ".\n\n"
@@ -1203,7 +1203,7 @@ class Hellion < Monster
     super
     @weapon = Cleaver.new
     @armor = nil
-    @rewards = [Apple.new]
+    @rewards = [Apple.new, Bread.new, Juice.new]
     @desires = Lighter.new
     @health = 10
     @focus = 1

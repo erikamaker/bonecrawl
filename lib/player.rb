@@ -29,12 +29,17 @@ class Player
         @weapon = nil
         @health = 4
         @focus = 3
-        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :strength => 80, :aggression => 0, :intelligence => 0}
+        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 80, :stimulated => 0, :envigored => 0}
+        @stats = { :level => @level, :attack => attack, :health => @health, :focus => @focus}
+
+    end
+    def attack
+        attack_points + @stats_clock[:envigored]
     end
     def defense
         if armor_equipped
-            [(@armor.profile[:defense] + @stats_clock[:strength]),4].min
-        else 0 + [@stats_clock[:strength],4].min
+            [(@armor.profile[:defense] + @stats_clock[:fortified]),4].min
+        else 0 + [@stats_clock[:fortified],4].min
         end
     end
     def gain_health(magnitude)
@@ -54,7 +59,7 @@ class Player
         @state = :inert
     end
     def toggle_state_engaged
-        moves = MOVES[1..15].flatten
+        moves = MOVES[1..16].flatten
         return if moves.none?(@action)
         @state = :engaged
     end
