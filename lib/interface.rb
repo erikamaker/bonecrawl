@@ -136,7 +136,6 @@ module Interface
         toggle_state_engaged
     end
     def target_does_not_exist
-        return if MOVES[16].include?(@target) || MOVES[16].include?(@move)
         return if @target == @action
         return if @state == :inert
         if @sight.none?(@target)
