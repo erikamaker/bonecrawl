@@ -12,6 +12,9 @@ module Inventory
     def opening_or_viewing
         (MOVES[1] | MOVES[3]).include?(@action)
     end
+    def inventory_selected
+        INVENTORY.include?(Board.player.target)
+    end
     def search_inventory(types)
         types = Array(types)
         @items.any? do |item|

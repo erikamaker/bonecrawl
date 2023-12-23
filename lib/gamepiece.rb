@@ -14,7 +14,15 @@ class Gamepiece < Board
     def initialize
         super
     end
+    def display_position
+        # Unique position the object is in.
+        # E:G: 'lays on the table'
+    end
     def display_backdrop
+        if self.is_a?(Portable)
+            print Rainbow("	     1 #{targets[0]} ").orange
+            display_position
+        end
         # Some pieces have unique backdrops.
         # Hidden items will return nil.
     end
@@ -422,9 +430,6 @@ class Tool < Portable
       @@player.weapon = nil if self == @@player.weapon
     end
   end
-  def display_backdrop
-  	puts "	   - A #{targets[0]} lays here.\n\n"
-  end
 end
 
 
@@ -522,11 +527,11 @@ class Character < Gamepiece
         @profile[:defense] = @defense
         @profile[:hostile] = @hostile
         @profile[:focus] = @focus
-        @profile[:weapon] = @weapon.targets[0]
-        @profile[:armor] = @armor.targets[0]
+        @profile[:weapon] = weapon_name
+        @profile[:armor] = armor_name
         @profile[:sigil] = @sigil
         self.cooldown_effects
-        @content = [@rewards,@armor,@weapon]
+        @content = [@rewards,@armor,@weapon].compact
     end
     def activate
         player_near ? reveal_targets_to_player : return

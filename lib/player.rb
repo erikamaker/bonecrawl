@@ -59,6 +59,9 @@ class Player
     def toggle_state_inert
         @state = :inert
     end
+    def state_engaged
+        @state == :engaged
+    end
     def toggle_state_engaged
         moves = MOVES[1..16].flatten
         return if moves.none?(@action)

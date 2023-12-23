@@ -20,9 +20,8 @@ print "\e[8;40;57t"
 ##############################################################################################################################################################################################################################################################
 
 
-# Adds each game piece and its unique qualities to record. Make your pieces tell a story.
-# I recommend no more than 2 objects per room coordinate to avoid overwhelming the player.
-# A good rule of thumb is: room backdrop, object 1 backdrop, object 2 backdrop.
+# Adds each gamepiece and its unique qualities to record. Make your pieces tell a story.
+# Portable items (loot) will display in list form following all room or fixture backdrop displays.
 
 
 room_1 = Dungeon.new
@@ -37,9 +36,15 @@ end
 
 staff = Staff.new
 staff.location = [[0,1,1]]
+def staff.display_position
+    puts "resting in the corner."
+end
 
 lighter = Lighter.new
-lighter.location = [[0,1,2]]
+lighter.location = [[0,1,1]]
+def lighter.display_position
+    puts "on the floor."
+end
 
 drain_1 = Toilet.new
 drain_1.location =  [[0,1,1]]
@@ -63,8 +68,8 @@ hook_1.location = [[0,2,0]]
 
 hoodie_1 = Hoodie.new
 hoodie_1.location = [[0,2,0]]
-def hoodie_1.draw_backdrop
-    puts "	   - A black hoodie hangs from it.\n\n"
+def hoodie_1.display_position
+    puts "hangs from the hook."
 end
 
 room_2 = Dungeon.new
@@ -182,14 +187,11 @@ end
 
 femur = Femur.new
 
-lighter = Lighter.new
-lighter.location = [[0,2,2]]
-
-fat = Fat.new
-fat.location = [[0,2,2]]
-
 fat1 = Fat.new
 fat1.location = [[0,2,2]]
+def fat1.display_position
+    puts "sulks on the ground."
+end
 
 secret_room = Corridor.new
 secret_room.location = [[0,3,2],[0,4,2],[0,5,2]]
@@ -210,12 +212,21 @@ end
 
 gold = Gold.new
 gold.location = [[0,2,1]]
+def gold.display_position
+    puts "sits at your feet."
+end
 
 flower = RedFlower.new
 flower.location = [[0,2,1]]
+def flower.display_position
+    puts "grows here."
+end
 
 juice = Juice.new
 juice.location = [[0,2,1]]
+def juice.display_position
+    puts "sits on the floor."
+end
 
 wizard = Wizard.new
 wizard.location = [[0,2,2]]
@@ -259,22 +270,32 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-# Adds all game pieces into a convenient array
-levels = [ room_1, staff, torch_1, juice, flower, wizard, gold, lighter, fat1, altar, drain_1, door_1, hook_1, hoodie_1, door_2, hellion_1, door_3, tree, pull_1, table_1, bread_1, pick_1, fire_1 ]
+rooms = [ room_1, door_1, door_2, door_3 ]
+fixtures = [ torch_1, wizard, altar, drain_1, hook_1, hellion_1, pull_1, table_1, fire_1, tree ]
+items = [ staff, juice, flower, gold, lighter, fat1, hoodie_1, door_2, bread_1, pick_1 ]
 
-# open_scene
-
-# Main gameplay loop including interface and back-end functions
 loop do
   print "\e[?25h"
   Board.player.action_select
-  system("clear")  # Clear the screen
+  system("clear")
   Board.player.header
   Board.player.detect_movement
   Board.player.suggest_tutorial
   Board.player.tutorial_screen
   Board.player.stats_screen
-  levels.each { |gamepiece| gamepiece.activate }
+
+  rooms.each { |room| room.activate}
+  fixtures.each { |fixture| fixture.activate }
+  if items.any? { |item| item.location.include?(Board.player.position) }
+    cond_1 = Board.player.inventory_selected
+    cond_2 = Board.player.tutorial_selected
+    cond_3 = Board.player.stats_selected
+    cond_4 = Board.player.state_engaged
+    cond_5 = [cond_1, cond_2, cond_3, cond_4]
+    puts "	   - At this coordinate, you find:\n\n" if cond_5.none?
+  end
+  items.each { |item| item.activate }
+
   Board.player.load_inventory
   Board.player.target_does_not_exist
   Board.player.game_over

@@ -353,10 +353,7 @@ class Bread < Edible
   	@profile = { :hearts => 2, :portions => 3 }
   end
   def subtype
-    ["bread"]
-  end
-  def display_backdrop
-  	puts "	   - A loaf of bread sits here.\n\n"
+    ["bread loaf"]
   end
   def display_description
   	puts "	   - It's stale and burnt.\n\n"
@@ -494,13 +491,9 @@ class Juice < Liquid
   def subtype
     ["juice","brew"]
   end
-  def display_backdrop
-    puts "	   - A vial of cherub juice glows"
-    print "	     with a pale pink hue.\n\n"
-  end
   def display_description
-  	puts "	   - It's cherub juice. It builds"
-    puts "	     focus, and heals 2 hearts.\n\n"
+  	puts "	   - It's a vial of cherub juice for"
+    puts "	     focus. It restores 2 hearts.\n\n"
   end
   def activate_side_effects
     puts Rainbow("	   - Your focus sharpens. Details").cyan
@@ -613,9 +606,6 @@ class Blossom < Burnable
     @@player.remove_from_inventory(self)
     print "\n"
   end
-  def display_backdrop
-  	puts "	   - A #{subtype[1]} flower blooms here.\n\n"
-  end
 end
 
 class RedFlower < Blossom
@@ -624,7 +614,7 @@ class RedFlower < Blossom
   	@profile = { :effect => :analgesic, :duration => 10}
   end
   def subtype
-  	["blood flower","crimson","red flower","red"]
+  	["red blossom","crimson","red flower","red"]
   end
   def display_description
   	puts "	   - When burned, it's a powerful,"
@@ -675,7 +665,7 @@ end
 
 class Silver < Ore
     def subtype
-      ["silver"]
+      ["silver ore"]
     end
     def display_backdrop
       puts "	   - A hunk of raw silver lays on"
@@ -685,11 +675,7 @@ end
 
 class Gold < Ore
     def subtype
-      ["gold"]
-    end
-    def display_backdrop
-      puts "	   - A chunk of raw gold lays on"
-      puts "	     the ground at your feet.\n\n"
+      ["gold ore"]
     end
 end
 
@@ -708,11 +694,7 @@ end
 
 class Fat < Fuel
   def subtype
-    ["fat"]
-  end
-  def display_backdrop
-    puts "	   - A wad of stinkworm fat sulks"
-  	puts "	     on the ground at your feet.\n\n"
+    ["stinkworm fat", "fat"]
   end
   def view
     puts "	   - It smells putrid. It's good"
@@ -966,10 +948,6 @@ class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
   def subtype
     ["hoodie","sweater","sweatshirt"]
   end
-  def display_backdrop
-    puts "	   - A dark hoodie lays in a pile"
-  	puts "	     on the ground here.\n\n"
-  end
   def display_description
   	puts "	   - It's a hooded sweatshirt. It"
   	puts "	     was sewn with spider's silk.\n\n"
@@ -1203,7 +1181,7 @@ class Hellion < Monster
     super
     @weapon = Cleaver.new
     @armor = nil
-    @rewards = [Apple.new, Bread.new, Juice.new]
+    @rewards = RedFlower.new
     @desires = Lighter.new
     @health = 10
     @focus = 1

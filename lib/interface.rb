@@ -69,14 +69,14 @@ module Interface
     	end
     	(4 - @health).times { print Rainbow("♥ ").cyan }
     end
-    def not_a_move?
+    def not_a_move
         MOVES.flatten.none?(@action)
     end
     def target_equal_to_action
         @target == @action
     end
     def nontraditional_move
-        not_a_move? || target_equal_to_action
+        not_a_move || target_equal_to_action
     end
     def tutorial_selected
         MOVES[15].include?(@target)
@@ -88,38 +88,28 @@ module Interface
     	if nontraditional_move
             return if stats_selected
     	    return if tutorial_selected
-    	    toggle_state_inert
+            return if MOVES[0].include?(@action)
     	    print "	   - A single page passes. Review\n"
     	    print "	     tutorial with command"
             print Rainbow(" help").cyan + ".\n\n"
     	end
     end
     def tutorial_screen
-    	if tutorial_selected
-    	    puts "	   - Speak your move plainly in a"
-    	    puts "	     few short words, referencing"
-    	    puts "	     only one subject per page.\n\n"
-            puts Rainbow("	     View my stats.").orange
-    	    puts Rainbow("	     Slay the troll.").red
-    	    puts Rainbow("	     View my items.").yellow
-    	    puts Rainbow("	     Eat some bread.").green
-    	    puts Rainbow("	     Go to the west.").blue
-    	    puts Rainbow("	     Light the torch.\n").indigo
-    	    print "	   - Press "
-            print Rainbow("return").cyan
-    	    puts " for the current"
-            puts "	     coordinate's list of targets,"
-            puts "	     or to quickly pass time.\n\n"
-    	end
-    end
-    def display_stats
-        stats.each do |key, value|
-            length = 25 - (key.to_s.length + value.to_s.length)
-            dots = Rainbow(".").purple * length
-            space = " " * 13
-            value = value.to_s.capitalize
-            puts space + "#{key.capitalize} #{dots} #{value}"
-        end
+    	return if !tutorial_selected
+    	puts "	   - Speak your move plainly in a"
+    	puts "	     few short words, referencing"
+    	puts "	     only one subject per page.\n\n"
+        puts Rainbow("	     View my stats.").orange
+    	puts Rainbow("	     Fight the troll.").red
+    	puts Rainbow("	     View my items.").yellow
+    	puts Rainbow("	     Eat some bread.").green
+    	puts Rainbow("	     Go to the west.").blue
+    	puts Rainbow("	     Light the torch.\n").indigo
+    	print "	   - Press "
+        print Rainbow("return").cyan
+    	puts " for the current"
+        puts "	     coordinate's list of targets,"
+        puts "	     or to quickly pass time.\n\n"
     end
     def stats_screen
         return if !stats_selected
@@ -132,8 +122,14 @@ module Interface
             puts "	     condemned to perditiion.\n\n"
         else puts "	     cleansed for ascension.\n\n"
         end
-        display_stats
-        toggle_state_engaged
+        stats.each do |key, value|
+            length = 25 - (key.to_s.length + value.to_s.length)
+            dots = Rainbow(".").purple * length
+            space = " " * 13
+            value = value.to_s.capitalize
+            puts space + "#{key.capitalize} #{dots} #{value}"
+        end
+        print "\n"
     end
     def target_does_not_exist
         return if @target == @action
@@ -142,7 +138,7 @@ module Interface
             puts "	   - If it exists, it isn't here."
             print "	     To view your inventory, "
             print Rainbow("open\n").cyan
-            print Rainbow("	     your knapsack").cyan + ".\n\n"
+            print Rainbow("	     your rucksack").cyan + ".\n\n"
         end
     end
     def game_map
