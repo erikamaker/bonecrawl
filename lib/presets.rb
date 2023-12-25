@@ -268,10 +268,10 @@ end
 class Lighter < Tool
   def initialize
     super
-    @profile = {:build => "silver"}
+    @profile = {:build => "brass"}
   end
   def subtype
-    ["silver lighter", "lighter"]
+    ["brass lighter", "lighter"]
   end
   def display_description
   	puts "	   - It can be refueled using any"
@@ -327,16 +327,16 @@ class Sword < Weapon
   end
 end
 
-class Staff < Weapon
+class Cane < Weapon
   def initialize
     super
-    @profile = { :build => "wood", :lifespan => rand(5..10), :damage => 5 }
+    @profile = { :build => "wood", :lifespan => rand(10..20), :damage => 5 }
   end
   def subtype
-    ["staff"]
+    ["magick cane", "cane", "staff", "stave", "stick"]
   end
   def display_description
-    puts "	   - A magick staff's power level"
+    puts "	   - A hooked staff's power level"
     puts "	     builds with its user's focus.\n\n"                     ## ADD A MAGIC LEVEL TO INVENTORY TODO
   end
 end
@@ -623,7 +623,7 @@ class RedFlower < Blossom
   def burn_effect
     puts Rainbow("	   - You feel light as a feather.").orange
     print Rainbow("	     Your defense begins to soar.\n").orange
-    @@player.stats_clock[:strength] += 10
+    @@player.stats_clock[:fortified] += 10
   end
 end
 
@@ -694,11 +694,11 @@ end
 
 class Fat < Fuel
   def subtype
-    ["stinkworm fat", "fat"]
+    ["fat wad", "stinkworm fat"]
   end
   def view
-    puts "	   - It smells putrid. It's good"
-  	puts "	     for refueling tanks, though.\n\n"
+    puts "	   - Stinkworm fat is putrid, but"
+  	puts "	     good for refueling tanks.\n\n"
   end
 end
 
@@ -1241,7 +1241,7 @@ end
       @focus = -9
       @defense = 0
       @sigil = "Magick"
-      @weapon = Staff.new
+      @weapon = Cane.new
       @rewards = Silver.new
       @armor = Hoodie.new
       @desires = Gold.new

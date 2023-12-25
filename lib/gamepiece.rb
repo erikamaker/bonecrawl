@@ -196,7 +196,7 @@ class Container < Gamepiece
     end
     def is_locked
         if key.nil?
-            puts "	   - It won't open. It's locked.\n\n"
+            puts "	   - It won't open. It's locked."
         else
             puts "	   - You twirl a #{key.targets[0]} in the"
             print "	     #{targets[0]}'s latch. "
@@ -508,7 +508,7 @@ class Character < Gamepiece
         @content = [@weapon,@armor,@rewards]
         @sigil = nil
         @profile = {}
-        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :strength => 0, :aggression => 0, :intelligence => 0}
+        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 0, :stimulated => 0, :envigored => 0}
     end
     def targets
         subtype | ["character","person","npc"]
@@ -676,7 +676,7 @@ class Altar < Gamepiece
     @gold_ring_stock = []
     @sneaker_stock = []
     @hoodie_stock = []
-    @staff_stock = []
+    @cane_stock = []
     @tonic_stock = []
     @juice_stock = []
     fill_stock
@@ -688,7 +688,7 @@ class Altar < Gamepiece
       @gold_ring_stock.push(GoldRing.new)
       @sneaker_stock.push(Sneakers.new)
       @hoodie_stock.push(Hoodie.new)
-      @staff_stock.push(Staff.new)
+      @cane_stock.push(Cane.new)
       @tonic_stock.push(Tonic.new)
       @juice_stock.push(Juice.new)
     end
@@ -746,7 +746,7 @@ class Altar < Gamepiece
   def hoodie_materials?
     (@@player.all_item_types & [Silver,Silk]).size == 2
   end
-  def staff_materials?
+  def cane_materials?
     (@@player.all_item_types & [Branch,Feather]).size == 2
   end
   def tonic_materials?
@@ -758,7 +758,7 @@ class Altar < Gamepiece
   def any_materials?
     materials = [
       lock_pick_materials?,
-      staff_materials?,
+      cane_materials?,
       tonic_materials?,
       juice_materials?,
       hoodie_materials?,
@@ -791,8 +791,8 @@ class Altar < Gamepiece
       print("	        - 1 Silk\n")
       print("	        - 1 Silver\n\n")
     end
-    if staff_materials?
-      print(Rainbow("	     + 1 Magick Staff\n").green)
+    if cane_materials?
+      print(Rainbow("	     + 1 Magick Cane\n").green)
       print("	        - 1 Branch\n")
       print("	        - 1 Feather\n\n")
     end
@@ -835,8 +835,8 @@ class Altar < Gamepiece
   def build_hoodie
     build_item(@hoodie_stock, ["silk","silver"])
   end
-  def build_staff
-    build_item(@staff_stock, ["branch","feather"])
+  def build_cane
+    build_item(@cane_stock, ["branch","feather"])
   end
   def build_tonic
     build_item(@tonic_stock, ["water","purple flower"])
@@ -859,8 +859,8 @@ class Altar < Gamepiece
       sneaker_materials? ? build_sneakers : greedy_mortal_message
     when *@hoodie_stock[0].targets
       hoodie_materials? ? build_hoodie : greedy_mortal_message
-    when *@staff_stock[0].targets
-      staff_materials? ? build_staff : greedy_mortal_message
+    when *@cane_stock[0].targets
+      cane_materials? ? build_cane : greedy_mortal_message
     when *@tonic_stock[0].targets
       tonic_materials? ? build_tonic : greedy_mortal_message
     when *@Juice_stock[0].targets

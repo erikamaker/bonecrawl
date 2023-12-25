@@ -141,6 +141,14 @@ module Interface
             print Rainbow("	     your rucksack").cyan + ".\n\n"
         end
     end
+    def present_list_of_loot
+        cond_1 = inventory_selected
+        cond_2 = tutorial_selected
+        cond_3 = stats_selected
+        cond_4 = state_engaged
+        cond_5 = [cond_1, cond_2, cond_3, cond_4]
+        puts Rainbow("	   - At this coordinate, you find:\n").magenta if cond_5.none?
+    end
     def game_map
         z = @position[0]
     	x = @position[1]

@@ -43,8 +43,8 @@ module Battle
     end
     def defense
         if armor_equipped
-            [(@armor.profile[:defense] + @stats_clock[:strength]),4].min
-        else 0 + [@stats_clock[:strength],4].min
+            [(@armor.profile[:defense] + @stats_clock[:fortified]),4].min
+        else 0 + [@stats_clock[:fortified],4].min
         end
     end
     def successful_hit

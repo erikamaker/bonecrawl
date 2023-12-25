@@ -34,10 +34,10 @@ def room_1.overview
   puts "	     your cell's only exit.\n\n"
 end
 
-staff = Staff.new
-staff.location = [[0,1,1]]
-def staff.display_position
-    puts "resting in the corner."
+cane = Cane.new
+cane.location = [[0,1,1]]
+def cane.display_position
+    puts "in the corner."
 end
 
 lighter = Lighter.new
@@ -123,10 +123,6 @@ def pull_1.reveal_secret
   print " For\n"
   puts "	     a moment, your ears ring and"
   puts "	     your heart races.\n\n"
-  puts "	   - But, if it really had been a"
-  puts "	     goblin, you would already be"
-  puts "	     hung on that rusty hook back"
-  puts "	     outside your cell door.\n\n"
 end
 
 door_2 = Door.new
@@ -190,7 +186,7 @@ femur = Femur.new
 fat1 = Fat.new
 fat1.location = [[0,2,2]]
 def fat1.display_position
-    puts "sulks on the ground."
+    puts "sulks on the floor."
 end
 
 secret_room = Corridor.new
@@ -272,7 +268,7 @@ end
 
 rooms = [ room_1, door_1, door_2, door_3 ]
 fixtures = [ torch_1, wizard, altar, drain_1, hook_1, hellion_1, pull_1, table_1, fire_1, tree ]
-items = [ staff, juice, flower, gold, lighter, fat1, hoodie_1, door_2, bread_1, pick_1 ]
+items = [ cane, juice, flower, gold, lighter, fat1, hoodie_1, bread_1, pick_1 ]
 
 loop do
   print "\e[?25h"
@@ -287,12 +283,7 @@ loop do
   rooms.each { |room| room.activate}
   fixtures.each { |fixture| fixture.activate }
   if items.any? { |item| item.location.include?(Board.player.position) }
-    cond_1 = Board.player.inventory_selected
-    cond_2 = Board.player.tutorial_selected
-    cond_3 = Board.player.stats_selected
-    cond_4 = Board.player.state_engaged
-    cond_5 = [cond_1, cond_2, cond_3, cond_4]
-    puts "	   - At this coordinate, you find:\n\n" if cond_5.none?
+    Board.player.present_list_of_loot
   end
   items.each { |item| item.activate }
 
