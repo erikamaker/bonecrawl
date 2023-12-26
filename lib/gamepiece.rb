@@ -16,7 +16,7 @@ class Gamepiece < Board
     end
     def display_position
         # Unique position the object is in.
-        # E:G: 'lays on the table'
+        # EG: 'lays on the table'
     end
     def display_backdrop
         if self.is_a?(Portable)
@@ -28,7 +28,7 @@ class Gamepiece < Board
     end
     def execute_special_behavior
         # Unique behavior during activation.
-        # E.G. Fruit trees can grow new fruit.
+        # EG. Fruit trees can grow new fruit.
     end
     def remove_from_board
         @location = [0]
@@ -196,7 +196,7 @@ class Container < Gamepiece
     end
     def is_locked
         if key.nil?
-            puts "	   - It won't open. It's locked."
+            puts "	   - It won't open. It's locked.\n\n"
         else
             puts "	   - You twirl a #{key.targets[0]} in the"
             print "	     #{targets[0]}'s latch. "
@@ -234,11 +234,11 @@ class Burnable < Portable
     def fuel
         @@player.items.find { |item| item.is_a?(Fuel) }
     end
-    def fire_near?
+    def fire_near
         @@player.sight.include?("fire")
     end
     def burn
-        if fire_near?
+        if fire_near
             unique_burn_screen
             remove_from_board
         elsif @@player.search_inventory(Lighter)
@@ -413,6 +413,7 @@ class Tool < Portable
   	MOVES[1..2].flatten | MOVES[14]
   end
   def damage_item
+    puts "	         #{targets[0].capitalize}: - 1 lifespan\n\n"
     profile[:lifespan] -= 1
   end
   def targets
@@ -546,7 +547,6 @@ class Character < Gamepiece
         unless @hostile
             @hostile = true
             @location = @regions
-            hostile_script
         end
     end
     def become_passive
@@ -586,11 +586,11 @@ class Character < Gamepiece
         else
             @speech = [
                 "	   - 'Nothing comes from nothing.'\n\n",
-                "	   - 'If you change your mind...'\n\n",
-                "	   - 'Really? Why not? Trust me.'\n\n",
-                "	   - 'Never mind, then. Forget it.'\n\n",
-                "	   - 'I can guarantee a fair trade.'\n\n",
-                "	   - 'I can guarantee a fair trade.'\n\n"]
+                "	   - 'Just think about it, friend.'\n\n",
+                "	   - 'What? You don't trust me?'\n\n",
+                "	   - 'Forget it, then.'\n\n",
+                "	   - 'I offer a very fair trade.'\n\n",
+                "	   - '... Fine. Your loss.'\n\n"]
                 become_hostile if rand(1..8) == 8
             puts @speech.sample
         end
@@ -605,22 +605,34 @@ class Character < Gamepiece
         @hostile = false
         @desires = nil
     end
+    def hearts_lost
+        @@player.damage_received(attack_points)
+    end
+
     def attack
         become_hostile
         puts "	   - You move to strike with your"
         print "	     #{@@player.weapon_name}.\n\n"
-        hearts_lost = @@player.attack_points
         if @@player.successful_hit
             @@player.degrade_weapon
             @health -= hearts_lost
             animate_damage if is_alive
             animate_death if is_slain
-        else puts Rainbow("	   - The #{targets[0]} dodges your attack.\n").red
+        else puts Rainbow(" The #{targets[0]} dodges.\n").red
             ## CHANCE OF DEMON PARRY
         end
     end
+    def animate_damage
+        if is_alive
+            SoundBoard.hit_enemy
+            puts "	     Weapon Damage:    #{weapon_damage}"
+            puts "	     Daemon Trauma:    #{hearts_lost} Hearts"
+            puts "	     Critical Type:    Trauma x 2"
+            puts "	     Extra Effects:    Cursed"
+            puts "	   	         Total:    #{hearts_lost} Hearts\n\n"
+        end
+    end
     def retaliate
-        hearts_lost = @@player.damage_received(attack_points)
         puts "	   - The #{targets[0]} lunges to attack"
         print "	     with its #{weapon_name}.\n\n"
         if successful_hit

@@ -4,6 +4,11 @@
 
 
 module Battle
+    def weapon_damage
+        weapon_damage = weapon_equipped ?
+        Rainbow("- 1 Life").red :
+        "N/A"
+    end
     def is_alive
         @health > 0
     end
@@ -28,6 +33,9 @@ module Battle
         else Rainbow("bare skin").orange
         end
     end
+    def armor_points
+        Rainbow("#{@armor.profile[:defense]}").green
+    end
     def attack_points
         if weapon_equipped
             total = @weapon.profile[:damage] + @level
@@ -48,8 +56,7 @@ module Battle
         end
     end
     def successful_hit
-        focus_value = @focus.to_i  # Convert focus to integer as a safeguard
-
+        focus_value = @focus.to_i
         rand(focus_value..4) > 3
     end
     def degrade_weapon
@@ -66,20 +73,9 @@ module Battle
     end
     def display_defense
         if armor_equipped
-            print "	   - Your #{armor_name} deflects "
-            print Rainbow("#{@armor.profile[:defense]}").green
-            print " damage\n"
-            print "	     points. Its lifespan wanes.\n\n "
-        end
-    end
-    def animate_damage
-        if is_alive
-            SoundBoard.hit_enemy
-            print Rainbow("	   - You hit it. #{@health} heart").green
-            print Rainbow("s").green if @health > 1
-            print Rainbow(" remain").green
-            print Rainbow("s").green if @health == 1
-            print Rainbow(".\n\n").green
+            print Rainbow("	   - Your #{armor_name} ").cyan
+            print Rainbow("deflects #{armor_points} ").cyan
+            print Rainbow("damage\n	     points. Its lifespan wanes.\n\n").cyan
         end
     end
     def lose_all_items
@@ -87,7 +83,7 @@ module Battle
     end
     def animate_death
         if is_slain
-            puts Rainbow("	   - You slay the #{targets[0]}. It drops:\n").cyan
+            puts Rainbow("\n\n	   - You slay the #{targets[0]}. It drops:\n").cyan
             @content.each {|item| puts("	       - 1 #{item.targets[0]}") if item}
             puts "\n"
             puts Rainbow("	   - You stuff the spoils of this").orange

@@ -18,7 +18,7 @@ MOVES =
   ["drink", "guzzle", "gulp","swallow", "quaff", "swill", "imbibe", "swig", "sip"],
   ["mine", "dig", "tunnel", "bore", "burrow", "gouge", "drill", "break"],
   ["lift","raise","hoist","elevate","uplift","heft","upraise"],
-  ["equip","prepare","select","enable","use"],
+  ["equip","prepare","select","enable","use","wear"],
   ["help", "assist", "moves", "moveslist", "moveset", "hint","menu"],
   ["stats","player","self","profile","myself","statistics"]]
 

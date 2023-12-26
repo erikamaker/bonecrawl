@@ -1198,10 +1198,6 @@ class Hellion < Monster
     puts "	   - A dark and violent hellion is"
     puts "	     stalking your every move.\n\n"
   end
-  def hostile_script
-    puts "	   - Its black pupils quiver with"
-    puts "	     rage. It bleats aggressively.\n\n"
-  end
   def display_description
     puts "	   - It's a hellion. This goatish"
     puts "	     demon has a quick temper.\n\n"
@@ -1223,10 +1219,6 @@ class Goblin < Monster
     def docile_backdrop
       puts "	   - A knobby goblin stoops near\n"
       puts "	     you in a black hoodie.\n\n"
-    end
-    def hostile_script
-      puts "	   - Its yellow eyes narrow with"
-      puts "	     cunning. It bears its fangs.\n\n"
     end
     def display_description
       puts "	   - It's a pallid-green goblin,"
@@ -1257,10 +1249,6 @@ end
     def hostile_backdrop
         puts "	   - A wrathful wizard stalks you,\n"
         puts "	     his keen eyes glowing blue.\n\n"
-    end
-    def hostile_script
-      puts "	   - Light gleams in the wizard's"
-      puts "	     blue eyes. His brow furrows.\n\n"
     end
     def display_description
       puts "	   - It's a wizard. They are full"
