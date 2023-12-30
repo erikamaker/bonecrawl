@@ -503,11 +503,11 @@ class Character < Gamepiece
     attr_accessor :regions, :desires, :content, :rewards
     def initialize
         super
+        @profile = {}
         @moveset = (MOVES[1] | MOVES[6..7]).flatten
         @hostile = false
         @content = [@weapon,@armor,@rewards]
         @sigil = nil
-        @profile = {}
         @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 0, :stimulated => 0, :envigored => 0}
     end
     def targets
@@ -527,8 +527,6 @@ class Character < Gamepiece
         @profile[:defense] = @defense
         @profile[:hostile] = @hostile
         @profile[:focus] = @focus
-        @profile[:weapon] = weapon_name
-        @profile[:armor] = armor_name
         @profile[:sigil] = @sigil
         self.cooldown_effects
         @content = [@rewards,@armor,@weapon].compact

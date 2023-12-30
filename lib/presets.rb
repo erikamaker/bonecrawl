@@ -353,7 +353,7 @@ class Bread < Edible
   	@profile = { :hearts => 2, :portions => 3 }
   end
   def subtype
-    ["bread loaf"]
+    ["bread loaf", "bread","loaf"]
   end
   def display_description
   	puts "	   - It's stale and burnt.\n\n"
@@ -655,7 +655,7 @@ end
 
 class Ore  < Portable
     def targets
-      subtype | ["ore","ingot"]
+      subtype | ["ore"]
     end
     def view
         puts "	   - It's valueless in Hell, but"
@@ -675,7 +675,7 @@ end
 
 class Gold < Ore
     def subtype
-      ["gold ore"]
+      ["gold ore", "gold"]
     end
 end
 
@@ -1184,9 +1184,10 @@ class Hellion < Monster
     @rewards = RedFlower.new
     @desires = Lighter.new
     @health = 10
+    @sigil = "Evil"
     @focus = 1
     @level = 1
-    @weakness = "magick"
+    @weakness = "Magick"
   end
   def subtype
     ["hellion","goat"]
@@ -1231,9 +1232,10 @@ end
     def initialize
       super
       @health = 8
-      @focus = -9
+      @focus = 1
       @defense = 0
       @sigil = "Magick"
+      @weakness = nil
       @weapon = Cane.new
       @rewards = Silver.new
       @armor = Hoodie.new
@@ -1253,6 +1255,6 @@ end
     end
     def display_description
       puts "	   - It's a wizard. They are full"
-      puts "	     of anient power and wisdom.\n\n"
+      puts "	     of ancient power and wisdom.\n\n"
     end
   end
