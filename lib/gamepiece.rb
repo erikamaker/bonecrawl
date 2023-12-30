@@ -598,11 +598,12 @@ class Character < Gamepiece
         reward_animation
         reward = @rewards
         puts "	   - To help you on your journey,"
-        puts "	     you're given 1 #{reward.targets[0]}.\n\n"
-        reward.take
+        puts "	     you're given 1 #{Rainbow(reward.targets[0]).orange}.\n\n"
+        reward.push_to_player_inventory
         @@player.remove_from_inventory(material_leverage)
         @hostile = false
         @desires = nil
+        @rewards = nil
     end
     def hearts_lost
         damage_received(@@player.attack_points)
