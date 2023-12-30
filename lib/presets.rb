@@ -1179,7 +1179,7 @@ end
 class Hellion < Monster
   def initialize
     super
-    @weapon = Cleaver.new
+    @weapon = nil
     @armor = nil
     @rewards = RedFlower.new
     @desires = Lighter.new

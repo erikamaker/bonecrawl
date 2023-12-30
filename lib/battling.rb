@@ -6,8 +6,8 @@
 module Battle
     def weapon_damage
         weapon_damage = weapon_equipped ?
-        Rainbow("- 1 Life").red :
-        "N/A"
+        Rainbow("-1 Use").magenta :
+        Rainbow("N/A").magenta
     end
     def is_alive
         @health > 0
@@ -38,8 +38,7 @@ module Battle
     end
     def attack_points
         if weapon_equipped
-            total = @weapon.profile[:damage] + @level
-            total
+            @weapon.profile[:damage] + @level
         else @level
         end
     end
@@ -83,7 +82,7 @@ module Battle
     end
     def animate_death
         if is_slain
-            puts Rainbow("\n\n	   - You slay the #{targets[0]}. It drops:\n").cyan
+            puts Rainbow("	   - You slay the #{targets[0]}. It drops:\n").cyan
             @content.each {|item| puts("	       - 1 #{item.targets[0]}") if item}
             puts "\n"
             puts Rainbow("	   - You stuff the spoils of this").orange
@@ -113,44 +112,3 @@ module Battle
         end
     end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

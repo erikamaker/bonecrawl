@@ -413,7 +413,6 @@ class Tool < Portable
   	MOVES[1..2].flatten | MOVES[14]
   end
   def damage_item
-    puts "	         #{targets[0].capitalize}: - 1 lifespan\n\n"
     profile[:lifespan] -= 1
   end
   def targets
@@ -425,8 +424,8 @@ class Tool < Portable
   end
   def break_item
     if profile[:lifespan] == 0
-      puts Rainbow("	   - Your #{targets[0]} snaps in two.").red
-      puts Rainbow("	     You toss away the pieces.\n").red
+      puts Rainbow("	   - Your #{targets[0]} snaps in half.").red
+      puts Rainbow("	     You toss the broken pieces.\n").red
       @@player.remove_from_inventory(self)
       @@player.weapon = nil if self == @@player.weapon
     end
@@ -606,30 +605,41 @@ class Character < Gamepiece
         @desires = nil
     end
     def hearts_lost
+        damage_received(@@player.attack_points)
+    end
+    def player_hearts_lost
         @@player.damage_received(attack_points)
     end
 
     def attack
         become_hostile
         puts "	   - You move to strike with your"
-        print "	     #{@@player.weapon_name}.\n\n"
+        print "	     #{@@player.weapon_name}. "
         if @@player.successful_hit
+            puts Rainbow("Success.\n").green
             @@player.degrade_weapon
             @health -= hearts_lost
             animate_damage if is_alive
             animate_death if is_slain
-        else puts Rainbow(" The #{targets[0]} dodges.\n").red
+        else puts Rainbow("You miss.\n").red
             ## CHANCE OF DEMON PARRY
         end
     end
+    def print_lost_hearts
+        hearts_lost.times do |index|
+          print " " * 30 if index % 5 == 0 && index != 0
+          print Rainbow("♥ ").red
+          print "\n" if (index + 1) % 5 == 0 && index != 0
+        end
+        print "\n\n" unless hearts_lost % 5 == 0
+      end
+
     def animate_damage
         if is_alive
             SoundBoard.hit_enemy
-            puts "	     Weapon Damage:    #{weapon_damage}"
-            puts "	     Daemon Trauma:    #{hearts_lost} Hearts"
-            puts "	     Critical Type:    Trauma x 2"
-            puts "	     Extra Effects:    Cursed"
-            puts "	   	         Total:    #{hearts_lost} Hearts\n\n"
+            puts "	     Weapon Update:   #{@@player.weapon_damage}"
+            puts "	     Stats Effects:   #{Rainbow("None").cyan}"
+            print "	     Damage Result:   " ; print_lost_hearts
         end
     end
     def retaliate
@@ -637,9 +647,9 @@ class Character < Gamepiece
         print "	     with its #{weapon_name}.\n\n"
         if successful_hit
             SoundBoard.take_damage
-            @@player.health -= hearts_lost
+            @@player.health -= player_hearts_lost
             @@player.display_defense
-            print Rainbow("	   - It costs you #{hearts_lost} heart point").red
+            print Rainbow("	   - It costs you #{player_hearts_lost} heart point").red
             hearts_lost != 1 && print(Rainbow("s").red)
             print(".\n\n")
             @@player.degrade_armor
