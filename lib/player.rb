@@ -14,7 +14,7 @@ class Player
     include Navigation
     include Battle
     attr_accessor :action, :target, :state, :sight, :position, :items
-    attr_accessor :armor, :weapon, :health, :focus, :defense, :spirit, :level
+    attr_accessor :armor, :weapon, :health, :focus, :defense, :spirit, :level, :upper_hand
     attr_accessor :stats_clock
     def initialize
         super
@@ -29,6 +29,7 @@ class Player
         @weapon = nil
         @health = 4
         @focus = 3
+        @upper_hand = false
         @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 80, :stimulated => 0, :envigored => 0}
     end
     def stats

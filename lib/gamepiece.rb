@@ -610,7 +610,12 @@ class Character < Gamepiece
     def player_hearts_lost
         @@player.damage_received(attack_points)
     end
-
+    def weapon_is_weakness
+        if @@player.weapon.profile[:type].eql?(@weakness)
+            @@player.upper_hand = true
+        else @@player.upper_hand = false
+        end
+    end
     def attack
         become_hostile
         puts "	   - You move to strike with your"
@@ -627,7 +632,7 @@ class Character < Gamepiece
     end
     def print_lost_hearts
         hearts_lost.times do |index|
-          print " " * 30 if index % 5 == 0 && index != 0
+          print " " * 29 if index % 5 == 0 && index != 0
           print Rainbow("♥ ").red
           print "\n" if (index + 1) % 5 == 0 && index != 0
         end
@@ -637,9 +642,9 @@ class Character < Gamepiece
     def animate_damage
         if is_alive
             SoundBoard.hit_enemy
-            puts "	     Weapon Update:   #{@@player.weapon_damage}"
-            puts "	     Stats Effects:   #{Rainbow("None").cyan}"
-            print "	     Damage Result:   " ; print_lost_hearts
+            puts "	     Weapon Update   #{@@player.weapon_damage}"
+            puts "	     Critical Hit?   #{Rainbow(weapon_is_weakness.to_s).cyan}"
+            print "	     Damage Result   " ; print_lost_hearts
         end
     end
     def retaliate
@@ -653,8 +658,8 @@ class Character < Gamepiece
             hearts_lost != 1 && print(Rainbow("s").red)
             print(".\n\n")
             @@player.degrade_armor
+            ## CHANCE OF EFFECTS
         else puts Rainbow("	   - You narrowly avoid its blow.\n").green
-            ## CHANCE OF PARRY
         end
     end
 

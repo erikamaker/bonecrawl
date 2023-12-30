@@ -330,7 +330,7 @@ end
 class Cane < Weapon
   def initialize
     super
-    @profile = { :build => "wood", :lifespan => rand(10..20), :damage => 5 }
+    @profile = { :build => "wood", :lifespan => rand(10..20), :damage => 5, :type => "magick" }
   end
   def subtype
     ["magick cane", "cane", "staff", "stave", "stick"]
@@ -1186,6 +1186,7 @@ class Hellion < Monster
     @health = 10
     @focus = 1
     @level = 1
+    @weakness = "magick"
   end
   def subtype
     ["hellion","goat"]

@@ -36,9 +36,12 @@ module Battle
     def armor_points
         Rainbow("#{@armor.profile[:defense]}").green
     end
+    def type_bonus
+        @upper_hand == true ? rand(2..3) : 0
+    end
     def attack_points
         if weapon_equipped
-            @weapon.profile[:damage] + @level
+            @weapon.profile[:damage] + type_bonus + @level
         else @level
         end
     end
