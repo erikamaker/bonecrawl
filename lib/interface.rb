@@ -92,7 +92,8 @@ module Interface
     def process_input
         @action = gets.chomp.downcase
         sentence = @action.scan(/[\w']+/)
-        @action = (MOVES.flatten & sentence).map.with_index { |m, i| i.zero? ? m : '' }.join
+        intersection = MOVES.flatten & sentence
+        @action = intersection.first
         @target = (sentence - SPEECH).last
     end
     def reset_input
