@@ -533,6 +533,8 @@ class Character < Gamepiece
     end
     def activate
         player_near ? reveal_targets_to_player : return
+        return if MOVES[15].include?(@@player.target)
+
         @@player.state_inert ? display_backdrop : interact
         execute_special_behavior
     end

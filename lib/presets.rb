@@ -336,8 +336,8 @@ class Cane < Weapon
     ["magick cane", "cane", "staff", "stave", "stick"]
   end
   def display_description
-    puts "	   - A hooked staff's power level"
-    puts "	     builds with its user's focus.\n\n"                     ## ADD A MAGIC LEVEL TO INVENTORY TODO
+    puts "	   - A hooked cane's attack power"
+    puts "	     grows with its user's level.\n\n"
   end
 end
 

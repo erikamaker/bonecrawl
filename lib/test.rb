@@ -291,8 +291,8 @@ loop do
   Board.player.target_does_not_exist
   Board.player.game_over
   Board.player.turn_page
-  Board.player.page_bottom
   Board.player.page_top
+  Board.player.page_bottom
 end
 
 

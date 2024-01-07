@@ -71,6 +71,7 @@ class Player
     def turn_page
         Board.increment_page(1)
         clear_sight
+        @sight.concat(MOVES[15..16].flatten)
         toggle_state_inert
         cooldown_effects
         reset_input
