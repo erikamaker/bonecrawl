@@ -20,7 +20,7 @@ class Gamepiece < Board
     end
     def display_backdrop
         if self.is_a?(Portable)
-            print Rainbow("	     1 #{targets[0]} ").orange
+            print Rainbow("	     1 #{targets[0].split.map(&:capitalize).join(' ')} ").orange
             display_position
         end
         # Some pieces have unique backdrops.
