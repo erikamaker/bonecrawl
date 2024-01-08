@@ -15,6 +15,24 @@ require_relative 'player'
 print "\e[8;40;57t"
 
 
+
+
+
+def open_scene
+    system("clear")  # Clear the screen
+    print "\e[?25l"
+    print "\n\n\n\n\n\n\n\n"
+    sleep 2
+    print Rainbow("	   - You wake up with a headache\n").violet
+    print Rainbow("	     on the cold, hard floor.\n\n").violet
+    sleep 3
+    Board.player.reset_input
+    Board.player.page_bottom
+    Board.player.page_top
+    Board.player.turn_page
+end
+
+
 ##############################################################################################################################################################################################################################################################
 #####    LEVEL 1    ##########################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
@@ -246,20 +264,6 @@ def wizard.passive_script
   puts "	     to always follow your nose.\n\n"
 end
 
-def open_scene
-    system("clear")  # Clear the screen
-    print "\e[?25l"
-    print "\n\n\n\n\n\n\n\n"
-    sleep 2
-    print Rainbow("	   - You wake up with a headache\n").violet
-    print Rainbow("	     on the cold, hard floor.\n\n").violet
-    sleep 3
-    Board.player.reset_input
-    Board.player.page_bottom
-    Board.player.page_top
-    Board.player.turn_page
-end
-
 
 ##############################################################################################################################################################################################################################################################
 #####    GAME LOOP     #######################################################################################################################################################################################################################################
@@ -269,32 +273,9 @@ end
 rooms = [ room_1, door_1, door_2, door_3 ]
 fixtures = [ torch_1, wizard, altar, drain_1, hook_1, hellion_1, pull_1, table_1, fire_1, tree ]
 items = [ cane, juice, flower, gold, lighter, fat1, hoodie_1, bread_1, pick_1 ]
+#open_scene
 
-loop do
-  print "\e[?25h"
-  Board.player.action_select
-  system("clear")
-  Board.player.header
-  Board.player.detect_movement
-  Board.player.suggest_tutorial
-  Board.player.tutorial_screen
-  Board.player.stats_screen
-
-  rooms.each { |room| room.activate}
-  fixtures.each { |fixture| fixture.activate }
-  if items.any? { |item| item.location.include?(Board.player.position) }
-    Board.player.present_list_of_loot
-    items.each { |item| item.activate }
-    print "\n"
-  end
-
-  Board.player.load_inventory
-  Board.player.target_does_not_exist
-  Board.player.game_over
-  Board.player.turn_page
-  Board.player.page_top
-  Board.player.page_bottom
-end
+Board.run_game(rooms,fixtures,items)
 
 
 
