@@ -13,24 +13,6 @@ class Board
         @@map = []
         @@player = Player.new
     end
-    def self.game_start
-        print "\e[?25h"
-        player.action_select
-        system("clear")
-        player.header
-        player.detect_movement
-        player.suggest_tutorial
-        player.tutorial_screen
-        player.stats_screen
-        player.load_inventory
-    end
-    def self.game_end
-        player.target_does_not_exist
-        player.game_over
-        player.turn_page
-        player.page_top
-        player.page_bottom
-    end
     def self.actions
     {
         view: MOVES[1],
@@ -64,6 +46,17 @@ class Board
     def self.decrement_page(count)
         @@page -= count
     end
+    def self.game_start
+        print "\e[?25h"
+        player.action_select
+        system("clear")
+        player.header
+        player.detect_movement
+        player.suggest_tutorial
+        player.tutorial_screen
+        player.stats_screen
+        player.load_inventory
+    end
     def self.load_loot(items)
         if items.any? { |item| item.location.include?(Board.player.position) }
             Board.player.present_list_of_loot
@@ -79,5 +72,12 @@ class Board
             Board.load_loot(items)
             Board.game_end
         end
+    end
+    def self.game_end
+        player.target_does_not_exist
+        player.game_over
+        player.turn_page
+        player.page_top
+        player.page_bottom
     end
 end
