@@ -170,7 +170,6 @@ module Interface
         cond_1 = inventory_selected
         cond_2 = MOVES[15].include?(@target)
         cond_3 = MOVES[16].include?(@target)
-
         cond_4 = state_engaged
         cond_5 = [cond_1, cond_2, cond_3, cond_4]
         puts Rainbow("	   - At this coordinate, you find:\n").magenta if cond_5.none?

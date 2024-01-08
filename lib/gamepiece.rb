@@ -609,10 +609,12 @@ class Character < Gamepiece
         damage_received(@@player.attack_points)
     end
     def player_hearts_lost
-        @@player.damage_received(attack_points)
+        [@@player.damage_received(attack_points),4].min
     end
     def weapon_is_weakness
-        if @@player.weapon.profile[:type].eql?(@weakness)
+        if @@player.weapon.nil?
+            @@player.upper_hand = false
+        elsif @@player.weapon.profile[:type].eql?(@weakness)
             @@player.upper_hand = true
         else @@player.upper_hand = false
         end
@@ -632,6 +634,11 @@ class Character < Gamepiece
         end
     end
     def print_lost_hearts
+        if hearts_lost == 0
+            print Rainbow("None\n\n").red
+            return
+        end
+
         hearts_lost.times do |index|
           print " " * 29 if index % 5 == 0 && index != 0
           print Rainbow("♥ ").red
@@ -644,7 +651,7 @@ class Character < Gamepiece
         if is_alive
             SoundBoard.hit_enemy
             puts "	     Weapon Update   #{@@player.weapon_damage}"
-            puts "	     Critical Hit?   #{Rainbow(weapon_is_weakness.to_s).cyan}"
+            puts "	     Critical Hit?   #{Rainbow(weapon_is_weakness.to_s.capitalize).cyan}"
             print "	     Damage Result   " ; print_lost_hearts
         end
     end

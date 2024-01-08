@@ -284,8 +284,9 @@ loop do
   fixtures.each { |fixture| fixture.activate }
   if items.any? { |item| item.location.include?(Board.player.position) }
     Board.player.present_list_of_loot
+    items.each { |item| item.activate }
+    print "\n"
   end
-  items.each { |item| item.activate }
 
   Board.player.load_inventory
   Board.player.target_does_not_exist
