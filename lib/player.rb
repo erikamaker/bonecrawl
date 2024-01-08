@@ -30,7 +30,7 @@ class Player
         @health = 4
         @focus = 3
         @upper_hand = false
-        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 80, :stimulated => 0, :envigored => 0}
+        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 0, :stimulated => 0, :envigored => 0}
     end
     def stats
         { :level => @level, :attack => attack_points, :defense => defense, :health => @health, :focus => @focus}

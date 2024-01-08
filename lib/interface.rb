@@ -155,7 +155,6 @@ module Interface
             value = value.to_s.capitalize
             puts space + "#{key.capitalize} #{dots} #{value}"
         end
-        print "\n"
     end
     def target_does_not_exist
         return if @target == @action
