@@ -120,28 +120,28 @@ module Interface
     	end
     end
     def tutorial_screen
-    	if MOVES[15].include?(@target)
-            puts "	   - Speak your move plainly in a"
-    	    puts "	     few short words, referencing"
-    	    puts "	     only one subject per page.\n\n"
-            puts Rainbow("	     View my stats.").orange
-    	    puts Rainbow("	     Fight the troll.").red
-    	    puts Rainbow("	     View my items.").yellow
-    	    puts Rainbow("	     Eat some bread.").green
-    	    puts Rainbow("	     Go to the west.").blue
-    	    puts Rainbow("	     Light the torch.\n").indigo
-    	    print "	   - Press "
-            print Rainbow("return").cyan
-    	    puts " for the current"
-            puts "	     coordinate's list of targets,"
-            puts "	     or to quickly pass time.\n\n"
-        end
+        return if MOVES[0].include?(@action)
+        return if !MOVES[15].include?(@target)
+        puts "	   - Speak your move plainly in a"
+    	puts "	     few short words, referencing"
+    	puts "	     only one subject per page.\n\n"
+        puts Rainbow("	     View my stats.").orange
+    	puts Rainbow("	     Fight the troll.").red
+    	puts Rainbow("	     View my items.").yellow
+    	puts Rainbow("	     Eat some bread.").green
+    	puts Rainbow("	     Go to the west.").blue
+    	puts Rainbow("	     Light the torch.\n").indigo
+    	print "	   - Press "
+        print Rainbow("return").cyan
+    	puts " for the current"
+        puts "	     coordinate's list of targets,"
+        puts "	     or to quickly pass time.\n\n"
     end
 
 
     def stats_screen
         return if !MOVES[16].include?(@target)
-
+        return if MOVES[0].include?(@action)
         if @level < 10
             title = "desicrated"
         else title = "sanctified"
