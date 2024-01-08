@@ -100,20 +100,19 @@ module Interface
         @action = :reset
         @target = :reset
     end
-
-
-
     def nontraditional_move
         MOVES.flatten.none?(@action) || @target == @action
     end
-
-
-
-
+    def navigation_move
+        MOVES[0].include?(@action)
+    end
+    def menu_move
+        MOVES[15..16].flatten.include?(@target)
+    end
     def suggest_tutorial
     	if nontraditional_move
-            return if MOVES[0].include?(@action)
-            return if MOVES[15..16].flatten.include?(@target)
+            return if navigation_move
+            return if menu_move
     	    print "	   - A single page passes. Review\n"
     	    print "	     tutorial with command"
             print Rainbow(" help").cyan + ".\n\n"
@@ -137,11 +136,9 @@ module Interface
         puts "	     coordinate's list of targets,"
         puts "	     or to quickly pass time.\n\n"
     end
-
-
     def stats_screen
         return if !MOVES[16].include?(@target)
-        return if MOVES[0].include?(@action)
+        return if navigation_move
         if @level < 10
             title = "desicrated"
         else title = "sanctified"
@@ -160,9 +157,6 @@ module Interface
         end
         print "\n"
     end
-
-
-
     def target_does_not_exist
         return if @target == @action
         return if @state == :inert
@@ -182,7 +176,6 @@ module Interface
         cond_5 = [cond_1, cond_2, cond_3, cond_4]
         puts Rainbow("	   - At this coordinate, you find:\n").magenta if cond_5.none?
     end
-
     def game_over
         if @health < 1
           sleep 2
