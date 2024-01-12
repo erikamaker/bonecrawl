@@ -11,8 +11,6 @@ require_relative 'sound'
 require_relative 'gamepiece'
 require_relative 'presets'
 require_relative 'player'
-# Sets the size of the terminal window.
-print "\e[8;40;57t"
 
 
 ##############################################################################################################################################################################################################################################################
@@ -116,13 +114,10 @@ chest_1.content = Knife.new
 pull_1 = Lever.new
 pull_1.location = [[0,3,-3]]
 pull_1.content = chest_1
-def pull_1.reveal_secret
+def pull_1.reveal_secret_text
   SoundBoard.secret_music
   puts Rainbow("	   - Something heavy crashes east").cyan
-  print Rainbow("	     of the warm supply room.").cyan
-  print " For\n"
-  puts "	     a moment, your ears ring and"
-  puts "	     your heart races.\n\n"
+  print Rainbow("	     of the warm supply room.\n\n").cyan
 end
 
 door_2 = Door.new
@@ -172,9 +167,7 @@ def altar.level_complete_screen
     sleep 3
     system("clear")  # Clear the screen
     sleep 3
-    print Rainbow("\n\n\n\n\n\n\n\n	   \" You cannot outpace my abyss.\n" ).red.bright
-    sleep 3
-    print Rainbow("	     See you in Level 2, lamby. \" \n\n\n\n\n\n\n " ).red.bright
+    print Rainbow("\n\n\n\n\n\n\n\n	   \" You cannot outpace my abyss.\"\n\n\n\n\n\n\n" ).red.bright
     sleep 3
     print Rainbow("\n---------------------------------------------------------").blue.bright
     exit!

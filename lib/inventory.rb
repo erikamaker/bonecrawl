@@ -45,14 +45,14 @@ module Inventory
         @armor.targets[0].split.map(&:capitalize).join(' ')
     end
     def print_equipped_items
-        print Rainbow("	     WEAPON EQUIPPED: ").orange
+        print Rainbow("	     Weapon Equipped: ").indianred
         if @weapon
-            print equipped_weapon
+            print Rainbow("#{equipped_weapon}").orange.italic
         end
             print "\n"
-            print Rainbow("	      ARMOR EQUIPPED: ").orange
+            print Rainbow("	      Armor Equipped: ").indianred
         if @armor
-            print equipped_armor
+            print Rainbow("#{equipped_armor}").orange.italic
         end
     end
     def open_inventory
@@ -83,13 +83,10 @@ module Inventory
         bag_action(item)
         reset_input
     end
-    def interface_hint
-        puts "	   - Interact with your inventory"
-        puts "	     as you would in the dungeon.\n\n"
-    end
     def bag_action(item)
         if MOVES[1..14].flatten.none?(@action)
-            interface_hint
+            puts "	   - Interact with your inventory"
+            puts "	     as you would in the dungeon.\n\n"
             puts Rainbow("           - You tie your rucksack shut.\n").red
         elsif item.nil?
             puts Rainbow("           - That isn't in your inventory.\n").red

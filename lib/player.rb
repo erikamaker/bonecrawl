@@ -33,7 +33,7 @@ class Player
         @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 0, :stimulated => 0, :envigored => 0}
     end
     def stats
-        { :level => @level, :attack => attack_points, :defense => defense, :health => @health, :focus => @focus}
+        { :level => @level, :attack => attack, :defense => defense, :health => @health, :focus => @focus}
     end
     def attack
         attack_points + @stats_clock[:envigored]

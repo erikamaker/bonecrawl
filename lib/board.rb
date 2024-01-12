@@ -65,6 +65,7 @@ class Board
         end
     end
     def self.run_game(rooms,fixtures,items)
+        print "\e[8;40;57t"
         loop do
             Board.game_start
             rooms.each { |room| room.activate}

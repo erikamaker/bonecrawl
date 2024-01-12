@@ -12,25 +12,25 @@ require_relative 'gamepiece'
 
 
 class Bricks < Tiles
-  def composition
-  	["brick","bricks","block","blocks"]
-  end
-  def view_type
-  	puts "	   - The weathered bricks look to"
-  	puts "	     to be cut from solid rock.\n\n"
-  end
-  def view_wall
-  	puts "	   - The walls are built of bricks"
-  	puts "	     cobbled haphazardly together.\n\n"
-  end
-  def view_down
-  	puts "	   - The cobbled floor is stained"
-  	puts "	     with either soot or dirt.\n\n"
-  end
-  def view_above
-  	puts "	   - The cobbled ceiling is burnt"
-  	puts "	     black with torch smoke.\n\n"
-  end
+    def composition
+  	    ["brick","bricks","block","blocks"]
+    end
+    def view_type
+  	    puts "	   - The weathered bricks look to"
+  	    puts "	     to be cut from solid rock.\n\n"
+    end
+    def view_wall
+  	    puts "	   - The walls are built of bricks"
+  	    puts "	     cobbled haphazardly together.\n\n"
+    end
+    def view_down
+  	    puts "	   - The cobbled floor is stained"
+  	    puts "	     with either soot or dirt.\n\n"
+    end
+    def view_above
+  	    puts "	   - The cobbled ceiling is burnt"
+  	    puts "	     black with torch smoke.\n\n"
+    end
 end
 
 class Dungeon < Bricks

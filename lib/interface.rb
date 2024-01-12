@@ -12,7 +12,19 @@ module Interface
         print Rainbow("[").blue.bright
         print Rainbow("          Bone Crawl  |  Chapter 1  |  2020 ©          ").red
         print Rainbow("]").blue.bright
-        print Rainbow("\n---------------------------------------------------------").blue.bright
+        print Rainbow("\n---------------------------------------------------------\n\n").blue.bright
+        print Rainbow("  Chosen Move: ").indianred.italic
+        condition_1 = MOVES[15].include?(@target)
+        condition_2 = MOVES[16].include?(@target)
+        condition_3 = nontraditional_move && (!condition_1 || !condition_2)
+        if condition_1
+            print Rainbow("View Tutorial").seagreen.italic
+        elsif condition_2
+            print Rainbow("View Stats").seagreen.italic
+        elsif condition_3
+            print Rainbow("None").seagreen.italic
+        else print Rainbow("#{@action.to_s.capitalize} #{@target.to_s.capitalize}").seagreen.italic
+        end
         print "\n\n\n\n\n"
     end
     def page_top
@@ -46,7 +58,7 @@ module Interface
     end
     def draw_page_count
         (37 - Board.page_count.to_s.length).times { print(" ") }
-    	print Rainbow("- Pg. #{Board.page_count} -\n\n").purple
+    	print Rainbow("- Pg. #{Board.page_count} -\n\n").magenta
     end
     def page_bottom
         print Rainbow("\n---------------------------------------------------------\n").blue.bright
@@ -137,7 +149,7 @@ module Interface
         puts "	     or to quickly pass time.\n\n"
     end
     def stats_screen
-        return if !MOVES[16].include?(@target)
+        return if MOVES[16].none?(@target)
         return if navigation_move
         if @level < 10
             title = "desicrated"
@@ -155,6 +167,7 @@ module Interface
             value = value.to_s.capitalize
             puts space + "#{key.capitalize} #{dots} #{value}"
         end
+        print "\n"
     end
     def target_does_not_exist
         return if @target == @action

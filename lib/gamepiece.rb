@@ -476,6 +476,10 @@ class Pullable < Gamepiece
   def toggle_state_pulled
     @pulled = true
   end
+  def reveal_secret
+    reveal_secret_text
+    @@player.toggle_state_inert
+  end
   def pull
   	unless @pulled
   	  reveal_secret
