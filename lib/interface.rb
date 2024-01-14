@@ -12,7 +12,7 @@ module Interface
         print Rainbow("[").blue.bright
         print Rainbow("          Bone Crawl  |  Chapter 1  |  2020 ©          ").red
         print Rainbow("]").blue.bright
-        print Rainbow("\n---------------------------------------------------------\n\n").blue.bright
+        print Rainbow("\n---------------------------------------------------------\n\n\n").blue.bright
         print Rainbow("  Chosen Move: ").indianred.italic
         condition_1 = MOVES[15].include?(@target)
         condition_2 = MOVES[16].include?(@target)
