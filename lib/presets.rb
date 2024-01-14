@@ -548,7 +548,7 @@ class Torch < Burnable
   def remove_from_board
       light_torch
   end
-  def execute_special_behavior
+  def special_behavior
       content.activate if @lit
   end
   def light_torch
@@ -1102,7 +1102,7 @@ class Door < Container
     super
     @needkey = true
   end
-  def execute_special_behavior
+  def special_behavior
     if state == :"already open"
       content.activate
     end

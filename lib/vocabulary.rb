@@ -44,3 +44,5 @@ INVENTORY =
 
 AFFIRMATIONS =
     ["yes","yeah","sure","yep","aye","affirmative","yea","yh", "uh huh", "uh-huh", "i guess"]
+
+EXISTING_TARGETS = ["north","south","east","west"]

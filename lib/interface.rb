@@ -16,13 +16,17 @@ module Interface
         print Rainbow("  Chosen Move: ").indianred.italic
         condition_1 = MOVES[15].include?(@target)
         condition_2 = MOVES[16].include?(@target)
-        condition_3 = nontraditional_move && (!condition_1 || !condition_2)
+        condition_3 = EXISTING_TARGETS.include?(@target)
+        condition_4 = nontraditional_move && (!condition_1 || !condition_2 || !condition_3)
+        condition_5 = EXISTING_TARGETS.none?(@target)
         if condition_1
             print Rainbow("View Tutorial").seagreen.italic
         elsif condition_2
-            print Rainbow("View Stats").seagreen.italic
-        elsif condition_3
+            print Rainbow("View Statistics").seagreen.italic
+        elsif condition_4
             print Rainbow("None").seagreen.italic
+        elsif condition_5
+            print Rainbow("#{@action.to_s.capitalize} Invalid").seagreen.italic
         else print Rainbow("#{@action.to_s.capitalize} #{@target.to_s.capitalize}").seagreen.italic
         end
         print "\n\n\n\n\n"
@@ -113,7 +117,10 @@ module Interface
         @target = :reset
     end
     def nontraditional_move
-        MOVES.flatten.none?(@action) || @target == @action
+        condition_1 = MOVES.flatten.none?(@action)
+        condition_2 = @target == @action
+        condition_3 = condition_1 || condition_2
+        condition_3
     end
     def navigation_move
         MOVES[0].include?(@action)

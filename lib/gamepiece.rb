@@ -23,12 +23,16 @@ class Gamepiece < Board
             print Rainbow("	     1 #{targets[0].split.map(&:capitalize).join(' ')} ").orange
             display_position
         end
-        # Some pieces have unique backdrops.
         # Hidden items will return nil.
     end
-    def execute_special_behavior
+    def special_behavior
         # Unique behavior during activation.
         # EG. Fruit trees can grow new fruit.
+    end
+    def execute_special_behavior
+        # Populates potential targets for vocabulary.
+        EXISTING_TARGETS.concat(targets)
+        special_behavior
     end
     def remove_from_board
         @location = [0]
@@ -111,7 +115,7 @@ class Tiles < Fixture
     def view
         overview
     end
-    def execute_special_behavior
+    def special_behavior
         @@map |= @location
     end
     def interpret_action
@@ -374,7 +378,7 @@ class FruitTree < Edible
       @stock.shift
     end
   end
-  def execute_special_behavior
+  def special_behavior
     @fruit.count < 3 && grow_fruit
   end
   def fruit_needs_time_to_grow
@@ -470,7 +474,7 @@ class Pullable < Gamepiece
     @moveset = MOVES[1] | MOVES[5]
     @pulled = false
   end
-  def execute_special_behavior
+  def special_behavior
     content.activate if @pulled == true
   end
   def toggle_state_pulled
@@ -538,11 +542,10 @@ class Character < Gamepiece
     def activate
         player_near ? reveal_targets_to_player : return
         return if MOVES[15].include?(@@player.target)
-
         @@player.state_inert ? display_backdrop : interact
         execute_special_behavior
     end
-    def execute_special_behavior
+    def special_behavior
         update_profile
         retaliate if (@hostile and is_alive)
     end
@@ -687,7 +690,7 @@ class Monster < Character
     def targets
         subtype | ["monster","beast","abomination","enemy","cryptid","demon"]
     end
-    def execute_special_behavior
+    def special_behavior
         update_profile
         become_hostile if player_near
         #if chance == 1

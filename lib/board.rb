@@ -46,7 +46,7 @@ class Board
     def self.decrement_page(count)
         @@page -= count
     end
-    def self.game_start
+    def self.load_player
         print "\e[?25h"
         player.action_select
         system("clear")
@@ -67,7 +67,7 @@ class Board
     def self.run_game(rooms,fixtures,items)
         print "\e[8;40;57t"
         loop do
-            Board.game_start
+            Board.load_player
             rooms.each { |room| room.activate}
             fixtures.each { |fixture| fixture.activate }
             Board.load_loot(items)
