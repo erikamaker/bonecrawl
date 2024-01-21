@@ -70,13 +70,13 @@ class Board
             Board.load_player
             rooms.each { |room| room.activate}
             fixtures.each { |fixture| fixture.activate }
+            player.game_over
             Board.load_loot(items)
             Board.game_end
         end
     end
     def self.game_end
         player.target_does_not_exist
-        player.game_over
         player.turn_page
         player.page_top
         player.page_bottom

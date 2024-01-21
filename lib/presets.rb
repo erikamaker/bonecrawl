@@ -288,7 +288,7 @@ end
 class Hands < Weapon
     def initialize
       super
-      @profile = { :build => "flesh", :damage => @@player.level }
+      @profile = { :build => "flesh", :lifespan => -1, :damage => @@player.level, :sigil => "None" }
     end
     def subtype
       ["bare hands","fists","hand","fist"]
@@ -305,7 +305,7 @@ end
 class Knife < Weapon
   def initialize
     super
-    @profile = { :build => "bone", :lifespan => rand(5..10), :damage => 2 }
+    @profile = { :build => "bone", :lifespan => rand(5..10), :damage => 2, :sigil => "None" }
   end
   def subtype
     ["knife","dagger"]
@@ -319,7 +319,7 @@ end
 class Cleaver < Weapon
   def initialize
     super
-    @profile = { :build => "iron", :lifespan => rand(10..15), :damage => 3 }
+    @profile = { :build => "iron", :lifespan => rand(10..15), :damage => 3, :sigil => "Evil"}
   end
   def subtype
     ["cleaver", "axe","blade"]
@@ -333,7 +333,7 @@ end
 class Sword < Weapon
   def initialize
     super
-    @profile = { :build => "silver", :lifespan => rand(15..25), :damage => 4 }
+    @profile = { :build => "silver", :lifespan => rand(15..25), :damage => 4, :sigil => "Divinity" }
   end
   def subtype
     ["sword"]
@@ -347,7 +347,7 @@ end
 class Cane < Weapon
   def initialize
     super
-    @profile = { :build => "wood", :lifespan => rand(10..20), :damage => 5, :type => "magick" }
+    @profile = { :build => "wood", :lifespan => rand(10..20), :damage => 5, :sigil => "Magick" }
   end
   def subtype
     ["hooked cane", "magick cane", "cane", "staff", "stave", "stick"]
@@ -1252,10 +1252,10 @@ end
       @focus = 1
       @defense = 0
       @sigil = "Magick"
-      @weakness = nil
+      @weakness = "Evil"
       @weapon = Cane.new
       @rewards = Silver.new
-      @armor = Hoodie.new
+      @armor = Cloak.new
       @desires = Gold.new
       @level = 0
     end
