@@ -35,7 +35,14 @@ class Player
     def stats
         { :level => @level, :attack => attack, :defense => defense, :health => @health, :focus => @focus}
     end
+    def equipped_weapon
+        @weapon.targets[0].split.map(&:capitalize).join(' ')
+    end
+    def equipped_armor
+        @armor.targets[0].split.map(&:capitalize).join(' ')
+    end
     def attack
+        # See Battle module for attack_points definition
         attack_points + @stats_clock[:envigored]
     end
     def defense

@@ -13,23 +13,68 @@ module Interface
         print Rainbow("          Bone Crawl  |  Chapter 1  |  2020 ©          ").red
         print Rainbow("]").blue.bright
         print Rainbow("\n---------------------------------------------------------\n\n\n").blue.bright
-        print Rainbow("  Chosen Move: ").indianred.italic
+        print Rainbow("   Action: ").indianred.italic
+        display_subheader
+        print "\n\n\n\n\n"
+    end
+    def display_subheader
         condition_1 = MOVES[15].include?(@target)
         condition_2 = MOVES[16].include?(@target)
         condition_3 = EXISTING_TARGETS.include?(@target)
         condition_4 = nontraditional_move && (!condition_1 || !condition_2 || !condition_3)
         condition_5 = EXISTING_TARGETS.none?(@target)
         if condition_1
-            print Rainbow("View Tutorial").seagreen.italic
+            string = "View Tutorial"
         elsif condition_2
-            print Rainbow("View Statistics").seagreen.italic
+            string = "View Statistics"
         elsif condition_4
-            print Rainbow("None").seagreen.italic
+            string = "None"
         elsif condition_5
-            print Rainbow("#{@action.to_s.capitalize} Invalid").seagreen.italic
-        else print Rainbow("#{@action.to_s.capitalize} #{@target.to_s.capitalize}").seagreen.italic
+            string = "#{@action.to_s.capitalize} Invalid"
+        else string = "#{@action.to_s.capitalize} #{@target.to_s.capitalize}"
         end
-        print "\n\n\n\n\n"
+        print Rainbow("#{string}").seagreen.italic
+        if @stats_clock[:stunned] > 0
+            padding = 33 - string.length
+            padding.times { print " " }
+            print Rainbow("Stunned").green.italic
+        elsif @stats_clock[:cursed] > 0
+            padding = 34 - string.length
+            padding.times { print " " }
+            print Rainbow("Cursed").green.italic
+        elsif @stats_clock[:subdued] > 0
+            padding = 33 - string.length
+            padding.times { print " " }
+            print Rainbow("Subdued").green.italic
+        elsif @stats_clock[:infected] > 0
+            padding = 32 - string.length
+            padding.times { print " " }
+            print Rainbow("Infected").green.italic
+        elsif @stats_clock[:fortified] > 0
+            padding = 31 - string.length
+            padding.times { print " " }
+            print Rainbow("Fortified").green.italic
+        elsif @stats_clock[:stimulated] > 0
+            padding = 30 - string.length
+            padding.times { print " " }
+            print Rainbow("Stimulated").green.italic
+        elsif @stats_clock[:envigored] > 0
+            padding = 31 - string.length
+            padding.times { print " " }
+            print Rainbow("Envigored").green.italic
+        else padding = 34 - string.length
+            padding.times { print " " }
+            print Rainbow("Normal").green.italic
+        end
+        print Rainbow("	    Weapon: ").indianred.italic
+        if @weapon
+            print Rainbow("#{equipped_weapon}").seagreen.italic
+        end
+        print "\n"
+            print Rainbow("    Armor: ").indianred.italic
+        if @armor
+            print Rainbow("#{equipped_armor}").seagreen.italic
+        end
     end
     def page_top
         puts "\n\n\n"
@@ -192,7 +237,7 @@ module Interface
         cond_3 = MOVES[16].include?(@target)
         cond_4 = state_engaged
         cond_5 = [cond_1, cond_2, cond_3, cond_4]
-        puts Rainbow("	   - At this coordinate, you find:\n").magenta if cond_5.none?
+        puts Rainbow("\n	   - At this coordinate, you find:\n").magenta if cond_5.none?
     end
     def game_over
         if @health < 1

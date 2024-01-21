@@ -41,7 +41,10 @@ module Battle
     end
     def attack_points
         if weapon_equipped
-            @weapon.profile[:damage] + type_bonus + @level
+            @weapon.profile[:damage] +
+            type_bonus +
+            @level +
+            @stats_clock[:envigored]
         else @level
         end
     end
@@ -85,7 +88,7 @@ module Battle
     end
     def animate_death
         if is_slain
-            puts Rainbow("	   - You slay the #{targets[0]}. It drops:\n").cyan
+            puts Rainbow("	   - You slay the #{targets[0]}, earning:\n").cyan
             @content.each {|item| puts("	       - 1 #{item.targets[0]}") if item}
             puts "\n"
             puts Rainbow("	   - You stuff the spoils of this").orange
@@ -99,19 +102,18 @@ module Battle
     def cooldown_effects
         if @stats_clock[:stunned] > 0
             @stats_clock[:stunned] -= 1
-            display_clock("Stunned") if @stats_clock[:stunned] == 1
-        end
-        if @stats_clock[:cursed] > 0
+        elsif @stats_clock[:cursed] > 0
             @stats_clock[:cursed] -= 1
-            display_clock("Cursed") if @stats_clock[:cursed] == 1
-        end
-        if @stats_clock[:subdued] > 0
+        elsif @stats_clock[:subdued] > 0
             @stats_clock[:subdued] -= 1
-            display_clock("Subdued") if @stats_clock[:subdued] == 1
-        end
-        if @stats_clock[:infected] > 0
+        elsif @stats_clock[:infected] > 0
             @stats_clock[:infected] -= 1
-            display_clock("Infected") if @stats_clock[:poisoned] == 1
+        elsif @stats_clock[:fortified] > 0
+            @stats_clock[:fortified] -= 1
+        elsif @stats_clock[:stimulated] > 0
+            @stats_clock[:stimulated] -= 1
+        elsif @stats_clock[:envigored] > 0
+            @stats_clock[:envigored] -= 1
         end
     end
 end

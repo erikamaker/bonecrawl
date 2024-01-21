@@ -285,6 +285,23 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
+class Hands < Weapon
+    def initialize
+      super
+      @profile = { :build => "flesh", :damage => @@player.level }
+    end
+    def subtype
+      ["bare hands","fists","hand","fist"]
+    end
+    def display_description
+        puts "	   - Your own two hands. Wherever"
+        puts "	     you reach, there they are.\n\n"
+    end
+    def equip
+        @@player.weapon = self
+    end
+end
+
 class Knife < Weapon
   def initialize
     super
@@ -333,7 +350,7 @@ class Cane < Weapon
     @profile = { :build => "wood", :lifespan => rand(10..20), :damage => 5, :type => "magick" }
   end
   def subtype
-    ["magick cane", "cane", "staff", "stave", "stick"]
+    ["hooked cane", "magick cane", "cane", "staff", "stave", "stick"]
   end
   def display_description
     puts "	   - A hooked cane's attack power"
