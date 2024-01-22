@@ -23,16 +23,22 @@ module Battle
     end
     def weapon_name
         if @weapon != nil
-            Rainbow("#{@weapon.targets[0]}").orange
-        else Rainbow("bare hands").orange
+            capitalized_target = @weapon.targets[0].split.map(&:capitalize).join(' ')
+            Rainbow(capitalized_target).orange
+        else
+            Rainbow("Bare Hands").orange
         end
     end
+
     def armor_name
         if @armor != nil
-            Rainbow("#{@armor.targets[0]}").orange
-        else Rainbow("bare skin").orange
+            capitalized_target = @armor.targets[0].split.map(&:capitalize).join(' ')
+            Rainbow(capitalized_target).orange
+        else
+            Rainbow("Bare Skin").orange
         end
     end
+
     def armor_points
         Rainbow("#{@armor.profile[:defense]}").green
     end

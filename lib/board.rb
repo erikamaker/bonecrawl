@@ -66,6 +66,14 @@ class Board
     end
     def self.run_game(rooms,fixtures,items)
         print "\e[8;40;57t"
+        bare_hands = Hands.new
+        bare_hands.location = [[0,0,0]]
+        rags = Rags.new
+        rags.location = [[0,0,0]]
+        rags.equip
+        bare_hands.equip
+
+
         loop do
             Board.load_player
             rooms.each { |room| room.activate}

@@ -657,9 +657,9 @@ class Character < Gamepiece
     def animate_damage
         if is_alive
             SoundBoard.hit_enemy
-            puts "	     Weapon Update   #{@@player.weapon_damage}"
-            puts "	     Critical Hit?   #{Rainbow(weapon_is_weakness.to_s.capitalize).cyan}"
-            print "	     Damage Result   " ; print_lost_hearts
+            puts "	     Weapon Update:   #{@@player.weapon_damage}"
+            puts "	     Critical Hit?:   #{Rainbow(weapon_is_weakness.to_s.capitalize).cyan}"
+            print "	     Damage Result:   " ; print_lost_hearts
         end
     end
     def retaliate

@@ -957,6 +957,23 @@ class Clothes < Tool
   end
 end
 
+class Rags < Clothes   # Requires 1 copper ore, and 3 spider spools
+    def initialize
+      super
+      @profile = {:defense => 1, :lifespan => 30}
+    end
+    def subtype
+      ["rags"]
+    end
+    def display_description
+        puts "	   - It's a one-size set of rags, "
+        puts "	     sewn with spider's silk.\n\n"
+    end
+    def equip
+        @@player.armor = self
+    end
+  end
+
 class Hoodie < Clothes   # Requires 1 copper ore, and 3 spider spools
   def initialize
     super
