@@ -26,7 +26,7 @@ module Battle
             capitalized_target = @weapon.targets[0].split.map(&:capitalize).join(' ')
             Rainbow(capitalized_target).orange
         else
-            Rainbow("Bare Hands").orange
+            Rainbow("Two Big Hands").orange
         end
     end
 

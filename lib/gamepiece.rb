@@ -247,18 +247,16 @@ class Burnable < Portable
             remove_from_board
         elsif @@player.search_inventory(Lighter)
             use_lighter
-        else puts "	   - There's isn't any fire here.\n\n"
+        else puts "	   - There isn't any fire here.\n\n"
         end
-    end
-    def use_fuel
-        puts "	   - You thumb a little fuel into"
-        puts "	     your lighter's fuel canister."
-        puts "	     It sparks a warm flame.\n\n"
-        @@player.remove_from_inventory(fuel)
     end
     def use_lighter
         if @@player.search_inventory(Fuel)
-            use_fuel
+            puts "	   - You thumb a little fuel into"
+            puts "	     your lighter's fuel canister."
+            puts "	     It sparks a warm flame.\n\n"
+            @@player.sight.concat(["fire","flame"])
+            @@player.remove_from_inventory(fuel)
             unique_burn_screen
             remove_from_board
         else

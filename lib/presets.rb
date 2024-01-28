@@ -550,9 +550,6 @@ class Torch < Burnable
       super
       @lit = true
   end
-  def is_lit
-    @lit == true
-  end
   def unlit_target
     ["torch"]
   end
@@ -563,7 +560,7 @@ class Torch < Burnable
       MOVES[1] | MOVES[9]
   end
   def remove_from_board
-      light_torch
+    light_torch
   end
   def special_behavior
       content.activate if @lit
@@ -573,15 +570,6 @@ class Torch < Burnable
   end
   def douse_torch
       @lit = false
-  end
-  def use_lighter
-    if @@player.search_inventory(Fuel)
-      use_fuel
-      unique_burn_screen
-      remove_from_board
-    else
-      puts "	   - You're out of lighter fuel.\n\n"
-    end
   end
   def unique_burn_screen
     if @lit
@@ -946,7 +934,7 @@ class Clothes < Tool
     SoundBoard.equip_item
     self.push_to_player_inventory if @@player.items.none?(self)
     view
-    puts Rainbow("	   - You equip the #{targets[0]}.\n").orange
+    puts Rainbow("	   - You put on the #{targets[0]}.").orange
     @@player.armor = self
   end
   def wrong_move
