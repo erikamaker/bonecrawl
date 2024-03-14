@@ -22,12 +22,12 @@ module Navigation
         }
     end
     def directed_movement
-        @position[1] += direction[@target][0]
-        @position[2] += direction[@target][1]
+        @pos[1] += direction[@target][0]
+        @pos[2] += direction[@target][1]
     end
     def activated_barrier
-        @position[1] -= direction[@target][0]
-        @position[2] -= direction[@target][1]
+        @pos[1] -= direction[@target][0]
+        @pos[2] -= direction[@target][1]
     end
     def no_direction_detected
         print Rainbow("	   - Move ").cyan
@@ -51,7 +51,7 @@ module Navigation
     end
     def reposition_player
       directed_movement
-      if Board.world_map.include?(@position)
+      if Board.world_map.include?(@pos)
         animate_movement
       else activated_barrier
         the_way_is_blocked
@@ -59,7 +59,7 @@ module Navigation
     end
     def animate_movement
       print "	   - You move #{@target} to "
-      print Rainbow(	     "[ #{@position[1]} , #{@position[2]} ]").orange
+      print Rainbow(	     "[ #{@pos[1]} , #{@pos[2]} ]").orange
       print ".\n\n"
     end
     def the_way_is_blocked

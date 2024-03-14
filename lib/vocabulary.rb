@@ -48,5 +48,4 @@ AFFIRMATIONS =
 EXISTING_TARGETS = ["north","south","east","west", INVENTORY].flatten
 
 
-
 # TODO:   Player can't burn things at the torch now for some reason. Look into this.

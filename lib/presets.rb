@@ -265,17 +265,24 @@ class Key < Tool
   end
 end
 
-class Lighter < Tool
+class Match < Tool
   def initialize
     super
-    @profile = {:build => "brass"}
+    @profile = {:build => "wood", :lifespan => 1}
   end
   def subtype
-    ["brass lighter", "lighter"]
+    ["matchstick", "match"]
   end
   def display_description
-  	puts "	   - It can be refueled using any"
-    puts "	     grease, wax, or sap.\n\n"
+  	puts "	   - It can only strike and light"
+    puts "	     once, so choose wisely.\n\n"
+  end
+  def update_durability
+    if profile[:lifespan] == 0
+        puts Rainbow("	   - You toss the expired match.\n").red
+        @@player.remove_from_inventory(self)
+        @@player.armor = nil
+      end
   end
 end
 
@@ -515,7 +522,7 @@ class Juice < Liquid
   def activate_side_effects
     puts Rainbow("	   - Your focus sharpens. Details").cyan
     print Rainbow("	     you've never noticed shimmer.\n\n").cyan
-    @@player.stats_clock[:stimulated] += 7
+    @@player.smart += 7
   end
 end
 
@@ -550,11 +557,8 @@ class Torch < Burnable
       super
       @lit = true
   end
-  def unlit_target
-    ["torch"]
-  end
   def targets
-      !@lit ? unlit_target : unlit_target | ["fire","flame"]
+    !@lit ? ["torch"] : ["torch", "fire", "flame"]
   end
   def moveset
       MOVES[1] | MOVES[9]
@@ -573,7 +577,7 @@ class Torch < Burnable
   end
   def unique_burn_screen
     if @lit
-      puts "	   - The torch is already lit.\n\n"
+      puts "	   - The torch is already lit.\n"
     else
       puts Rainbow("	   - The cold base of the torch").orange
       puts Rainbow("	     lights and catches fire.\n").orange
@@ -628,7 +632,7 @@ class RedFlower < Blossom
   def burn_effect
     puts Rainbow("	   - You feel light as a feather.").orange
     print Rainbow("	     Your defense begins to soar.\n").orange
-    @@player.stats_clock[:fortified] += 10
+    @@player.tough += 10
   end
 end
 
@@ -670,7 +674,7 @@ end
 
 class Silver < Ore
     def subtype
-      ["silver ore"]
+      ["silver ore", "silver"]
     end
     def display_backdrop
       puts "	   - A hunk of raw silver lays on"
@@ -1075,7 +1079,7 @@ end
 class Chest < Container
   def initialize
     super
-    @needkey = true
+    @key = true
   end
   def targets
     ["chest","strongbox","lootbox","box"]
@@ -1089,7 +1093,7 @@ end
 class Urn < Container
   def initialize
     super
-    @needkey = false
+    @key = false
   end
   def targets
     ["urn","jar","bottle","remains"]
@@ -1102,7 +1106,7 @@ end
 class Barrel < Container
   def initialize
     super
-    @needkey = false
+    @key = false
   end
   def targets
     ["barrel","keg","drum","vat"]
@@ -1122,7 +1126,7 @@ end
 class Door < Container
   def initialize
     super
-    @needkey = true
+    @key = true
   end
   def special_behavior
     if state == :"already open"
@@ -1199,12 +1203,14 @@ end
 
 
 class Hellion < Monster
+  attr_accessor :regions, :desires, :content, :rewards, :alive, :tough
   def initialize
     super
     @weapon = nil
     @armor = nil
+    @tough = 0
     @rewards = RedFlower.new
-    @desires = Lighter.new
+    @desires = Match.new
     @health = 10
     @sigil = "Evil"
     @focus = 1
@@ -1234,7 +1240,7 @@ class Goblin < Monster
       @weapon = Knife.new
       @armor = Hoodie.new
       @rewards = [Bread.new,Hoodie.new]
-      @desires = Lighter.new
+      @desires = Match.new
       @profile = {:health => 8, :focus => 1}
     end
     def subtype
@@ -1254,6 +1260,7 @@ end
     def initialize
       super
       @health = 8
+      @tough = 0
       @focus = 1
       @defense = 0
       @sigil = "Magick"

@@ -46,47 +46,4 @@ class Board
     def self.decrement_page(count)
         @@page -= count
     end
-    def self.load_player
-        print "\e[?25h"
-        player.action_select
-        system("clear")
-        player.header
-        player.detect_movement
-        player.suggest_tutorial
-        player.tutorial_screen
-        player.stats_screen
-        player.load_inventory
-    end
-    def self.load_loot(items)
-        if items.any? { |item| item.location.include?(Board.player.position) }
-            Board.player.present_list_of_loot
-            items.each { |item| item.activate }
-            print "\n"
-        end
-    end
-    def self.run_game(rooms,fixtures,items)
-        print "\e[8;40;57t"
-        bare_hands = Hands.new
-        bare_hands.location = [[0,0,0]]
-        rags = Rags.new
-        rags.location = [[0,0,0]]
-        rags.equip
-        bare_hands.equip
-
-
-        loop do
-            Board.load_player
-            rooms.each { |room| room.activate}
-            fixtures.each { |fixture| fixture.activate }
-            player.game_over
-            Board.load_loot(items)
-            Board.game_end
-        end
-    end
-    def self.game_end
-        player.target_does_not_exist
-        player.turn_page
-        player.page_top
-        player.page_bottom
-    end
 end

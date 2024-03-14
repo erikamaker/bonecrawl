@@ -21,7 +21,7 @@ module Interface
         condition_1 = MOVES[15].include?(@target)
         condition_2 = MOVES[16].include?(@target)
         condition_3 = EXISTING_TARGETS.include?(@target)
-        condition_4 = nontraditional_move && (!condition_1 || !condition_2 || !condition_3)
+        condition_4 = nontraditional_move && ( !condition_1 || !condition_2 || !condition_3 )
         condition_5 = EXISTING_TARGETS.none?(@target)
         if condition_1
             string = "View Tutorial"
@@ -34,34 +34,30 @@ module Interface
         else string = "#{@action.to_s.capitalize} #{@target.to_s.capitalize}"
         end
         print Rainbow("#{string}").seagreen.italic
-        if @stats_clock[:stunned] > 0
+        if @stun > 0
             padding = 33 - string.length
             padding.times { print " " }
             print Rainbow("Stunned").green.italic
-        elsif @stats_clock[:cursed] > 0
+        elsif @curse > 0
             padding = 34 - string.length
             padding.times { print " " }
             print Rainbow("Cursed").green.italic
-        elsif @stats_clock[:subdued] > 0
+        elsif @sleep > 0
             padding = 33 - string.length
             padding.times { print " " }
             print Rainbow("Subdued").green.italic
-        elsif @stats_clock[:infected] > 0
+        elsif @sick > 0
             padding = 32 - string.length
             padding.times { print " " }
             print Rainbow("Infected").green.italic
-        elsif @stats_clock[:fortified] > 0
+        elsif @tough > 0
             padding = 31 - string.length
             padding.times { print " " }
             print Rainbow("Fortified").green.italic
-        elsif @stats_clock[:stimulated] > 0
+        elsif @smart > 0
             padding = 30 - string.length
             padding.times { print " " }
             print Rainbow("Stimulated").green.italic
-        elsif @stats_clock[:envigored] > 0
-            padding = 31 - string.length
-            padding.times { print " " }
-            print Rainbow("Envigored").green.italic
         else padding = 34 - string.length
             padding.times { print " " }
             print Rainbow("Normal").green.italic
@@ -82,9 +78,9 @@ module Interface
         draw_page_count
     end
     def game_map
-        z = @position[0]
-    	x = @position[1]
-    	y = @position[2]
+        z = @pos[0]
+    	x = @pos[1]
+    	y = @pos[2]
         [
     	    [[z, x - 1, y + 1], [z, x, y + 1], [z, x + 1, y + 1]],
     	    [[z, x - 1, y], [z, x, y], [z, x + 1, y]],
@@ -92,7 +88,7 @@ module Interface
     	]
     end
     def map_character(pos)
-        return Rainbow("■ ").red.blink if pos == @position
+        return Rainbow("■ ").red.blink if pos == @pos
         return Rainbow("■ ").green if Board.world_map.include?(pos)
         "⬚ "
     end
@@ -122,7 +118,7 @@ module Interface
     end
     def print_defense_meter
         print "DEFENSE "
-    	blocks = [defense, 4].min
+    	blocks = [self.defense, 4].min
     	blocks.times { print Rainbow("■ ").orange }
     	(4 - blocks).times { print Rainbow("■ ").cyan }
     end
@@ -231,15 +227,8 @@ module Interface
             print Rainbow("	     your rucksack").cyan + ".\n\n"
         end
     end
-    def present_list_of_loot
-        cond_1 = inventory_selected
-        cond_2 = MOVES[15].include?(@target)
-        cond_3 = MOVES[16].include?(@target)
-        cond_4 = state_engaged
-        cond_5 = [cond_1, cond_2, cond_3, cond_4]
-        puts Rainbow("\n	   - At this coordinate, you find:\n").magenta if cond_5.none?
-    end
     def game_over
+
         if @health < 1
           sleep 2
           puts Rainbow("	   - Hearts expired, you collapse").purple

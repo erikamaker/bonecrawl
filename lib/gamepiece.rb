@@ -12,46 +12,54 @@ require_relative 'battling'
 class Gamepiece < Board
     attr_accessor :location, :targets, :moveset, :profile
     def initialize
+        # Ensure we can access all Board
+        # parent methods.
         super
     end
-    def display_position
-        # Unique position the object is in.
-        # EG: 'lays on the table'
-    end
     def display_backdrop
-        if self.is_a?(Portable)
-            print Rainbow("	     1 #{targets[0].split.map(&:capitalize).join(' ')} ").orange
-            display_position
-        end
-        # Hidden items will return nil.
+        # This acts as the visible asset.
+        # Most pieces have one, except for
+        # hidden items that return nil.
     end
     def special_behavior
-        # Unique behavior during activation.
-        # EG. Fruit trees can grow new fruit.
+        # Unique behavior at activation.
+        # EG. Fruit trees grow new fruit.
+        # EG. Characters can retaliate.
+        # EG. Tiles supply coords to @@map.
+        # EG. Pull switches reveal things.
     end
     def execute_special_behavior
-        # Populates potential targets for vocabulary.
+        # Populates vocabulary with targets.
         EXISTING_TARGETS.concat(targets)
         special_behavior
     end
     def remove_from_board
+        # Without a proper position, this
+        # ensures piece removal from game.
         @location = [0]
     end
-    def teleport(new_plot)
-        @location = new_plot
-    end
     def reveal_targets_to_player
+        # Populates player's line of sight
+        # with the piece's target keywords.
         @@player.sight |= targets
     end
     def player_near
-        @location.include?(@@player.position)
+        # Used in activation method below.
+        @location.include?(@@player.pos)
     end
     def view
+        # All pieces in player @sight are
+        # viewable. This chains two methods
+        # together that describe the piece's
+        # state, and its detailed profile.
         display_description
         display_profile
         print "\n"
     end
     def display_profile
+        # A @profile holds the keys / value
+        # pairs for specific descriptive or
+        # statistical data.
         return if @profile.nil?
         @profile.each do |key, value|
             length = 25 - (key.to_s.length + value.to_s.length)
@@ -62,25 +70,36 @@ class Gamepiece < Board
         end
     end
     def interpret_action
+        # Registers player's chosen @action,
+        # if it exists within Board's actions.
         Board.actions.each do |action, moves|
             send(action) if moves.include?(@@player.action)
         end
     end
     def activate
+        # First, execute any special behavior.
+        # Determine whether player can see it.
+        # Show idle backdrop, or interact.
         execute_special_behavior
         player_near ? reveal_targets_to_player : return
         @@player.state_inert ? display_backdrop : interact
     end
     def wrong_move
+        # Default exception for when player
+        # selects a wrong move. It's helpful
+        # to write unique hints for a piece.
         puts "	   - It would be uesless to try."
         puts "	     A page passes in vain.\n\n"
     end
     def interact
+        # If the player targets the piece, it
+        # will check the chosen @move against
+        # list of possible moves, and behaves
+        # according to the result.
         return if targets.none?(@@player.target)
         if moveset.include?(@@player.action)
             interpret_action
-        else
-            wrong_move
+        else wrong_move
         end
     end
 end
@@ -93,6 +112,10 @@ end
 
 class Fixture < Gamepiece
     def moveset
+        # A player can only view a fixture.
+        # It does nothing but describe. A
+        # fixture helps build the player's
+        # world, and the push the story.
         MOVES[1]
     end
 end
@@ -104,11 +127,16 @@ end
 
 
 class Tiles < Fixture
-    attr_accessor  :subtype, :composition, :terrain, :borders, :general, :targets
+    # The physical world that both player
+    # and pieces inhabit is built of tiles.
+    attr_accessor  :subtype, :composition, :terrain
+    attr_accessor  :borders, :general, :targets
     def initialize
         super
         @general = ["around","room","area","surroundings"] | subtype
-        @borders = [["wall", "walls"],["floor","down", "ground"], ["ceiling","up","canopy"]]
+        @borders = [["wall", "walls"],
+                    ["floor","down", "ground"],
+                    ["ceiling","up","canopy"]]
         @terrain = ["terrain","medium","material"] | composition
         @targets = (general + terrain + borders).flatten
     end
@@ -116,9 +144,12 @@ class Tiles < Fixture
         overview
     end
     def special_behavior
+        # Supply overall map with @location.
         @@map |= @location
     end
     def interpret_action
+        # The player can observe, with varying
+        # specificity, the tile's attributes.
         case @@player.target
         when *general
             @@player.toggle_state_inert
@@ -143,7 +174,19 @@ end
 
 class Portable < Gamepiece
     def moveset
+        # Items can be viewed or taken.
     	MOVES[1..2].flatten
+    end
+    def display_backdrop
+        # Show in list-format. For context
+        # see the Board's load_loot method
+        print "             "
+        print Rainbow("1 #{targets[0].split.map(&:capitalize).join(' ')} ").orange
+        display_position
+    end
+    def display_position
+        # Unique position the object is in.
+        # STYLE: 'lays on the table'
     end
     def wrong_move
         print "	   - This portable object can be\n"
@@ -151,8 +194,9 @@ class Portable < Gamepiece
         print Rainbow("taken").cyan + ".\n\n"
     end
     def take
+        # First execute view (for pacing).
         self.view
-        puts Rainbow("	   - You take the #{targets[0]}.\n").orange
+        puts Rainbow("	   - You take the #{targets[0]}.").orange
         push_to_player_inventory
         SoundBoard.found_item
     end
@@ -169,36 +213,45 @@ end
 
 
 class Container < Gamepiece
-    attr_accessor :content, :needkey, :state
+    # This piece exists to hide things from
+    # the player. This includes loot inside
+    # traditional containers, up to entire
+    # rooms behind doors. @key is toggleable.
+    attr_accessor :content, :key, :state
     def initialize
         super
         @state = :"closed shut"
-        @needkey = false
+        @key = false
     end
     def moveset
+        # Can be viewed or opened.
         @moveset = MOVES[1] | MOVES[3]
     end
     def toggle_state_open
+        # See open method for context.
         @state = :"already open"
     end
     def view
+        # "closed shut" or "already open"
     	puts "	   - This #{targets[0]} is #{state}.\n\n"
     end
     def key
-        @@player.items.find {|i| i.is_a?(Lockpick) or i.is_a?(Key)}
+        # Searches player for a key, or
+        # a lockpick. Both are accepted.
+        @@player.items.find {|i| i.is_a?(Lockpick) or  i.is_a?(Key)}
     end
     def open
+        # Player's method to reveal the
+        # piece's hidden content.
         if @state == :"closed shut"
-            @needkey ? is_locked : give_content
-        else
-            puts "	   - This #{targets[0]}'s already open.\n\n"
+            @key ? is_locked : give_content
+        else puts "	   - This #{targets[0]}'s already open.\n\n"
         end
     end
-    def use_key
-        key.profile[:lifespan] -= 1
-        key.break_item
-    end
     def is_locked
+        # If player has no item to unlock
+        # the container, it will not open.
+        # Otherwise, we use it to unlock.
         if key.nil?
             puts "	   - It won't open. It's locked.\n\n"
         else
@@ -209,13 +262,22 @@ class Container < Gamepiece
             give_content
         end
     end
-    def animate_opening
+    def use_key
+        # The first found key or lock pick
+        # will be the same that unlocked.
+        # See Tool subclass for @lifespan
+        # and update_durability context.
+        key.profile[:lifespan] -= 1
+        key.update_durability
+    end
+    def give_content
+        # In traditional containers, content
+        # is a portable loot item. Therefore,
+        # the player must take the content.
+        # This method is different for doors.
         puts Rainbow("           - It swings open and reveals a").cyan
         puts Rainbow("             hidden #{content.targets[0]}.\n").cyan
         toggle_state_open
-    end
-    def give_content
-        animate_opening
         content.take
     end
     def wrong_move
@@ -233,35 +295,53 @@ end
 
 class Burnable < Portable
     def moveset
+        # Can be viewed, taken, or burned.
         MOVES[1..2].flatten + MOVES[9]
     end
+    def matchstick
+        # Check player for a matchstick
+        # A matchstick is required to
+        # initially burn anything.
+        @@player.items.find {|i| i.is_a?(Match)}
+    end
     def fuel
+        # Some burnable objects require
+        # fuel to function.
         @@player.items.find { |item| item.is_a?(Fuel) }
     end
     def fire_near
+        # Boolean check for nearby fire.
         @@player.sight.include?("fire")
     end
     def burn
+        # First, check if fire is near.
+        # Burning evokes display and
+        # removes piece from the game.
         if fire_near
             unique_burn_screen
             remove_from_board
-        elsif @@player.search_inventory(Lighter)
-            use_lighter
-        else puts "	   - There isn't any fire here.\n\n"
+        # Priotize using a matchstick
+        # if there isn't any fire near.
+        elsif @@player.search_inventory(Match)
+            use_match
+        end
+        # If there isn't any fire, the
+        # piece cannot burn.
+        if !fire_near
+            "	   - There isn't any fire here.\n\n"
         end
     end
-    def use_lighter
-        if @@player.search_inventory(Fuel)
-            puts "	   - You thumb a little fuel into"
-            puts "	     your lighter's fuel canister."
-            puts "	     It sparks a warm flame.\n\n"
-            @@player.sight.concat(["fire","flame"])
-            @@player.remove_from_inventory(fuel)
-            unique_burn_screen
-            remove_from_board
-        else
-            puts "	   - You're out of lighter fuel.\n\n"
-        end
+    def use_match
+        # Display striking matchstick.
+        # Each can be used only once.
+        puts "	   - You strike a matchstick on"
+        puts "	     the cold floor. It ignites.\n\n"
+        # Execute the same unique burn
+        # screen as a local fire would.
+        unique_burn_screen
+        matchstick.profile[:lifespan] -= 1
+        matchstick.update_durability
+        remove_from_board
     end
     def wrong_move
         print "	   - This burnable object can be\n"
@@ -318,8 +398,8 @@ class Edible < Portable
         end
     end
     def activate_side_effects
-        # Reserved for foods or drinks that affect
-        # player's stats in some way. See presets.
+        # Reserved for items that affect
+        # player stats. See presets.
     end
     def wrong_move
         print "	   - This food item can only be\n"
@@ -421,13 +501,13 @@ class Tool < Portable
     subtype | ["tool"]
   end
   def equip
-    puts "	   - This item will automatically"
-    puts "	     apply in its time of need.\n\n"
+    puts "	   - This object will auto-equip"
+    puts "	     during its time of need.\n\n"
   end
-  def break_item
+  def update_durability
     if profile[:lifespan] == 0
-      puts Rainbow("	   - Your #{targets[0]} snaps in half.").red
-      puts Rainbow("	     You toss the broken pieces.\n").red
+      puts Rainbow("	   - Your #{targets[0]} breaks in two.").red
+      puts Rainbow("	     You drop the broken pieces.\n").red
       @@player.remove_from_inventory(self)
       @@player.weapon = nil if self == @@player.weapon
     end
@@ -506,7 +586,7 @@ end
 
 class Character < Gamepiece
     include Battle
-    attr_accessor :regions, :desires, :content, :rewards
+    attr_accessor :regions, :desires, :content, :rewards, :alive, :tough
     def initialize
         super
         @profile = {}
@@ -514,7 +594,31 @@ class Character < Gamepiece
         @hostile = false
         @content = [@weapon,@armor,@rewards]
         @sigil = nil
-        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 0, :stimulated => 0, :envigored => 0}
+        @health = 0
+        @alive = @health > 0
+        @armor = nil
+        @defense = 0
+        @weapon = nil
+        @attack = 0
+        @focus = 3
+        @level = 1
+        @stun = 0
+        @curse = 0
+        @sleep = 0
+        @sick = 0
+        @tough = 0
+        @smart = 0
+        @trance = 0
+    end
+    def update_profile
+        @profile[:heatlh] = @health
+        @profile[:defense] = @defense
+        @profile[:hostile] = @hostile
+        @profile[:focus] = @focus
+        @profile[:sigil] = @sigil
+        @profile[:tough] = @tough
+        self.cooldown_effects
+        @content = [@rewards,@armor,@weapon].compact
     end
     def targets
         subtype | ["character","person","npc"]
@@ -528,15 +632,6 @@ class Character < Gamepiece
     def display_backdrop
         @hostile ? hostile_backdrop : docile_backdrop
     end
-    def update_profile
-        @profile[:heatlh] = @health
-        @profile[:defense] = @defense
-        @profile[:hostile] = @hostile
-        @profile[:focus] = @focus
-        @profile[:sigil] = @sigil
-        self.cooldown_effects
-        @content = [@rewards,@armor,@weapon].compact
-    end
     def activate
         player_near ? reveal_targets_to_player : return
         return if MOVES[15].include?(@@player.target)
@@ -545,7 +640,7 @@ class Character < Gamepiece
     end
     def special_behavior
         update_profile
-        retaliate if (@hostile and is_alive)
+        attack_player if (@hostile and @alive)
     end
     def become_hostile
         unless @hostile
@@ -610,19 +705,8 @@ class Character < Gamepiece
         @desires = nil
         @rewards = nil
     end
-    def hearts_lost
-        damage_received(@@player.attack_points)
-    end
-    def player_hearts_lost
-        [@@player.damage_received(attack_points),4].min
-    end
-    def weapon_is_weakness
-        if @@player.weapon.nil?
-            @@player.upper_hand = false
-        elsif @@player.weapon.profile[:type].eql?(@weakness)
-            @@player.upper_hand = true
-        else @@player.upper_hand = false
-        end
+    def lose_all_items
+        @content.each { |item| item.push_to_player_inventory }
     end
     def attack
         become_hostile
@@ -631,36 +715,14 @@ class Character < Gamepiece
         if @@player.successful_hit
             puts Rainbow("Success.\n").green
             @@player.degrade_weapon
-            @health -= hearts_lost
-            animate_damage if is_alive
-            animate_death if is_slain
+            @health -= character_hearts_lost
+            character_damage if @alive
+            character_death !@alive
         else puts Rainbow("You miss.\n").red
             ## CHANCE OF DEMON PARRY
         end
     end
-    def print_lost_hearts
-        if hearts_lost == 0
-            print Rainbow("None\n\n").red
-            return
-        end
-
-        hearts_lost.times do |index|
-          print " " * 29 if index % 5 == 0 && index != 0
-          print Rainbow("♥ ").red
-          print "\n" if (index + 1) % 5 == 0 && index != 0
-        end
-        print "\n\n" unless hearts_lost % 5 == 0
-      end
-
-    def animate_damage
-        if is_alive
-            SoundBoard.hit_enemy
-            puts "	     Weapon Update:   #{@@player.weapon_damage}"
-            puts "	     Critical Hit?:   #{Rainbow(weapon_is_weakness.to_s.capitalize).cyan}"
-            print "	     Damage Result:   " ; print_lost_hearts
-        end
-    end
-    def retaliate
+    def attack_player
         puts "	   - The #{targets[0]} lunges to attack"
         print "	     with its #{weapon_name}.\n\n"
         if successful_hit
@@ -668,14 +730,34 @@ class Character < Gamepiece
             @@player.health -= player_hearts_lost
             @@player.display_defense
             print Rainbow("	   - It costs you #{player_hearts_lost} heart point").red
-            hearts_lost != 1 && print(Rainbow("s").red)
-            print(".\n\n")
+            player_hearts_lost != 1 && print(Rainbow("s").red)
+            print Rainbow(".\n\n").red
             @@player.degrade_armor
             ## CHANCE OF EFFECTS
         else puts Rainbow("	   - You narrowly avoid its blow.\n").green
         end
     end
-
+    def character_hearts_lost
+        damage_received(@@player.attack_points)
+    end
+    def player_hearts_lost
+        [@@player.damage_received(attack_points),4].min
+    end
+    def display_defense
+        if armor_equipped
+            print Rainbow("	   - Your #{armor_name} ").cyan
+            print Rainbow("deflects #{armor_points} ").cyan
+            print Rainbow("damage\n	     points. Its lifespan wanes.\n\n").cyan
+        end
+    end
+    def character_damage
+        if @alive
+            SoundBoard.hit_character
+            puts "	     Weapon Update:   #{@@player.print_character_damage}"
+            puts "	     Critical Hit?:   #{Rainbow(weapon_is_weakness.to_s.capitalize).cyan}"
+            print "	     Damage Result:   " ; print_damage
+        end
+    end
 end
 
 
@@ -692,7 +774,7 @@ class Monster < Character
         update_profile
         become_hostile if player_near
         #if chance == 1
-            retaliate if is_alive
+            attack_player if @alive
         #else
             #special_move
         #end

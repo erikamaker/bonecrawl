@@ -38,9 +38,9 @@ def cane.display_position
     puts "in the corner."
 end
 
-lighter = Lighter.new
-lighter.location = [[0,1,1]]
-def lighter.display_position
+match = Match.new
+match.location = [[0,1,1]]
+def match.display_position
     puts "on the floor."
 end
 
@@ -100,7 +100,7 @@ end
 def hellion_1.default_script
   puts "	   - It leers at you, dark pupils"
   puts "	     flexing in its yellow eyes."
-  puts "	     It says it lost its lighter.\n\n"
+  puts "	     It says it lost its match.\n\n"
 end
 def hellion_1.passive_script
   puts "	   - It says this place isn't all"
@@ -193,9 +193,8 @@ torch_1.content = secret_room
 def torch_1.reveal_secret
     SoundBoard.secret_music
     SoundBoard.wall_reveal
-    puts Rainbow("	   - The eastern wall rumbles and").cyan
-    puts Rainbow("	     recedes to reveal a new path.").cyan
-    puts Rainbow("	     Your map has been updated.\n").cyan
+    puts Rainbow("	   - The eastern wall recedes to").cyan
+    puts Rainbow("	     reveal a secret corridor.\n").cyan
     content.activate
 end
 
@@ -206,10 +205,17 @@ def gold.display_position
 end
 
 flower = RedFlower.new
-flower.location = [[0,2,1]]
+flower.location = [[0,2,2]]
 def flower.display_position
     puts "grows here."
 end
+
+flower2 = RedFlower.new
+flower2.location = [[0,2,1]]
+def flower.display_position
+    puts "grows here."
+end
+
 
 juice = Juice.new
 juice.location = [[0,2,1]]
@@ -246,8 +252,26 @@ end
 
 
 rooms = [ room_1, door_1, door_2, door_3 ]
-fixtures = [ torch_1, wizard, altar, drain_1, hook_1, hellion_1, pull_1, table_1, fire_1, tree ]
-items = [ cane, juice, flower, gold, lighter, fat1, hoodie_1, bread_1, pick_1 ]
-#open_scene
+fixtures = [ flower, torch_1, wizard, altar, drain_1, hook_1, hellion_1, pull_1, table_1, fire_1, tree ]
+items = [ cane, juice, flower, gold, match, fat1, hoodie_1, bread_1, pick_1 ]
 
-Board.run_game(rooms,fixtures,items)
+
+loop do
+  print "\e[?25h"
+  Board.player.action_select
+  system("clear")
+  Board.player.header
+  Board.player.detect_movement
+  Board.player.suggest_tutorial
+  Board.player.tutorial_screen
+  Board.player.stats_screen
+  rooms.each { |room| room.activate}
+  fixtures.each { |fixture| fixture.activate }
+  items.each { |item| item.activate }
+  Board.player.load_inventory
+  Board.player.target_does_not_exist
+  Board.player.game_over
+  Board.player.turn_page
+  Board.player.page_top
+  Board.player.page_bottom
+end

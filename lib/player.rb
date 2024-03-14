@@ -13,27 +13,37 @@ class Player
     include Inventory
     include Navigation
     include Battle
-    attr_accessor :action, :target, :state, :sight, :position, :items
-    attr_accessor :armor, :weapon, :health, :focus, :defense, :spirit, :level, :upper_hand
-    attr_accessor :stats_clock
+    attr_accessor :action, :target, :state, :sight, :pos, :items
+    attr_accessor  :health, :armor, :defense, :weapon, :attack, :focus, :level
+    attr_accessor :stun, :curse, :sleep, :sick, :tough, :smart, :trance
     def initialize
         super
-        @level = 1
-        @position = [0,1,2]
         @action = :start
         @target = :start
-        @state =  :inert
-        @sight =  []
-        @items = []
-        @armor = nil
-        @weapon = nil
+        @state = :inert
+        @sight = Array.new
+        @pos = [0,1,2]
+        @items = Array.new
         @health = 4
+        @armor = nil
+        @defense = 0
+        @weapon = nil
+        @attack = 0
         @focus = 3
-        @upper_hand = false
-        @stats_clock = {:stunned => 0, :cursed => 0, :subdued => 0, :infected => 0, :fortified => 0, :stimulated => 0, :envigored => 0}
+        @level = 1
+        @stun = 0
+        @curse = 0
+        @sleep = 0
+        @sick = 0
+        @tough = 0
+        @smart = 0
+        @trance = 0
     end
-    def stats
-        { :level => @level, :attack => attack, :defense => defense, :health => @health, :focus => @focus}
+    def defense
+        if armor_equipped
+            [(@armor.profile[:defense] + @tough),4].min
+        else [0 + @tough,4].min
+        end
     end
     def equipped_weapon
         @weapon.targets[0].split.map(&:capitalize).join(' ')
@@ -41,22 +51,9 @@ class Player
     def equipped_armor
         @armor.targets[0].split.map(&:capitalize).join(' ')
     end
-    def attack
-        # See Battle module for attack_points definition
-        attack_points + @stats_clock[:envigored]
-    end
-    def defense
-        if armor_equipped
-            [(@armor.profile[:defense] + @stats_clock[:fortified]),4].min
-        else 0 + [@stats_clock[:fortified],4].min
-        end
-    end
     def gain_health(magnitude)
         SoundBoard.heal_heart
         @health += (magnitude)
-    end
-    def alive?
-        @health > 0
     end
     def clear_sight
         @sight.clear
