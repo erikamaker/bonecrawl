@@ -324,11 +324,8 @@ class Burnable < Portable
         # if there isn't any fire near.
         elsif @@player.search_inventory(Match)
             use_match
-        end
-        # If there isn't any fire, the
-        # piece cannot burn.
-        if !fire_near
-            "	   - There isn't any fire here.\n\n"
+        else
+            puts "	   - There isn't any fire here.\n\n"
         end
     end
     def use_match

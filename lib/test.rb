@@ -250,28 +250,16 @@ end
 #####    GAME LOOP     #######################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
+print "\e[?25h"
+
+
+
+
+
 
 rooms = [ room_1, door_1, door_2, door_3 ]
-fixtures = [ flower, torch_1, wizard, altar, drain_1, hook_1, hellion_1, pull_1, table_1, fire_1, tree ]
-items = [ cane, juice, flower, gold, match, fat1, hoodie_1, bread_1, pick_1 ]
+fixtures = [ torch_1, wizard, altar, drain_1, hook_1, hellion_1, pull_1, table_1, fire_1, tree ]
+items = [ cane, juice, flower, gold, match, fat1, hoodie_1, bread_1 ]
+hidden_loot = [ pick_1 ]
 
-
-loop do
-  print "\e[?25h"
-  Board.player.action_select
-  system("clear")
-  Board.player.header
-  Board.player.detect_movement
-  Board.player.suggest_tutorial
-  Board.player.tutorial_screen
-  Board.player.stats_screen
-  rooms.each { |room| room.activate}
-  fixtures.each { |fixture| fixture.activate }
-  items.each { |item| item.activate }
-  Board.player.load_inventory
-  Board.player.target_does_not_exist
-  Board.player.game_over
-  Board.player.turn_page
-  Board.player.page_top
-  Board.player.page_bottom
-end
+Board.run_level(rooms,fixtures,items,hidden_loot)

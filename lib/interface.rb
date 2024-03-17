@@ -62,12 +62,12 @@ module Interface
             padding.times { print " " }
             print Rainbow("Normal").green.italic
         end
-        print Rainbow("	    Weapon: ").indianred.italic
+        print Rainbow("\n   Weapon: ").indianred.italic
         if @weapon
             print Rainbow("#{equipped_weapon}").seagreen.italic
         end
         print "\n"
-            print Rainbow("    Armor: ").indianred.italic
+        print Rainbow("    Armor: ").indianred.italic
         if @armor
             print Rainbow("#{equipped_armor}").seagreen.italic
         end
