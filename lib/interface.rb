@@ -8,12 +8,12 @@ require 'rainbow'
 
 module Interface
     def header
-        print Rainbow("\n---------------------------------------------------------\n").blue.bright
-        print Rainbow("[").blue.bright
-        print Rainbow("          Bone Crawl  |  Chapter 1  |  2020 ©          ").red
-        print Rainbow("]").blue.bright
-        print Rainbow("\n---------------------------------------------------------\n\n\n").blue.bright
-        print Rainbow("   Action: ").indianred.italic
+        print Rainbow("\n---------------------------------------------------------\n").darkblue.bright
+        print Rainbow("[").darkblue.bright
+        print Rainbow("          Bone Crawl  |  Chapter 1  |  2020 ©          ").darkred
+        print Rainbow("]").darkblue.bright
+        print Rainbow("\n---------------------------------------------------------\n\n\n").darkblue.bright
+        print Rainbow("   Action: ").darkgreen
         display_subheader
         print "\n\n\n\n\n"
     end
@@ -33,43 +33,43 @@ module Interface
             string = "#{@action.to_s.capitalize} Invalid"
         else string = "#{@action.to_s.capitalize} #{@target.to_s.capitalize}"
         end
-        print Rainbow("#{string}").seagreen.italic
+        print Rainbow("#{string}").indianred.italic
         if @stun > 0
             padding = 33 - string.length
             padding.times { print " " }
-            print Rainbow("Stunned").green.italic
+            print Rainbow("Stunned").indianred.italic
         elsif @curse > 0
             padding = 34 - string.length
             padding.times { print " " }
-            print Rainbow("Cursed").green.italic
+            print Rainbow("Cursed").indianred.italic
         elsif @sleep > 0
             padding = 33 - string.length
             padding.times { print " " }
-            print Rainbow("Subdued").green.italic
+            print Rainbow("Subdued").indianred.italic
         elsif @sick > 0
             padding = 32 - string.length
             padding.times { print " " }
-            print Rainbow("Infected").green.italic
+            print Rainbow("Infected").indianred.italic
         elsif @tough > 0
             padding = 31 - string.length
             padding.times { print " " }
-            print Rainbow("Fortified").green.italic
+            print Rainbow("Fortified").indianred.italic
         elsif @smart > 0
             padding = 30 - string.length
             padding.times { print " " }
-            print Rainbow("Stimulated").green.italic
+            print Rainbow("Stimulated").indianred.italic
         else padding = 34 - string.length
             padding.times { print " " }
-            print Rainbow("Normal").green.italic
+            print Rainbow("Normal").indianred.italic
         end
-        print Rainbow("\n   Weapon: ").indianred.italic
+        print Rainbow("\n   Weapon: ").darkgreen
         if @weapon
-            print Rainbow("#{equipped_weapon}").seagreen.italic
+            print Rainbow("#{equipped_weapon}").indianred.italic
         end
         print "\n"
-        print Rainbow("    Armor: ").indianred.italic
+        print Rainbow("    Armor: ").darkgreen
         if @armor
-            print Rainbow("#{equipped_armor}").seagreen.italic
+            print Rainbow("#{equipped_armor}").indianred.italic
         end
     end
     def page_top
@@ -106,15 +106,15 @@ module Interface
     	print Rainbow("- Pg. #{Board.page_count} -\n\n").magenta
     end
     def page_bottom
-        print Rainbow("\n---------------------------------------------------------\n").blue.bright
-    	print Rainbow("[  ").blue.bright
+        print Rainbow("\n---------------------------------------------------------\n").darkblue.bright
+    	print Rainbow("[  ").darkblue.bright
         print_defense_meter
-        print Rainbow("  |   ").blue.bright
+        print Rainbow("  |   ").darkblue.bright
     	print_hearts_meter
-    	print Rainbow("  |   ").blue.bright
+    	print Rainbow("  |   ").darkblue.bright
         toggle_key_icon
-        print Rainbow("]").blue.bright
-    	print Rainbow("\n---------------------------------------------------------\n\n").blue.bright
+        print Rainbow("]").darkblue.bright
+    	print Rainbow("\n---------------------------------------------------------\n\n").darkblue.bright
     end
     def print_defense_meter
         print "DEFENSE "
@@ -188,7 +188,7 @@ module Interface
     	puts Rainbow("	     Fight the troll.").red
     	puts Rainbow("	     View my items.").yellow
     	puts Rainbow("	     Eat some bread.").green
-    	puts Rainbow("	     Go to the west.").blue
+    	puts Rainbow("	     Go to the west.").darkblue
     	puts Rainbow("	     Light the torch.\n").indigo
     	print "	   - Press "
         print Rainbow("return").cyan

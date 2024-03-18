@@ -46,14 +46,22 @@ class Board
     def self.decrement_page(count)
         @@page -= count
     end
-    def self.print_list_space(items)
-        items.each do |item|
-            item.player_near
+    def self.present_loot(items)
+        cond_1 = @@player.inventory_selected
+        cond_2 = MOVES[15].include?(@@player.target)
+        cond_3 = MOVES[16].include?(@@player.target)
+        cond_4 = @@player.state_engaged
+        cond_5 = items.none? { |item| item.location.include?(@@player.pos) }
+        cond_6 = [cond_1, cond_2, cond_3, cond_4, cond_5]
+        if cond_6.none?
+            puts Rainbow("	   - At this coordinate, you find:\n").magenta
         end
+        items.each{ |item| item.activate}
+        print "\n" if !cond_5
     end
-
-
-    def self.run_level(rooms,fixtures,items,hidden_loot)
+    def self.run_level(rooms,fixtures,items,loot)
+        print "\e[?25h"
+        print "\e[8;40;57t"
         loop do
             Board.player.action_select
             system("clear")
@@ -64,22 +72,7 @@ class Board
             Board.player.stats_screen
             rooms.each { |room| room.activate}
             fixtures.each { |fixture| fixture.activate }
-
-
-            cond_1 = @@player.inventory_selected
-            cond_2 = MOVES[15].include?(@@player.target)
-            cond_3 = MOVES[16].include?(@@player.target)
-            cond_4 = @@player.state_engaged
-            cond_5 = items.none? { |item| item.location.include?(@@player.pos) }
-            cond_6 = [cond_1, cond_2, cond_3, cond_4, cond_5]
-
-            if cond_6.none?
-                puts Rainbow "	   - At this coordinate, you find:\n"
-                print "\n"
-            end
-
-            items.each{ |item| item.activate}
-            print "\n" if !cond_5
+            Board.present_loot(items)
             Board.player.load_inventory
             Board.player.target_does_not_exist
             Board.player.game_over
