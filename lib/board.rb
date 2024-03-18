@@ -10,10 +10,10 @@ class Board
     include Interface
     def initialize
         @@page = 0
-        @@map = []
+        @@map = Array.new
         @@player = Player.new
     end
-    def self.actions
+    def self.player_actions
     {
         view: MOVES[1],
         take: MOVES[2],
@@ -46,7 +46,7 @@ class Board
     def self.decrement_page(count)
         @@page -= count
     end
-    def self.present_loot(items)
+    def self.present_list_of_items(items)
         cond_1 = @@player.inventory_selected
         cond_2 = MOVES[15].include?(@@player.target)
         cond_3 = MOVES[16].include?(@@player.target)
@@ -57,11 +57,12 @@ class Board
             puts Rainbow("	   - At this coordinate, you find:\n").magenta
         end
         items.each{ |item| item.activate}
-        print "\n" if !cond_5
+        print "\n" if [cond_4,cond_5].none?
     end
-    def self.run_level(rooms,fixtures,items,loot)
+    def self.run_level(rooms,fixtures,characters,items,loot)
+        system("clear")
         print "\e[?25h"
-        print "\e[8;40;57t"
+        print "\e[8;45;57t"
         loop do
             Board.player.action_select
             system("clear")
@@ -72,7 +73,8 @@ class Board
             Board.player.stats_screen
             rooms.each { |room| room.activate}
             fixtures.each { |fixture| fixture.activate }
-            Board.present_loot(items)
+            characters.each { |character| character.activate }
+            Board.present_list_of_items(items)
             Board.player.load_inventory
             Board.player.target_does_not_exist
             Board.player.game_over

@@ -251,13 +251,10 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-
-
-
-
 rooms = [ room_1, door_1, door_2, door_3 ]
-fixtures = [ torch_1, wizard, altar, drain_1, hook_1, hellion_1, pull_1, table_1, fire_1, tree ]
+fixtures = [ torch_1, altar, drain_1, hook_1, pull_1, table_1, fire_1, tree ]
+characters = [ wizard, hellion_1 ]
 items = [ cane, juice, flower, gold, match, fat1, hoodie_1, bread_1 ]
 loot = [ pick_1 ]
 
-Board.run_level(rooms,fixtures,items,loot)
+Board.run_level(rooms,fixtures,characters,items,loot)

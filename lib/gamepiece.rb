@@ -72,7 +72,7 @@ class Gamepiece < Board
     def interpret_action
         # Registers player's chosen @action,
         # if it exists within Board's actions.
-        Board.actions.each do |action, moves|
+        Board.player_actions.each do |action, moves|
             send(action) if moves.include?(@@player.action)
         end
     end
@@ -325,7 +325,7 @@ class Burnable < Portable
         elsif @@player.search_inventory(Match)
             use_match
         else
-            puts "	   - There isn't any fire here.\n\n"
+            puts "	   - There isn't any fire here.\n"
         end
     end
     def use_match
