@@ -66,7 +66,11 @@ module Battle
         states.each do |state|
           state -= 1 if state > 0
         end
-      end
+    end
+    def gain_health(magnitude)
+        SoundBoard.heal_heart
+        @health += (magnitude)
+    end
 
 
     ## EXECUTED BY CHARACTER CLASS, FROM PLAYER PERSPECTIVE

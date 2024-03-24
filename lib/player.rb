@@ -24,7 +24,7 @@ class Player
         @sight = Array.new
         @pos = [0,1,2]
         @items = Array.new
-        @health = 4
+        @health = 1
         @armor = nil
         @defense = 0
         @weapon = nil
@@ -50,10 +50,6 @@ class Player
     end
     def equipped_armor
         @armor.targets[0].split.map(&:capitalize).join(' ')
-    end
-    def gain_health(magnitude)
-        SoundBoard.heal_heart
-        @health += (magnitude)
     end
     def clear_sight
         @sight.clear

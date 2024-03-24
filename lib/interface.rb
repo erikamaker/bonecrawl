@@ -10,10 +10,10 @@ module Interface
     def header
         print Rainbow("\n---------------------------------------------------------\n").darkblue.bright
         print Rainbow("[").darkblue.bright
-        print Rainbow("          Bone Crawl  |  Chapter 1  |  2020 ©          ").darkred
+        print Rainbow("          Bone Crawl  |  Chapter 1  |  2020 ©          ").darkgreen
         print Rainbow("]").darkblue.bright
         print Rainbow("\n---------------------------------------------------------\n\n\n").darkblue.bright
-        print Rainbow("   Action: ").darkgreen
+        print Rainbow("   Action: ").darkred
         display_subheader
         print "\n\n\n\n\n"
     end
@@ -35,39 +35,39 @@ module Interface
         end
         print Rainbow("#{string}").indianred.italic
         if @stun > 0
-            padding = 33 - string.length
+            padding = 35 - string.length
             padding.times { print " " }
             print Rainbow("Stunned").indianred.italic
         elsif @curse > 0
-            padding = 34 - string.length
+            padding = 36 - string.length
             padding.times { print " " }
             print Rainbow("Cursed").indianred.italic
         elsif @sleep > 0
-            padding = 33 - string.length
+            padding = 35 - string.length
             padding.times { print " " }
             print Rainbow("Subdued").indianred.italic
         elsif @sick > 0
-            padding = 32 - string.length
+            padding = 34 - string.length
             padding.times { print " " }
             print Rainbow("Infected").indianred.italic
         elsif @tough > 0
-            padding = 31 - string.length
+            padding = 33 - string.length
             padding.times { print " " }
             print Rainbow("Fortified").indianred.italic
         elsif @smart > 0
-            padding = 30 - string.length
+            padding = 32 - string.length
             padding.times { print " " }
             print Rainbow("Stimulated").indianred.italic
-        else padding = 34 - string.length
+        else padding = 36 - string.length
             padding.times { print " " }
             print Rainbow("Normal").indianred.italic
         end
-        print Rainbow("\n   Weapon: ").darkgreen
+        print Rainbow("\n   Weapon: ").darkred
         if @weapon
             print Rainbow("#{equipped_weapon}").indianred.italic
         end
         print "\n"
-        print Rainbow("    Armor: ").darkgreen
+        print Rainbow("    Armor: ").darkred
         if @armor
             print Rainbow("#{equipped_armor}").indianred.italic
         end
@@ -228,7 +228,6 @@ module Interface
         end
     end
     def game_over
-
         if @health < 1
           sleep 2
           puts Rainbow("	   - Hearts expired, you collapse").purple

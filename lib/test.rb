@@ -148,8 +148,11 @@ pick_1.location = [[0,4,-4]]
 fire_1 = Fireplace.new
 fire_1.location = [[0,1,-4]]
 
-tree = AppleTree.new
-tree.location = [[0,6,-4]]
+tree = Tree.new
+tree.location = [[0,1,1]]
+apples = AppleSource.new
+apples.location = [[0,1,1]]
+
 
 altar = Altar.new
 altar.location = [[0,1,2]]
@@ -252,9 +255,15 @@ end
 
 
 rooms = [ room_1, door_1, door_2, door_3 ]
-fixtures = [ torch_1, altar, drain_1, hook_1, pull_1, table_1, fire_1, tree ]
-characters = [ wizard, hellion_1 ]
+fixtures = [ torch_1, altar, drain_1, hook_1, pull_1, table_1, fire_1, tree, apples ]
+npcs = [ wizard, hellion_1 ]
 items = [ cane, juice, flower, gold, match, fat1, hoodie_1, bread_1 ]
 loot = [ pick_1 ]
 
-Board.run_level(rooms,fixtures,characters,items,loot)
+
+
+
+
+Board.run_level(rooms,fixtures,npcs,items,loot)
+
+

@@ -53,13 +53,12 @@ class Board
         cond_4 = @@player.state_engaged
         cond_5 = items.none? { |item| item.location.include?(@@player.pos) }
         cond_6 = [cond_1, cond_2, cond_3, cond_4, cond_5]
-        if cond_6.none?
-            puts Rainbow("	   - At this coordinate, you find:\n").magenta
-        end
+        present = Rainbow("	   - Here you find:\n").magenta
+        puts present if cond_6.none?
         items.each{ |item| item.activate}
         print "\n" if [cond_4,cond_5].none?
     end
-    def self.run_level(rooms,fixtures,characters,items,loot)
+    def self.run_level(rooms,fixtures,npcs,items,loot)
         system("clear")
         print "\e[?25h"
         print "\e[8;45;57t"
@@ -73,7 +72,7 @@ class Board
             Board.player.stats_screen
             rooms.each { |room| room.activate}
             fixtures.each { |fixture| fixture.activate }
-            characters.each { |character| character.activate }
+            npcs.each { |npc| npc.activate }
             Board.present_list_of_items(items)
             Board.player.load_inventory
             Board.player.target_does_not_exist

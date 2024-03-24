@@ -79,7 +79,7 @@ class Gamepiece < Board
     def activate
         # First, execute any special behavior.
         # Determine whether player can see it.
-        # Show idle backdrop, or interact.
+        # Show idle backdrop, or interact script.
         execute_special_behavior
         player_near ? reveal_targets_to_player : return
         @@player.state_inert ? display_backdrop : interact
@@ -133,6 +133,9 @@ class Tiles < Fixture
     attr_accessor  :borders, :general, :targets
     def initialize
         super
+        # A room should have the following
+        # target attributes, for unique and
+        # nested interaction.
         @general = ["around","room","area","surroundings"] | subtype
         @borders = [["wall", "walls"],
                     ["floor","down", "ground"],
@@ -141,6 +144,8 @@ class Tiles < Fixture
         @targets = (general + terrain + borders).flatten
     end
     def view
+        # Display unique bird's eye view of
+        # the player-occupied room.
         overview
     end
     def special_behavior
@@ -152,14 +157,21 @@ class Tiles < Fixture
         # specificity, the tile's attributes.
         case @@player.target
         when *general
+            # toggle_state_inert in order to display
+            # any items from level activating and
+            # displaying their own backdrops.
             @@player.toggle_state_inert
             overview
         when *terrain
+            # View the terrain
             view_type
+            # View the walls
         when *borders[0]
             view_wall
+            # View the floor
         when *borders[1]
             view_down
+            # View the ceiling
         when *borders[2]
             view_above
         end
@@ -178,17 +190,24 @@ class Portable < Gamepiece
     	MOVES[1..2].flatten
     end
     def display_backdrop
-        # Show in list-format. For context
-        # see the Board's load_loot method
+        # Show in list-format. For context,
+        # see the Board's load_loot method.
         print "             "
         print Rainbow("1 #{targets[0].split.map(&:capitalize).join(' ')} ").orange
         display_position
     end
     def display_position
-        # Unique position the object is in.
-        # STYLE: 'lays on the table'
+        # From Board: "At this coordinate, you find:"
+        # From level file:
+        #    def eg_item.display_position
+        #       puts "lays on the table."                   < -- Follow style
+        #    end
+        # Complete: 1 {targets[0]} {position}
     end
     def wrong_move
+        # Basic loot without equipability
+        # (in contrast w/ weapons or armor)
+        # can only be viewed or taken.
         print "	   - This portable object can be\n"
         print Rainbow("	     viewed").cyan + " or "
         print Rainbow("taken").cyan + ".\n\n"
@@ -196,12 +215,14 @@ class Portable < Gamepiece
     def take
         # First execute view (for pacing).
         self.view
-        puts Rainbow("	   - You take the #{targets[0]}.").orange
+        puts Rainbow("	   - You take the #{targets[0]}.\n").orange
         push_to_player_inventory
         SoundBoard.found_item
     end
     def push_to_player_inventory
+        # Eliminate the item from the world
         remove_from_board
+        # Give it to the player
         @@player.items.push(self)
     end
 end
@@ -325,14 +346,14 @@ class Burnable < Portable
         elsif @@player.search_inventory(Match)
             use_match
         else
-            puts "	   - There isn't any fire here.\n"
+            puts "	   - There isn't any fire here.\n\n"
         end
     end
     def use_match
         # Display striking matchstick.
         # Each can be used only once.
         puts "	   - You strike a matchstick on"
-        puts "	     the cold floor. It ignites.\n\n"
+        puts "	     the floor. It ignites.\n\n"
         # Execute the same unique burn
         # screen as a local fire would.
         unique_burn_screen
@@ -341,7 +362,7 @@ class Burnable < Portable
         remove_from_board
     end
     def wrong_move
-        print "	   - This burnable object can be\n"
+        print "	   - This combustible object can be\n"
         print Rainbow("	     viewed").cyan + " or "
         print Rainbow("burned").cyan + ".\n\n"
     end
@@ -355,48 +376,67 @@ end
 
 class Edible < Portable
     def targets
+        # subtype specifies food name
     	subtype | ["food","edible","nourishment","nutrients","nutrient"]
     end
     def moveset
+        # Can be viewed, taken, or ingested.
     	MOVES[1..2].flatten | MOVES[10]
     end
-    def eat
-        animate_ingestion
-        remove_portion
-        display_remaining_portions
-        @@player.gain_health(heal_amount)
-        activate_side_effects
-    end
     def animate_ingestion
+        # Signals to user the item is
+        # being successfully eaten.
         puts Rainbow("	   - You eat the #{subtype[0]}, healing").orange
     	print Rainbow("	     #{heal_amount} heart").orange
         print Rainbow("#{heal_amount == 1 ? '.' : 's.'} ").orange
     end
     def remove_portion
+        # All edible items are built
+        # with a set portion number.
+        # This decrements it when the
+        # item is being eaten.
         profile[:portions] -= 1
     end
     def display_remaining_portions
+        # Shows the player how many
+        # portions are left after a
+        # portion is eaten.
         case profile[:portions]
         when 1
             print "#{profile[:portions]} portion left.\n\n"
         when * [2..7]
             print "#{profile[:portions]} portions left.\n\n"
-        else
-            print "You finish it.\n\n"
+        else print "You finish it.\n\n"
+            # Once the portions reaches 0,
+            # the item is removed from both
+            # the board, and the player.
             remove_from_board
             @@player.remove_from_inventory(self)
         end
     end
     def heal_amount
+        # Check if the player's health
+        # plus the number of hearts the
+        # food item can heal is over 4.
         if @@player.health + profile[:hearts] > 4
+            # If so, just fill player up to 4.
             (4 - @@player.health)
-        else
-            profile[:hearts]
+            # Else the standard number applies.
+        else profile[:hearts]
         end
     end
     def activate_side_effects
         # Reserved for items that affect
         # player stats. See presets.
+    end
+    def eat
+        # Main method chain of above.
+        animate_ingestion
+        remove_portion
+        display_remaining_portions
+        # See Battle module for gain_health.
+        @@player.gain_health(heal_amount)
+        activate_side_effects
     end
     def wrong_move
         print "	   - This food item can only be\n"
@@ -413,15 +453,21 @@ end
 
 class Liquid < Edible
     def targets
+        # subtype specifies drink name
     	subtype | ["drink","liquid","fluid"]
     end
     def moveset
+        # This item can be viewed, taken,
+        # eaten, or drank. Why both?
     	[MOVES[1..2],MOVES[10..11]].flatten
     end
     def drink
+        # Becuase it's the same method,
+        # for a flexible move selection.
         eat
     end
     def animate_ingestion
+        # Same rules as animating edibles.
         puts Rainbow("	   - You drink the #{subtype[0]}, healing").orange
     	print Rainbow("	     #{heal_amount} heart").orange
         print Rainbow("#{heal_amount == 1 ? '.' : 's.'} ").orange
@@ -435,50 +481,102 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
-#####    FRUIT TREES    ######################################################################################################################################################################################################################################
+#####    FRUIT SOURCE    #####################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
 
-class FruitTree < Edible
-  def initialize
-    super
-    @count = 999
-    @stock = []
-    @fruit = []
-    fill_stock
-  end
-  def grow_fruit
-    if @@page % 30 == 0
-      @fruit.push(@stock[0])
-      @stock.shift
+class FruitSource < Edible
+    # This piece exists to spawn its subtype
+    # as multiples, without resorting to list
+    # form. Couple these with tree fixtures!
+    def initialize
+        super
+        # This method ensures we draw from a
+        # once-spawned source. Spawning new
+        # fruit presets in grow_fruit would
+        # reset the entire game's state.
+        @count = 999
+        @stock = []
+        @fruit = []
+        fill_stock
     end
-  end
-  def special_behavior
-    @fruit.count < 3 && grow_fruit
-  end
-  def fruit_needs_time_to_grow
-    puts "	   - The fruit needs time to grow.\n\n"
-    @@player.toggle_state_inert
-  end
-  def take
-    if @fruit.count > 0
-      @fruit[0].take
-      @fruit.shift
-    else
-      fruit_needs_time_to_grow
+    def targets
+        # See presets.rb for subtypes.
+        subtype | ["fruit", "produce"]
     end
-  end
-  def eat
-    puts "	   - You can't eat fruit that you"
-    puts "	     haven't harvested.\n\n"
-    take
-  end
-  def view
-    display_description
-    display_profile
-    print "\n"
-    fruit_needs_time_to_grow if @fruit.count < 1
-  end
+    def display_description
+        # Only display if the fruit count is
+        # over zero, else signal that player
+        # must wait until it grows.
+        if @fruit.count > 0
+            @type.display_description
+        else fruit_unripe
+        end
+    end
+    def display_profile
+        # Similarly, we only display the fruit
+        # @type (fruit preset) profile if the
+        # fruit has already grown.
+        if @fruit.count > 0
+            @type.display_profile
+        end
+    end
+    def display_backdrop
+        # Unlike a @type's usual backdrop, the
+        # backdrop for a fruit source displays
+        # the count available, if any.
+        fruit = "#{@fruit.count} ripened #{subtype[0]}"
+        return if @fruit.count < 1
+        print "	   - It bears"
+        print Rainbow(" #{fruit}").orange
+        if @fruit.count == 1
+            puts Rainbow(".\n").orange
+        elsif @fruit.count != 0
+            puts Rainbow("s.\n").orange
+        end
+    end
+    def grow_fruit
+        # The fruit @type's custom page number
+        # counter for which fruit spawns. See
+        # preset's method harvest_time
+        if harvest_time
+            @fruit.push(@stock[0])
+            @stock.shift
+        end
+    end
+    def special_behavior
+        # If 3 fruit occupy the tree, refrain
+        # from growing more. Otherwise, grow!
+        @fruit.count < 3 && grow_fruit
+    end
+    def fruit_unripe
+        # This signals to the player that the
+        # fruit source they found currently
+        # has no fruit for them to take.
+        return if @fruit.count > 0
+        puts "	   - The fruit needs time to grow"
+        puts "	     before it can be harvested."
+        @@player.toggle_state_inert
+    end
+    def take
+        # If the count of fruit is over zero,
+        # player takes the first index, and
+        # the available fruit stock shifts.
+        if @fruit.count > 0
+            @fruit[0].take
+            @fruit.shift
+        else fruit_unripe
+            print "\n"
+        end
+    end
+    def eat
+        # This was a stylistic choice, but
+        # unexpected behavior might occur if
+        # removed in favor of standard method.
+        puts "	   - You can't eat fruit that you"
+        puts "	     haven't harvested.\n\n"
+        take
+    end
 end
 
 

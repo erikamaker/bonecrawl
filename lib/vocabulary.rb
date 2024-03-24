@@ -38,14 +38,9 @@ SPEECH =
     "while", "with", "within", "without"]
 
 
-INVENTORY =
-    ["rucksack","knapsack","backpack","bag","pack","items","inventory","stuff","things"]
+INVENTORY = ["rucksack","knapsack","backpack","bag","pack","items","inventory","stuff","things"]
 
 
-AFFIRMATIONS =
-    ["yes","yeah","sure","yep","aye","affirmative","yea","yh", "uh huh", "uh-huh", "i guess"]
+AFFIRMATIONS = ["yes","yeah","sure","yep","aye","affirmative","yea","yh", "uh huh", "uh-huh", "i guess"]
 
 EXISTING_TARGETS = ["north","south","east","west", INVENTORY].flatten
-
-
-# TODO:   Player can't burn things at the torch now for some reason. Look into this.

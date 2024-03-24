@@ -133,6 +133,28 @@ end
 
 
 ##############################################################################################################################################################################################################################################################
+#####    TREE    #############################################################################################################################################################################################################################################
+##############################################################################################################################################################################################################################################################
+
+
+class Tree < Fixture
+    def initialize
+      super
+        @targets = ["tree","branch","branches","trunk","roots"]
+    end
+    def display_backdrop
+        puts "	   - An ancient tree stands here,"
+        puts "	     with huge gnarly roots.\n\n"
+    end
+    def view
+        puts "	   - It's thick and marred by the"
+        puts "	     eons it's withstood.\n\n"
+        @@player.toggle_state_inert
+    end
+end
+
+
+##############################################################################################################################################################################################################################################################
 #####    HOOK    #############################################################################################################################################################################################################################################
 ##############################################################################################################################################################################################################################################################
 
@@ -266,6 +288,12 @@ class Key < Tool
 end
 
 class Match < Tool
+  def equip
+      burn = Rainbow("burn").cyan
+      puts "	   - You cannot equip this tool."
+      puts "	     Instead, use command #{burn}"
+      puts "	     and select your target.\n\n"
+  end
   def initialize
     super
     @profile = {:build => "wood", :lifespan => 1}
@@ -430,52 +458,44 @@ end
 ##############################################################################################################################################################################################################################################################
 
 
-class AppleTree < FruitTree
-  def initialize
-    super
-    @profile = Apple.new.profile
-  end
-  def targets
-    ["tree","apple","apples","fruit"]
-  end
-  def display_backdrop
-    puts "	   - An apple tree stands here. It"
-    print "	     bears #{@fruit.count} apple"
-    @fruit.count == 1 ? print(".\n\n") : print("s.\n\n")
-  end
-  def display_description
-    puts "	   - This tree produces uncommonly"
-    puts "	     sweet fruit with a blue hue.\n\n"
-  end
-  def fill_stock
-    @count.times do
-      @stock.push(Apple.new)
+class AppleSource < FruitSource
+    def initialize
+        super
+        @type = Apple.new
+        @profile = Apple.new.profile
     end
-  end
+    def harvest_time
+        @@page % 30 == 0
+    end
+    def subtype
+        ["apple","apples"]
+    end
+    def fill_stock
+        @count.times do
+            @stock.push(Apple.new)
+        end
+    end
 end
 
-class PlumTree < FruitTree
-  def initialize
-    super
-    @profile = Plum.new.profile
-  end
-  def targets
-    ["tree","apple","apples","fruit"]
-  end
-  def display_backdrop
-    puts "	   - A plum tree stands here. It"
-    print "	     bears #{@fruit.count} plum"
-    @fruit.count == 1 ? print(".\n\n") : print("s.\n\n")
-  end
-  def display_description
-    puts "	   - This tree produces delicious"
-    puts "	     plums that are good in brews.\n\n"
-  end
-  def fill_stock
-    @count.times do
-      @stock.push(Plum.new)
+
+class PlumSource < FruitSource
+    def initialize
+        super
+        @description = Plum.new.display_description
+        @profile = Plum.new.profile
     end
-  end
+    @@page % 60 == 0
+    def subtype
+        ["plum","plums"]
+    end
+    def display_description
+        @description
+    end
+    def fill_stock
+        @count.times do
+            @stock.push(Plum.new)
+        end
+    end
 end
 
 
