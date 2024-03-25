@@ -200,7 +200,7 @@ class Portable < Gamepiece
         # From Board: "At this coordinate, you find:"
         # From level file:
         #    def eg_item.display_position
-        #       puts "lays on the table."                   < -- Follow style
+        #       puts "lays on the table."   < -- Follow style
         #    end
         # Complete: 1 {targets[0]} {position}
     end
@@ -287,9 +287,9 @@ class Container < Gamepiece
         # The first found key or lock pick
         # will be the same that unlocked.
         # See Tool subclass for @lifespan
-        # and update_durability context.
+        # and break_item context.
         key.profile[:lifespan] -= 1
-        key.update_durability
+        key.break_item
     end
     def give_content
         # In traditional containers, content
@@ -358,7 +358,7 @@ class Burnable < Portable
         # screen as a local fire would.
         unique_burn_screen
         matchstick.profile[:lifespan] -= 1
-        matchstick.update_durability
+        matchstick.break_item
         remove_from_board
     end
     def wrong_move
@@ -391,16 +391,14 @@ class Edible < Portable
         print Rainbow("#{heal_amount == 1 ? '.' : 's.'} ").orange
     end
     def remove_portion
-        # All edible items are built
-        # with a set portion number.
-        # This decrements it when the
-        # item is being eaten.
+        # All edible items are built with
+        # a portion count that decrements
+        # when the preset is eaten.
         profile[:portions] -= 1
     end
     def display_remaining_portions
-        # Shows the player how many
-        # portions are left after a
-        # portion is eaten.
+        # Shows player how many portions
+        # are left after one is eaten.
         case profile[:portions]
         when 1
             print "#{profile[:portions]} portion left.\n\n"
@@ -408,16 +406,15 @@ class Edible < Portable
             print "#{profile[:portions]} portions left.\n\n"
         else print "You finish it.\n\n"
             # Once the portions reaches 0,
-            # the item is removed from both
-            # the board, and the player.
+            # remove from board and player.
             remove_from_board
             @@player.remove_from_inventory(self)
         end
     end
     def heal_amount
-        # Check if the player's health
-        # plus the number of hearts the
-        # food item can heal is over 4.
+        # Check if player's health plus
+        # the number of hearts preset
+        # can heal is over 4.
         if @@player.health + profile[:hearts] > 4
             # If so, just fill player up to 4.
             (4 - @@player.health)
@@ -426,8 +423,8 @@ class Edible < Portable
         end
     end
     def activate_side_effects
-        # Reserved for items that affect
-        # player stats. See presets.
+        # Reserved for stat changes on
+        # player state. See presets.
     end
     def eat
         # Main method chain of above.
@@ -462,8 +459,8 @@ class Liquid < Edible
     	[MOVES[1..2],MOVES[10..11]].flatten
     end
     def drink
-        # Becuase it's the same method,
-        # for a flexible move selection.
+        # Because it invokes the same 'eat'
+        # behavior, for more move options.
         eat
     end
     def animate_ingestion
@@ -486,15 +483,16 @@ end
 
 
 class FruitSource < Edible
-    # This piece exists to spawn its subtype
-    # as multiples, without resorting to list
-    # form. Couple these with tree fixtures!
+    # This piece spawns multiples of
+    # fruit. Couple with trees.
+    attr_accessor :type
     def initialize
         super
-        # This method ensures we draw from a
-        # once-spawned source. Spawning new
-        # fruit presets in grow_fruit would
-        # reset the entire game's state.
+        # This method ensures that we spawn
+        # the stock only once. Initializing
+        # individual fruit (e.g. Apple.new)
+        # during main loop resets the game's
+        # whole state. Preloading is the fix.
         @count = 999
         @stock = []
         @fruit = []
@@ -505,25 +503,24 @@ class FruitSource < Edible
         subtype | ["fruit", "produce"]
     end
     def display_description
-        # Only display if the fruit count is
-        # over zero, else signal that player
-        # must wait until it grows.
+        # Only display if the fruit count
+        # is > 0, else signal to wait.
         if @fruit.count > 0
             @type.display_description
         else fruit_unripe
         end
     end
     def display_profile
-        # Similarly, we only display the fruit
-        # @type (fruit preset) profile if the
-        # fruit has already grown.
+        # Similarly, we  display the fruit
+        # fruit preset @type's profile if
+        # @fruit count is > 0. No else.
         if @fruit.count > 0
             @type.display_profile
         end
     end
     def display_backdrop
-        # Unlike a @type's usual backdrop, the
-        # backdrop for a fruit source displays
+        # Unlike a @type's usual backdrop,
+        # a fruit source will only display
         # the count available, if any.
         fruit = "#{@fruit.count} ripened #{subtype[0]}"
         return if @fruit.count < 1
@@ -535,33 +532,35 @@ class FruitSource < Edible
             puts Rainbow("s.\n").orange
         end
     end
+    def harvest_time
+        @@page % 30 == 0
+    end
     def grow_fruit
-        # The fruit @type's custom page number
-        # counter for which fruit spawns. See
-        # preset's method harvest_time
-        if harvest_time
+        # The fruit @type's custom page
+        # counter determining a preset's
+        # harvest cycle.
+        if harvest_time # (e.g. every 30 pages)
             @fruit.push(@stock[0])
             @stock.shift
         end
     end
     def special_behavior
-        # If 3 fruit occupy the tree, refrain
-        # from growing more. Otherwise, grow!
+        # If 3 fruit occupy the source,
+        # stop spawning. Else, spawn!
         @fruit.count < 3 && grow_fruit
     end
     def fruit_unripe
-        # This signals to the player that the
-        # fruit source they found currently
-        # has no fruit for them to take.
+        # Display signal to  player that
+        # fruit count is currently 0.
         return if @fruit.count > 0
         puts "	   - The fruit needs time to grow"
         puts "	     before it can be harvested."
         @@player.toggle_state_inert
     end
     def take
-        # If the count of fruit is over zero,
-        # player takes the first index, and
-        # the available fruit stock shifts.
+        # If the count of fruit is > 0,
+        # player takes the first index,
+        # and the stock's queue shifts.
         if @fruit.count > 0
             @fruit[0].take
             @fruit.shift
@@ -570,9 +569,9 @@ class FruitSource < Edible
         end
     end
     def eat
-        # This was a stylistic choice, but
-        # unexpected behavior might occur if
-        # removed in favor of standard method.
+        # This was a stylistic choice.
+        # Unwanted behavior may occur
+        # if default method is favored.
         puts "	   - You can't eat fruit that you"
         puts "	     haven't harvested.\n\n"
         take
@@ -586,27 +585,29 @@ end
 
 
 class Tool < Portable
-  def moveset
-  	MOVES[1..2].flatten | MOVES[14]
-  end
-  def damage_item
-    profile[:lifespan] -= 1
-  end
-  def targets
-    subtype | ["tool"]
-  end
-  def equip
-    puts "	   - This object will auto-equip"
-    puts "	     during its time of need.\n\n"
-  end
-  def update_durability
-    if profile[:lifespan] == 0
-      puts Rainbow("	   - Your #{targets[0]} breaks in two.").red
-      puts Rainbow("	     You drop the broken pieces.\n").red
-      @@player.remove_from_inventory(self)
-      @@player.weapon = nil if self == @@player.weapon
+    # This is a special type of item
+    # that can be equipped (mostly).
+    def moveset
+    	MOVES[1..2].flatten | MOVES[14]
     end
-  end
+    def damage_item
+        profile[:lifespan] -= 1
+    end
+    def targets
+        subtype | ["tool"]
+    end
+    def equip
+        puts "	   - This object will auto-equip"
+        puts "	     during its time of need.\n\n"
+    end
+    def break_item
+        if profile[:lifespan] == 0
+            puts Rainbow("	   - Your #{targets[0]} breaks in two.").red
+            puts Rainbow("	     You drop the broken pieces.\n").red
+            @@player.remove_from_inventory(self)
+            @@player.weapon = nil if self == @@player.weapon
+        end
+    end
 end
 
 

@@ -27,13 +27,13 @@ module Battle
     def degrade_weapon
         if weapon_equipped
             @weapon.damage_item
-            @weapon.update_durability
+            @weapon.break_item
         end
     end
     def degrade_armor
         if armor_equipped
             @armor.damage_item
-            @armor.update_durability
+            @armor.break_item
         end
     end
     def armor_equipped

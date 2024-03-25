@@ -138,9 +138,8 @@ end
 
 
 class Tree < Fixture
-    def initialize
-      super
-        @targets = ["tree","branch","branches","trunk","roots"]
+    def targets
+        ["tree","branch","branches","trunk","roots"]
     end
     def display_backdrop
         puts "	   - An ancient tree stands here,"
@@ -305,7 +304,7 @@ class Match < Tool
   	puts "	   - It can only strike and light"
     puts "	     once, so choose wisely.\n\n"
   end
-  def update_durability
+  def break_item
     if profile[:lifespan] == 0
         puts Rainbow("	   - You toss the expired match.\n").red
         @@player.remove_from_inventory(self)
@@ -464,37 +463,13 @@ class AppleSource < FruitSource
         @type = Apple.new
         @profile = Apple.new.profile
     end
-    def harvest_time
-        @@page % 30 == 0
-    end
-    def subtype
-        ["apple","apples"]
-    end
     def fill_stock
         @count.times do
             @stock.push(Apple.new)
         end
     end
-end
-
-
-class PlumSource < FruitSource
-    def initialize
-        super
-        @description = Plum.new.display_description
-        @profile = Plum.new.profile
-    end
-    @@page % 60 == 0
     def subtype
-        ["plum","plums"]
-    end
-    def display_description
-        @description
-    end
-    def fill_stock
-        @count.times do
-            @stock.push(Plum.new)
-        end
+        ["apple","apples"]
     end
 end
 

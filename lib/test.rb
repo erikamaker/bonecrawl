@@ -148,6 +148,7 @@ pick_1.location = [[0,4,-4]]
 fire_1 = Fireplace.new
 fire_1.location = [[0,1,-4]]
 
+
 tree = Tree.new
 tree.location = [[0,1,1]]
 apples = AppleSource.new
