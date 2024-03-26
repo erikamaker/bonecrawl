@@ -463,10 +463,11 @@ class AppleSource < FruitSource
         @type = Apple.new
         @profile = Apple.new.profile
     end
-    def fill_stock
-        @count.times do
-            @stock.push(Apple.new)
-        end
+    def harvest_time
+        @@page % 30 == 0
+    end
+    def push_stock
+        @stock.push(Apple.new)
     end
     def subtype
         ["apple","apples"]

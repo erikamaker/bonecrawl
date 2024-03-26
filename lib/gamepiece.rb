@@ -498,6 +498,11 @@ class FruitSource < Edible
         @fruit = []
         fill_stock
     end
+    def fill_stock
+        @count.times do
+            push_stock
+        end
+    end
     def targets
         # See presets.rb for subtypes.
         subtype | ["fruit", "produce"]
@@ -531,9 +536,6 @@ class FruitSource < Edible
         elsif @fruit.count != 0
             puts Rainbow("s.\n").orange
         end
-    end
-    def harvest_time
-        @@page % 30 == 0
     end
     def grow_fruit
         # The fruit @type's custom page
